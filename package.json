@@ -2,6 +2,7 @@
     "devDependencies": {
         "@babel/core": "^7.17.0",
         "@babel/preset-env": "^7.16.0",
+        "@eslint/js": "^9.14.0",
         "@fullhuman/postcss-purgecss": "^6.0.0",
         "@hotwired/stimulus": "^3.0.0",
         "@hotwired/turbo": "^7.1.1 || ^8.0",
@@ -14,6 +15,8 @@
         "bootstrap": "^5.3.3",
         "chart.js": "^3.4.1 || ^4.0",
         "core-js": "^3.38.0",
+        "eslint": "^9.14.0",
+        "globals": "^15.11.0",
         "postcss": "^8.4.47",
         "postcss-loader": "^8.1.1",
         "regenerator-runtime": "^0.13.9",
@@ -27,7 +30,8 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "encore production --progress",
+        "lint": "eslint assets/*.js assets/**/*.js"
     },
     "dependencies": {
         "sass": "^1.80.6",
