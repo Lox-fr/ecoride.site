@@ -1,20 +1,59 @@
+name: ecoride-stack
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
-    volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+    mysql:
+        image: mysql:8.0
+        container_name: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: ecoride_db
+            MYSQL_USER: ecoride_user
+            MYSQL_PASSWORD: ecoride_userpassword
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        restart: always
+        environment:
+            PMA_HOST: mysql
+            PMA_USER: ecoride_user
+            PMA_PASSWORD: ecoride_userpassword
+        ports:
+            - "8080:80"
+        depends_on:
+            - mysql
+
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb
+        restart: always
+        environment:
+            MONGO_INITDB_DATABASE: ecoride_db
+            MONGO_INITDB_ROOT_USERNAME: ecoride_user
+            MONGO_INITDB_ROOT_PASSWORD: ecoride_userpassword
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongodb_data:/data/db
+
+    mongo-express:
+        image: mongo-express
+        container_name: mongodb-express
+        restart: always
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: ecoride_user
+            ME_CONFIG_MONGODB_ADMINPASSWORD: ecoride_userpassword
+            ME_CONFIG_MONGODB_SERVER: mongodb
+        ports:
+            - "8081:8081"
+        depends_on:
+            - mongodb
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+    mysql_data:
+    mongodb_data:
