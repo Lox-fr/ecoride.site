@@ -32,5 +32,11 @@
     "dependencies": {
         "sass": "^1.80.6",
         "sass-loader": "^16.0.3"
-    }
+    },
+    "browserslist": [
+        "> 0.5%",
+        "last 2 versions",
+        "Firefox ESR",
+        "not dead"
+    ]
 }
