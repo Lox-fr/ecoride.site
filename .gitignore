@@ -23,3 +23,7 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> phpunit/xdebug ###
+/tests/CoverageReport/
+###< phpunit/xdebug ###
