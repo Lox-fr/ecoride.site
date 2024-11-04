@@ -27,3 +27,7 @@
 ###> phpunit/xdebug ###
 /tests/CoverageReport/
 ###< phpunit/xdebug ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
