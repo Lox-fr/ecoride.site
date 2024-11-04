@@ -1,4 +1,3 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -18,8 +17,22 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+###> phpunit/xdebug ###
+/tests/CoverageReport/
+###< phpunit/xdebug ###
 
-###> symfony/asset-mapper ###
-/public/assets/
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
 /assets/vendor/
-###< symfony/asset-mapper ###
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
