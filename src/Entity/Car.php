@@ -26,6 +26,22 @@ class Car
     #[ORM\Column(length: 50)]
     private ?string $model = null;
 
+    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Brand $brand = null;
+
+    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?EngineType $engineType = null;
+
+    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Color $color = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,6 +79,54 @@ class Car
     public function setModel(string $model): static
     {
         $this->model = $model;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getBrand(): ?Brand
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?Brand $brand): static
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getEngineType(): ?EngineType
+    {
+        return $this->engineType;
+    }
+
+    public function setEngineType(?EngineType $engineType): static
+    {
+        $this->engineType = $engineType;
+
+        return $this;
+    }
+
+    public function getColor(): ?Color
+    {
+        return $this->color;
+    }
+
+    public function setColor(?Color $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }

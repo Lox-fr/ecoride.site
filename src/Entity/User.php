@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -72,10 +74,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $numberOfRatings = null;
 
     /**
-     * @var list<string> The user roles
+     * @var Collection<int, Role>
      */
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    private Collection $roles;
+
+    /**
+     * @var Collection<int, Preference>
+     */
+    #[ORM\OneToMany(targetEntity: Preference::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $preferences;
+
+    /**
+     * @var Collection<int, Car>
+     */
+    #[ORM\OneToMany(targetEntity: Car::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $cars;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+        $this->preferences = new ArrayCollection();
+        $this->cars = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -303,19 +324,86 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // Extract role names from Role objects
+        $roleLabels = $this->roles->map(fn (Role $role) => $role->getLabel())->toArray();
+        // Guarantee every user at least has ROLE_PASSENGER
+        $roleLabels[] = 'ROLE_PASSENGER';
 
-        return array_unique($roles);
+        return array_unique($roleLabels);
+    }
+
+    public function addRoles(Role $roles): static
+    {
+        if (!$this->roles->contains($roles)) {
+            $this->roles->add($roles);
+        }
+
+        return $this;
+    }
+
+    public function removeRoles(Role $roles): static
+    {
+        $this->roles->removeElement($roles);
+
+        return $this;
     }
 
     /**
-     * @param list<string> $roles
+     * @return Collection<int, Preference>
      */
-    public function setRoles(array $roles): static
+    public function getPreferences(): Collection
     {
-        $this->roles = $roles;
+        return $this->preferences;
+    }
+
+    public function addPreference(Preference $preference): static
+    {
+        if (!$this->preferences->contains($preference)) {
+            $this->preferences->add($preference);
+            $preference->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreference(Preference $preference): static
+    {
+        if ($this->preferences->removeElement($preference)) {
+            // set the owning side to null (unless already changed)
+            if ($preference->getUser() === $this) {
+                $preference->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Car>
+     */
+    public function getCars(): Collection
+    {
+        return $this->cars;
+    }
+
+    public function addCar(Car $car): static
+    {
+        if (!$this->cars->contains($car)) {
+            $this->cars->add($car);
+            $car->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCar(Car $car): static
+    {
+        if ($this->cars->removeElement($car)) {
+            // set the owning side to null (unless already changed)
+            if ($car->getUser() === $this) {
+                $car->setUser(null);
+            }
+        }
 
         return $this;
     }

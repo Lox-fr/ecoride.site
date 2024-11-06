@@ -18,6 +18,10 @@ class Preference
     #[ORM\Column(length: 100)]
     private ?string $label = null;
 
+    #[ORM\ManyToOne(inversedBy: 'preferences')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -31,6 +35,18 @@ class Preference
     public function setLabel(string $label): static
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
