@@ -1,0 +1,6 @@
+CREATE TABLE engine_type (
+    id INT AUTO_INCREMENT NOT NULL,
+    label VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id),
+    UNIQUE INDEX UNIQ_ENGINE_TYPE_LABEL (label)
+);
