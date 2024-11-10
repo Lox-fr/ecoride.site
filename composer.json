@@ -1,8 +1,19 @@
 {
+    "name": "lox/ecoride.site",
+    "description": "Eco-responsible carpooling application developed with Symfony",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*"
+    },
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
@@ -47,6 +58,21 @@
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan-doctrine": "^1.5",
+        "phpstan/phpstan-symfony": "^1.4",
+        "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "6.4.*",
+        "symfony/css-selector": "6.4.*",
+        "symfony/debug-bundle": "6.4.*",
+        "symfony/maker-bundle": "^1.0",
+        "symfony/phpunit-bridge": "^7.1",
+        "symfony/stopwatch": "6.4.*",
+        "symfony/web-profiler-bundle": "6.4.*"
+    },
     "config": {
         "allow-plugins": {
             "php-http/discovery": true,
@@ -66,14 +92,14 @@
             "App\\Tests\\": "tests/"
         }
     },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*"
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "6.4.*"
+        }
     },
     "scripts": {
         "auto-scripts": {
@@ -85,30 +111,83 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "dbPrepare": [
+            "php bin/console app:database:delete --no-interaction",
+            "php bin/console app:database:create",
+            "@tableCreations",
+            "@fixturesLoading"
+        ],
+        "tableCreations": [
+            "php bin/console app:database:execute create/table/brand",
+            "php bin/console app:database:execute create/table/car",
+            "php bin/console app:database:execute create/table/color",
+            "php bin/console app:database:execute create/table/engineType",
+            "php bin/console app:database:execute create/table/messengerMessages",
+            "php bin/console app:database:execute create/table/preference",
+            "php bin/console app:database:execute create/table/role",
+            "php bin/console app:database:execute create/table/user",
+            "php bin/console app:database:execute create/table/userRole",
+            "php bin/console app:database:execute create/constraints/car",
+            "php bin/console app:database:execute create/constraints/preference",
+            "php bin/console app:database:execute create/constraints/userRole"
+        ],
+        "fixturesLoading": [
+            "php bin/console app:database:execute create/fixtures/brands",
+            "php bin/console app:database:execute create/fixtures/colors",
+            "php bin/console app:database:execute create/fixtures/engineTypes",
+            "php bin/console app:database:execute create/fixtures/roles",
+            "php bin/console app:database:execute create/fixtures/users",
+            "php bin/console app:database:execute create/fixtures/cars",
+            "php bin/console app:database:execute create/fixtures/preferences",
+            "php bin/console app:database:execute create/fixtures/userRoles"
+        ],
+        "testDbPrepare": [
+            "php bin/console app:database:delete --no-interaction --env=test",
+            "php bin/console app:database:create --env=test",
+            "@testTableCreations",
+            "@testFixturesLoading"
+        ],
+        "testTableCreations": [
+            "php bin/console app:database:execute create/table/brand --env=test",
+            "php bin/console app:database:execute create/table/car --env=test",
+            "php bin/console app:database:execute create/table/color --env=test",
+            "php bin/console app:database:execute create/table/engineType --env=test",
+            "php bin/console app:database:execute create/table/messengerMessages --env=test",
+            "php bin/console app:database:execute create/table/preference --env=test",
+            "php bin/console app:database:execute create/table/role --env=test",
+            "php bin/console app:database:execute create/table/user --env=test",
+            "php bin/console app:database:execute create/table/userRole --env=test",
+            "php bin/console app:database:execute create/constraints/car --env=test",
+            "php bin/console app:database:execute create/constraints/preference --env=test",
+            "php bin/console app:database:execute create/constraints/userRole --env=test"
+        ],
+        "testFixturesLoading": [
+            "php bin/console app:database:execute create/fixtures/brands --env=test",
+            "php bin/console app:database:execute create/fixtures/colors --env=test",
+            "php bin/console app:database:execute create/fixtures/engineTypes --env=test",
+            "php bin/console app:database:execute create/fixtures/roles --env=test",
+            "php bin/console app:database:execute create/fixtures/users --env=test",
+            "php bin/console app:database:execute create/fixtures/cars --env=test",
+            "php bin/console app:database:execute create/fixtures/preferences --env=test",
+            "php bin/console app:database:execute create/fixtures/userRoles --env=test"
+        ],
+        "lint": [
+            "php bin/console lint:twig templates",
+            "php bin/console lint:yaml config --parse-tags",
+            "php bin/console lint:container"
+        ],
+        "phpFix": "php vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "phpStan": "php vendor/bin/phpstan analyze",
+        "phpUnit": [
+            "@testDbPrepare",
+            "php vendor/bin/phpunit --testdox --coverage-html tests/CoverageReport"
+        ],
+        "test": [
+            "composer validate --strict",
+            "@lint",
+            "@phpStan",
+            "@phpUnit"
         ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "6.4.*"
-        }
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.64",
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^1.12",
-        "phpstan/phpstan-doctrine": "^1.5",
-        "phpstan/phpstan-symfony": "^1.4",
-        "phpunit/phpunit": "^9.5",
-        "symfony/browser-kit": "6.4.*",
-        "symfony/css-selector": "6.4.*",
-        "symfony/debug-bundle": "6.4.*",
-        "symfony/maker-bundle": "^1.0",
-        "symfony/phpunit-bridge": "^7.1",
-        "symfony/stopwatch": "6.4.*",
-        "symfony/web-profiler-bundle": "6.4.*"
     }
 }
