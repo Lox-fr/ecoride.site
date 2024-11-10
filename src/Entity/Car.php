@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Trait\IdTrait;
 use App\Repository\CarRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,10 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'UNIQ_CAR_LICENSE_PLATE', fields: ['licensePlate'])]
 class Car
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use IdTrait;
 
     #[ORM\Column(length: 10)]
     private ?string $licensePlate = null;
@@ -41,11 +39,6 @@ class Car
     #[ORM\ManyToOne(inversedBy: 'cars')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Color $color = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getLicensePlate(): ?string
     {
