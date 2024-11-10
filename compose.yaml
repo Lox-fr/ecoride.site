@@ -7,13 +7,13 @@ services:
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_DATABASE: ecoride_db
             MYSQL_USER: ecoride_user
             MYSQL_PASSWORD: ecoride_userpassword
         ports:
             - "3306:3306"
         volumes:
             - mysql_data:/var/lib/mysql
+            - ./src/Sql/.init:/docker-entrypoint-initdb.d
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
