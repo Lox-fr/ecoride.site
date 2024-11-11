@@ -28,15 +28,15 @@ class Car
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\ManyToOne(inversedBy: 'cars', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Brand $brand = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\ManyToOne(inversedBy: 'cars', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?EngineType $engineType = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cars')]
+    #[ORM\ManyToOne(inversedBy: 'cars', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Color $color = null;
 
