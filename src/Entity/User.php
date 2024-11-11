@@ -14,8 +14,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_USER_PSEUDO', fields: ['pseudo'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_USER_PHONENUMBER', fields: ['phoneNumber'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_USER_PHOTONAME', fields: ['photoName'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use IdTrait;
@@ -54,10 +55,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phoneNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photoPath = null;
+    private ?string $photoName = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $dayOfBirth = null;
+    private ?\DateTimeImmutable $dateOfBirth = null;
+
+    private ?int $age = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $petsAllowed = null;
@@ -70,6 +73,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?int $numberOfRatings = null;
+
+    private ?float $averageRating = null;
+
+    #[ORM\Column]
+    private ?int $credits = null;
 
     /**
      * @var Collection<int, Role>
@@ -238,26 +246,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhotoPath(): ?string
+    public function getPhotoName(): ?string
     {
-        return $this->photoPath;
+        return $this->photoName;
     }
 
-    public function setPhotoPath(?string $photoPath): static
+    public function setPhotoName(?string $photoName): static
     {
-        $this->photoPath = $photoPath;
+        $this->photoName = $photoName;
 
         return $this;
     }
 
-    public function getDayOfBirth(): ?\DateTimeImmutable
+    public function getDateOfBirth(): ?\DateTimeImmutable
     {
-        return $this->dayOfBirth;
+        return $this->dateOfBirth;
     }
 
-    public function setDayOfBirth(?\DateTimeImmutable $dayOfBirth): static
+    public function setDateOfBirth(?\DateTimeImmutable $dateOfBirth): static
     {
-        $this->dayOfBirth = $dayOfBirth;
+        $this->dateOfBirth = $dateOfBirth;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        if (null === $this->dateOfBirth) {
+            return null;
+        }
+        $now = new \DateTime();
+        $age = $now->diff($this->dateOfBirth)->y;
+
+        return $age;
+    }
+
+    public function setAge(int $age): static
+    {
+        $this->age = $age;
 
         return $this;
     }
@@ -306,6 +332,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNumberOfRatings(?int $numberOfRatings): static
     {
         $this->numberOfRatings = $numberOfRatings;
+
+        return $this;
+    }
+
+    public function getAverageRating(): ?float
+    {
+        if (null === $this->numberOfRatings || 0 === $this->numberOfRatings) {
+            return null;
+        }
+
+        return $this->sumOfRatings / $this->numberOfRatings;
+    }
+
+    public function setAverageRating(float $averageRating): static
+    {
+        $this->averageRating = $averageRating;
+
+        return $this;
+    }
+
+    public function getCredits(): ?int
+    {
+        return $this->credits;
+    }
+
+    public function setCredits(int $credits): static
+    {
+        $this->credits = $credits;
 
         return $this;
     }

@@ -10,13 +10,15 @@ CREATE TABLE user (
     last_name VARCHAR(50) DEFAULT NULL,
     address VARCHAR(255) DEFAULT NULL,
     phone_number VARCHAR(17) DEFAULT NULL,
-    photo_path VARCHAR(255) DEFAULT NULL,
-    day_of_birth DATE DEFAULT NULL,
+    photo_name VARCHAR(255) DEFAULT NULL,
+    date_of_birth DATE DEFAULT NULL,
     pets_allowed TINYINT(1) DEFAULT NULL,
     smokers_allowed TINYINT(1) DEFAULT NULL,
     sum_of_ratings INT DEFAULT NULL,
     number_of_ratings INT DEFAULT NULL,
+    credits INT NOT NULL,
     PRIMARY KEY(id),
-    UNIQUE INDEX UNIQ_USER_PSEUDO (pseudo),
-    UNIQUE INDEX UNIQ_USER_EMAIL (email)
+    UNIQUE INDEX UNIQ_USER_PSEUDO (email),
+    UNIQUE INDEX UNIQ_USER_PHONE_NUMBER (phone_number),
+    UNIQUE INDEX UNIQ_USER_PHOTO_NAME (photo_name)
 );
