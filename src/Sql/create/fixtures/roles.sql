@@ -1,6 +1,6 @@
 INSERT INTO role (label)
 VALUES
-    ('ROLE_PASSENGER'), -- id=1
-    ('ROLE_DRIVER'),    -- id=2
-    ('ROLE_EMPLOYEE'),  -- id=3
-    ('ROLE_ADMIN');     -- id=4
+    ('ROLE_ADMIN'),     -- id 1
+    ('ROLE_EMPLOYEE'),  -- id 2
+    ('ROLE_DRIVER'),    -- id 3
+    ('ROLE_PASSENGER'); -- id 4
