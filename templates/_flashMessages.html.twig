@@ -1,0 +1,7 @@
+{% for label, messages in app.flashes %}
+	{% for message in messages %}
+		<div class="container mt-3 flash-{{ label }} alert text-center {{ label == 'success' ? 'alert-success' : 'alert-danger' }}" role="alert">
+			{{ message|raw}}
+		</div>
+	{% endfor %}
+{% endfor %}
