@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand-md bg-body-tertiary p-2 shadow-lg d-flex flex-column" id="mainNavbar">
+
+	{# hidden link for screen readers #}
+	<a href="#mainContent" class="nav-link visually-hidden-focusable text-center mb-2 px-5">
+		Aller au contenu principal</a>
+
+	<div class="container d-flex justify-content-between justify-content-md-center" data-controller="tooltips">
+
+		{# link to home, always visible #}
+		<h1 class="mb-0">
+			<a href="{{ path('app_home') }}" class="d-flex align-items-center nav-link" data-bs-toggle="tooltip" data-bs-title="Aller à la page d'accueil" data-bs-placement="bottom" {{ controller_name == 'HomeController' ? 'aria-current="page"' }}>
+				<img src="{{ asset('images/logo.svg') }}" alt="Logo d'EcoRide. Cliquer pour aller à la page d'accueil" width="40" height="40" class="me-3">
+				<span class="nav-link {{ controller_name == 'HomeController' ? 'active' }} fs-2">EcoRide</span>
+			</a>
+		</h1>
+
+		{# menu open button only on smaller screens #}
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Ouvrir le menu de navigation principal">
+			<span class="navbar-toggler-icon" aria-hidden="true"></span>
+		</button>
+
+		<div class="collapse d-md-inline-flex navbar-collapse w-auto" id="navbarSupportedContent">
+			<ul class="navbar-nav mx-auto mb-2 mb-md-0 fs-5 pe-md-5 pe-lg-0">
+				{# visible on all screens #}
+				<li role="separator"><hr></li>
+				<li class="nav-item mx-3">
+					<a class="nav-link {{ controller_name == 'CarpoolsController' ? 'active' }}" href="#" {{ controller_name == 'CarpoolsController' ? 'aria-current="page"' }}>Covoiturages</a>
+				</li>
+				<li class="nav-item mx-3">
+					<a class="nav-link {{ controller_name == 'ContactController' ? 'active' }}" href="#" {{ controller_name == 'ContactController' ? 'aria-current="page"' }}>Contact</a>
+				</li>
+				{# visible on smaller screens, replaces user menu #}
+				<li role="separator"><hr></li>
+				<li class="nav-item mx-3 d-md-none">
+					<a class="nav-link {{ controller_name == 'RegistrationController' ? 'active' }}" href="#" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
+				</li>
+				<li class="nav-item mx-3 d-md-none">
+					<a class="nav-link {{ controller_name == 'LoginController' ? 'active' }}" href="#" {{ controller_name == 'LoginController' ? 'aria-current="page"' }}>Se connecter</a>
+				</li>
+			</ul>
+		</div>
+
+		{# user menu, visible only on larger screens #}
+		<div class="d-none d-md-flex nav-item dropdown align-items-center" data-bs-toggle="tooltip" data-bs-title="Menu utilisateur" data-bs-placement="left">
+			<div id="userMenuDescription" class="visually-hidden">
+				Menu utilisateur, contient les options d'inscription et de connexion.
+			</div>
+			<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-describedby="userMenuDescription" aria-haspopup="true">
+				<img src="{{ asset('images/users/default.svg') }}" alt="Icône de l'utilisateur" width="32" height="32">
+			</a>
+			<ul class="dropdown-menu dropdown-menu-end shadow mt-3">
+				<li>
+					<a class="dropdown-item nav-link {{ controller_name == 'RegistrationController' ? 'active' }} py-1" href="#" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
+				</li>
+				<li>
+					<a class="dropdown-item nav-link {{ controller_name == 'LoginController' ? 'active' }} py-1" href="#" {{ controller_name == 'LoginController' ? 'aria-current="page"' }}>Se connecter</a>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+
+</nav>
