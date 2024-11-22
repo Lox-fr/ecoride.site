@@ -1,6 +1,6 @@
 import { startStimulusApp } from "@symfony/stimulus-bridge";
-import PagePreloaderController from "./controllers/pagePreloader_controller.js";
-import TooltipsController from "./controllers/tooltips_controller.js";
+import PagePreloaderController from "@controllers/pagePreloader_controller.ts";
+import TooltipsController from "@controllers/tooltips_controller.ts";
 
 const app = startStimulusApp();
 
