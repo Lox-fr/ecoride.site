@@ -33,7 +33,7 @@
 		{% endblock %}
 	</head>
 
-    <body>
+    <body class="d-flex flex-column" style="min-height: 100vh;">
 
 		{% include "_preloader.html.twig" %}
 	
@@ -45,6 +45,8 @@
 		<main class="mb-5" id="mainContent">
 			{% block main %}{% endblock %}
 		</main>
+
+		{% include '_footer.html.twig'%}
 
     </body>
 
