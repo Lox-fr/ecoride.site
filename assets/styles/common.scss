@@ -5,6 +5,9 @@ $body-bg-second-color: $color-2;
 $text-color: $color-3;
 $border-color: $color-3;
 $focus-shadow-color: $color-2;
+$framed-bg-color: $color-7;
+$popularRide-hover-color: $color-7;
+
 $footer-link-transform-scale: 1.15;
 $footer-link-transform-time: 0.2s;
 
@@ -42,13 +45,26 @@ body {
         "Snell Roundhand", cursive;
 }
 
+.framed {
+    border: 1px solid $border-color;
+    background-color: $framed-bg-color;
+}
+
 @import "_navbar.scss";
 
-#pageFooter a {
+#pageFooter a,
+#aboutUs a,
+#ourTeam a {
     display: inline-block;
     transition: transform $footer-link-transform-time ease-in-out !important;
     &:hover,
     &:focus {
         transform: scale($footer-link-transform-scale) !important;
+    }
+}
+
+#popularRides {
+    li a:hover {
+        background-color: $popularRide-hover-color;
     }
 }
