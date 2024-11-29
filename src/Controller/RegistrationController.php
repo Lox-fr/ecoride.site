@@ -36,10 +36,10 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', '
                 Bienvenue dans la communauté EcoRide<br/>
                 N\'hésitez pas à completer votre profil<br/>
-                Et profitez des 20 crédits offerts !'
+                Connectez-vous pour profitez des 20 crédits offerts !'
             );
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
