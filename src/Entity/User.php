@@ -18,7 +18,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_PHONENUMBER', fields: ['phoneNumber'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_PHOTONAME', fields: ['photoName'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette adresse email.')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use IdTrait;
@@ -101,9 +102,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->setActive(true);
         $this->roles = new ArrayCollection();
         $this->preferences = new ArrayCollection();
         $this->cars = new ArrayCollection();
+        $this->credits = 20;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        $this->setCreatedAt(new \DateTimeImmutable());
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->setUpdatedAt(new \DateTimeImmutable());
     }
 
     public function getPseudo(): ?string
