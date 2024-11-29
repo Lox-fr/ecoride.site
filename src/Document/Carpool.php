@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[MongoDB\Document]
 class Carpool
@@ -16,9 +17,18 @@ class Carpool
     private ?string $id = null;
 
     #[MongoDB\Field(type: 'date_immutable')]
+    #[Assert\NotNull(message: 'La date de départ est obligatoire.')]
+    #[Assert\Type(\DateTimeImmutable::class, message: "La date de départ doit être un objet DateTimeImmutable.")]
     private ?\DateTimeImmutable $departureTime = null;
 
     #[MongoDB\Field(type: 'string')]
+    #[Assert\NotBlank(message: 'La ville de départ est obligatoire.')]
+    #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville de départ ne doit pas excéder {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
+        message: "Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d'union."
+    )]
     private ?string $departureCity = null;
 
     #[MongoDB\Field(type: 'string')]
@@ -28,6 +38,13 @@ class Carpool
     private ?\DateTimeImmutable $arrivalTime = null;
 
     #[MongoDB\Field(type: 'string')]
+    #[Assert\NotBlank(message: 'La ville d\'arrivée est obligatoire.')]
+    #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville d\arrivée ne doit pas excéder {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
+        message: "Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d'union."
+    )]
     private ?string $arrivalCity = null;
 
     #[MongoDB\Field(type: 'string')]
