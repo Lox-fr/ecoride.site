@@ -39,11 +39,10 @@
 	
 		<header>
 			{% include "_navbar.html.twig" %}
+			{% include '_flashMessages.html.twig'%}
 		</header>
 	
-		{% include '_flashMessages.html.twig'%}
-
-		<main id="mainContent">
+		<main class="mb-5" id="mainContent">
 			{% block main %}{% endblock %}
 		</main>
 

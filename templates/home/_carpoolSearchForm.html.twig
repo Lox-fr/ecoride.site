@@ -1,0 +1,56 @@
+<h2 class="fs-1 fw-bold mb-5 px-sm-5">
+    <span class="handwriting text-nowrap">En route vers</span>
+    <span class="handwriting text-nowrap">la mobilité verte !</span>
+</h2>
+
+{{ form_start(carpoolSearchForm) }}
+
+    <div class="d-md-flex flex-row justify-content-center">
+
+        <div class="input-group mb-4 rounded-4 px-3 mx-auto mx-md-0" style="max-width: 500px;">
+            <span class="input-group-text fs-2 justify-content-center rounded-start-4 shadow" style="width: 60px;">
+                {{ ux_icon('gis:route-start') }}
+            </span>
+            <div class="form-floating">
+                {{ form_widget(carpoolSearchForm.departureCity, {
+                    'attr': {'class': 'text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
+                <small>{{ form_help(carpoolSearchForm.departureCity) }}</small>
+                {{ form_label(carpoolSearchForm.departureCity) }}
+                {{ form_errors(carpoolSearchForm.departureCity) }}
+            </div>
+        </div>
+
+        <div class="input-group input-group-lg mb-4 rounded-4 px-3 mx-auto mx-md-0" style="max-width: 500px;">
+            <span class="input-group-text fs-1 justify-content-center rounded-start-4 shadow" style="width: 60px;">
+                {{ ux_icon('gis:route-end') }}
+            </span>
+            <div class="form-floating">
+                {{ form_widget(carpoolSearchForm.arrivalCity, {
+                    'attr': {'class': 'text-start px-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
+                <small>{{ form_help(carpoolSearchForm.arrivalCity) }}</small>
+                {{ form_label(carpoolSearchForm.arrivalCity, null, {'attr': {'class': 'text-start text-md-end'}}) }}
+                {{ form_errors(carpoolSearchForm.arrivalCity) }}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="input-group input-group-lg mb-5 mb-md-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+        <span class="input-group-text fs-3 justify-content-center rounded-start-4 shadow" style="width: 60px;">
+            {{ ux_icon('uiw:date') }}
+        </span>
+        <div class="form-floating" data-controller="flatpickr">
+            {{ form_widget(carpoolSearchForm.departureTime, {
+                'attr': {
+                    'class': 'text-start ps-4 rounded-end-4 flatpickr shadow',
+                    'placeholder': "now"|date("Y-m-d"),
+                    'aria-required': 'true' }}) }}
+            <small>{{ form_help(carpoolSearchForm.departureTime) }}</small>
+            {{ form_label(carpoolSearchForm.departureTime) }}
+            {{ form_errors(carpoolSearchForm.departureTime) }}
+        </div>
+    </div>
+
+    {{ form_row(carpoolSearchForm.submit) }}
+
+{{ form_end(carpoolSearchForm) }}
