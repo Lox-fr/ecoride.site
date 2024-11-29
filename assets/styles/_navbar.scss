@@ -6,6 +6,10 @@ $nav-link-transform-scale: 1.05;
 $nav-link-transition-time: 0.1s;
 
 #mainNavbar {
+    .dropdown-item {
+        background-color: transparent;
+    }
+
     a {
         text-decoration: none;
     }
@@ -23,6 +27,7 @@ $nav-link-transition-time: 0.1s;
 
         &.active {
             color: $nav-link-active-color;
+            font-weight: bold;
 
             &:hover,
             &:focus {
@@ -30,9 +35,5 @@ $nav-link-transition-time: 0.1s;
                 transform: scale($nav-link-transform-scale);
             }
         }
-    }
-
-    .dropdown-item:hover {
-        background-color: transparent;
     }
 }

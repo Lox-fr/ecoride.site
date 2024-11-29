@@ -33,7 +33,7 @@
 				{# visible on smaller screens, replaces user menu #}
 				<li role="separator"><hr></li>
 				<li class="nav-item mx-3 d-md-none">
-					<a class="nav-link {{ controller_name == 'RegistrationController' ? 'active' }}" href="#" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
+					<a class="nav-link {{ controller_name == 'RegistrationController' ? 'active' }}" href="{{ path('app_register') }}" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
 				</li>
 				<li class="nav-item mx-3 d-md-none">
 					<a class="nav-link {{ controller_name == 'LoginController' ? 'active' }}" href="#" {{ controller_name == 'LoginController' ? 'aria-current="page"' }}>Se connecter</a>
@@ -51,7 +51,7 @@
 			</a>
 			<ul class="dropdown-menu dropdown-menu-end shadow mt-3">
 				<li>
-					<a class="dropdown-item nav-link {{ controller_name == 'RegistrationController' ? 'active' }} py-1" href="#" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
+					<a class="dropdown-item nav-link {{ controller_name == 'RegistrationController' ? 'active' }} py-1" href="{{ path('app_register') }}" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
 				</li>
 				<li>
 					<a class="dropdown-item nav-link {{ controller_name == 'LoginController' ? 'active' }} py-1" href="#" {{ controller_name == 'LoginController' ? 'aria-current="page"' }}>Se connecter</a>
