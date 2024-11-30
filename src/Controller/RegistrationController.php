@@ -27,19 +27,47 @@ class RegistrationController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // Encode the plain password
+            $hashedPassword = $userPasswordHasher->hashPassword($user, $plainPassword);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            try {
+                // Connecting to the database
+                $connection = $entityManager->getConnection();
 
-            $this->addFlash('success', '
-                Bienvenue dans la communauté EcoRide<br/>
-                N\'hésitez pas à completer votre profil<br/>
-                Connectez-vous pour profitez des 20 crédits offerts !'
-            );
+                // Load SQL from file
+                $sql = file_get_contents(__DIR__.'/../sql/create/userRegistration.sql');
 
-            return $this->redirectToRoute('app_login');
+                // The data to inject into the SQL script
+                $params = [
+                    'email' => $form->get('email')->getData(),
+                    'pseudo' => $form->get('pseudo')->getData(),
+                    'password' => $hashedPassword,
+                    'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
+                    'active' => (int) $user->isActive(),
+                    'credits' => (int) $user->getCredits(),
+                ];
+
+                // Replace placeholders in SQL script
+                foreach ($params as $key => $value) {
+                    $sql = str_replace(":$key", $connection->quote($value), $sql);
+                }
+
+                // Execute the SQL script
+                $connection->executeStatement($sql);
+
+                $this->addFlash('success', '
+                    Bienvenue dans la communauté EcoRide,<br/>
+                    N\'hésitez pas à completer votre profil.<br/>
+                    Connectez-vous pour profitez de vos 20 crédits offerts !'
+                );
+
+                return $this->redirectToRoute('app_login');
+            } catch (\Exception $e) {
+                // Handle any SQL or connection errors
+                $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
+
+                return $this->redirectToRoute('app_register');
+            }
         }
 
         return $this->render('registration/register.html.twig', [
