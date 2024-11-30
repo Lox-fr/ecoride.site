@@ -10,6 +10,7 @@ use App\Service\SqlBasePathLoader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,68 +32,77 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
-            // Hash the plain password
+            $userEmail = (string) $form->get('email')->getData();
+            $plainPassword = (string) $form->get('plainPassword')->getData();
+            $confirmPassword = (string) $form->get('confirmPassword')->getData();
             $hashedPassword = $userPasswordHasher->hashPassword($user, $plainPassword);
-            $userEmail = $form->get('email')->getData();
 
-            try {
-                /* Connecting to the database */
-                $connection = $entityManager->getConnection();
+            if ($plainPassword === $confirmPassword) {
 
-                /* Insert into user table */
-                $sql = $sqlFileLoader->getSqlFromFile('create/userRegistration', [
-                    'email' => $userEmail,
-                    'pseudo' => $form->get('pseudo')->getData(),
-                    'password' => $hashedPassword,
-                    'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
-                    'active' => (int) $user->isActive(),
-                    'credits' => (int) $user->getCredits(),
-                ]);
-                $connection->executeStatement($sql); // Execute the SQL script
-
-                $this->addFlash('success',
-                    'Bienvenue dans la communauté EcoRide.<br/>
-                    N\'hésitez pas à compléter votre profil.<br/>
-                    Et profitez de vos 20 crédits offerts !');
-            } catch (\Exception $e) {
-                // $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription : '.$e->getMessage());
-                $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
-
-                return $this->redirectToRoute('app_register');
-            }
-
-            try {
-                /* Fetch user id from email */
-                $sql = $sqlFileLoader->getSqlFromFile('read/userIdByEmail', [
-                    'email' => $userEmail, ]);
-                $userId = $connection->fetchOne($sql); // Execute the SQL script
-                if (!$userId) {
-                    throw new \Exception('Aucun utilisateur trouvé avec cette adresse e-mail.');
-                }
-
-                /* hydrate the user object */
-                $user
-                    ->setId((int) $userId)
-                    ->setEmail((string) $userEmail)
-                    ->setPassword((string) $hashedPassword);
-
-                /* Log the user in using Symfony's authentication system */
+                /* REGISTRATION */
                 try {
-                    $security->login($user);
-                } catch (\Exception $e) {
-                    throw new \Exception('Erreur lors de l\'authentification après inscription.');
-                }
-            } catch (\Exception $e) {
-                // $this->addFlash('error', 'Impossible de vous connecter après l\'inscription: '.$e->getMessage());
-                $this->addFlash('error',
-                    'Une erreur est survenue lors de la connexion après inscription. Veuillez réessayer.');
+                    /* Connecting to the database */
+                    $connection = $entityManager->getConnection();
 
-                return $this->redirectToRoute('app_login');
+                    /* Insert user data into 'user' table using a prepared SQL query */
+                    $sql = $sqlFileLoader->getSqlFromFile('create/userRegistration', [
+                        'email' => $userEmail,
+                        'pseudo' => $form->get('pseudo')->getData(),
+                        'password' => $hashedPassword,
+                        'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
+                        'active' => (int) $user->isActive(),
+                        'credits' => (int) $user->getCredits(),
+                    ]);
+                    $connection->executeStatement($sql); // Execute the SQL script
+
+                    /* Flash success message after successful registration */
+                    $this->addFlash('success',
+                        'Bienvenue dans la communauté EcoRide.<br/>
+                        N\'hésitez pas à compléter votre profil.<br/>
+                        Et profitez de vos 20 crédits offerts !');
+                } catch (\Exception $e) {
+                    // $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription : '.$e->getMessage());
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
+
+                    return $this->redirectToRoute('app_register');
+                }
+
+                /* AUTOMATICALLY LOG IN */
+                try {
+                    /* Fetch user id from email */
+                    $sql = $sqlFileLoader->getSqlFromFile('read/userIdByEmail', [
+                        'email' => $userEmail, ]);
+                    $userId = $connection->fetchOne($sql); // Execute the SQL script
+                    if (!$userId) {
+                        throw new \Exception('Aucun utilisateur trouvé avec cette adresse e-mail.');
+                    }
+
+                    /* hydrate the user object */
+                    $user
+                        ->setId((int) $userId)
+                        ->setEmail((string) $userEmail)
+                        ->setPassword((string) $hashedPassword);
+
+                    /* Log the user in using Symfony's authentication system */
+                    try {
+                        $security->login($user);
+                    } catch (\Exception $e) {
+                        throw new \Exception('Erreur lors de l\'authentification après inscription.');
+                    }
+                } catch (\Exception $e) {
+                    // $this->addFlash('error', 'Impossible de vous connecter après l\'inscription: '.$e->getMessage());
+                    $this->addFlash('error',
+                        'Une erreur est survenue lors de la connexion après inscription. Veuillez réessayer.');
+
+                    return $this->redirectToRoute('app_login');
+                }
+
+                return $this->redirectToRoute('app_home');
             }
 
-            return $this->redirectToRoute('app_home');
+            // Add error to plainPassword and confirmPassword fields when passwords typed are differents
+            $form->get('plainPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
+            $form->get('confirmPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
         }
 
         return $this->render('registration/register.html.twig', [
