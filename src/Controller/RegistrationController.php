@@ -35,6 +35,7 @@ class RegistrationController extends AbstractController
             $plainPassword = $form->get('plainPassword')->getData();
             // Hash the plain password
             $hashedPassword = $userPasswordHasher->hashPassword($user, $plainPassword);
+            $userEmail = $form->get('email')->getData();
 
             try {
                 /* Connecting to the database */
@@ -42,7 +43,7 @@ class RegistrationController extends AbstractController
 
                 /* Insert into user table */
                 $sql = $sqlFileLoader->getSqlFromFile('create/userRegistration', [
-                    'email' => $form->get('email')->getData(),
+                    'email' => $userEmail,
                     'pseudo' => $form->get('pseudo')->getData(),
                     'password' => $hashedPassword,
                     'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
@@ -65,17 +66,23 @@ class RegistrationController extends AbstractController
             try {
                 /* Fetch user id from email */
                 $sql = $sqlFileLoader->getSqlFromFile('read/userIdByEmail', [
-                    'email' => $form->get('email')->getData(), ]);
-                $result = $connection->fetchOne($sql); // Execute the SQL script
-                if (!$result) {
+                    'email' => $userEmail, ]);
+                $userId = $connection->fetchOne($sql); // Execute the SQL script
+                if (!$userId) {
                     throw new \Exception('Aucun utilisateur trouvé avec cette adresse e-mail.');
                 }
-                $user->setId((int) $result);
 
-                /* Log the user in using Symfony Security service */
-                $authenticatedUser = $entityManager->find(User::class, $user->getId());
-                if ($authenticatedUser) {
-                    $security->login($authenticatedUser); // Log in the user via Symfony's authentication system
+                /* hydrate the user object */
+                $user
+                    ->setId((int) $userId)
+                    ->setEmail((string) $userEmail)
+                    ->setPassword((string) $hashedPassword);
+
+                /* Log the user in using Symfony's authentication system */
+                try {
+                    $security->login($user);
+                } catch (\Exception $e) {
+                    throw new \Exception('Erreur lors de l\'authentification après inscription.');
                 }
             } catch (\Exception $e) {
                 // $this->addFlash('error', 'Impossible de vous connecter après l\'inscription: '.$e->getMessage());
