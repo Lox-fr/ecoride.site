@@ -51,6 +51,8 @@
         </div>
     </div>
 
-    {{ form_row(carpoolSearchForm.submit) }}
+    {{ form_row(carpoolSearchForm.submit, { 'attr': {
+        'class': 'btn btn-lg btn-primary shadow scaleOnFocusAndHover'
+    }}) }}
 
 {{ form_end(carpoolSearchForm) }}
