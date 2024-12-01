@@ -52,11 +52,7 @@ body {
 
 @import "_navbar.scss";
 
-#pageFooter a,
-#aboutUs a,
-#ourTeam a,
-#registrationForm button,
-#loginForm button {
+.scaleOnFocusAndHover {
     display: inline-block;
     transition: transform $transition-link-transform-time ease-in-out !important;
     &:hover,
