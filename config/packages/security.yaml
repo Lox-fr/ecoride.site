@@ -24,6 +24,10 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+            # configure the maximum login attempts
+            login_throttling:
+                max_attempts: 5
+                interval: '1 minute'
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
