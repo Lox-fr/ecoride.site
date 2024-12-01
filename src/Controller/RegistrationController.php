@@ -105,7 +105,7 @@ class RegistrationController extends AbstractController
             $form->get('confirmPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('registration/index.html.twig', [
             'controller_name' => 'RegistrationController',
             'registrationForm' => $form,
         ]);

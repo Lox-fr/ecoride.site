@@ -8,8 +8,8 @@ $focus-shadow-color: $color-2;
 $framed-bg-color: $color-7;
 $popularRide-hover-color: $color-7;
 
-$footer-link-transform-scale: 1.15;
-$footer-link-transform-time: 0.2s;
+$transition-link-transform-scale: 1.15;
+$transition-link-transform-time: 0.2s;
 
 * {
     font-family: "Helvetica Neue", "Helvetica", Arial, "Liberation Sans",
@@ -54,17 +54,26 @@ body {
 
 #pageFooter a,
 #aboutUs a,
-#ourTeam a {
+#ourTeam a,
+#registrationForm button,
+#loginForm button {
     display: inline-block;
-    transition: transform $footer-link-transform-time ease-in-out !important;
+    transition: transform $transition-link-transform-time ease-in-out !important;
     &:hover,
     &:focus {
-        transform: scale($footer-link-transform-scale) !important;
+        transform: scale($transition-link-transform-scale) !important;
     }
 }
 
 #popularRides {
     li a:hover {
         background-color: $popularRide-hover-color;
+    }
+}
+
+@media (max-width: map-get($grid-breakpoints, "sm")) {
+    .rounded-xs-start {
+        border-top-left-radius: 0.85rem !important;
+        border-bottom-left-radius: 0.85rem !important;
     }
 }

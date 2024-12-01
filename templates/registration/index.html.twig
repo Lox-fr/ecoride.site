@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription Ecoride{% endblock %}
+
+{% block main %}
+
+<section class="container d-flex flex-row justify-content-center align-items-center flex-fill" id="registrationForm">
+	<div method="post" class="rounded-5 framed shadow-lg p-4 my-5" style="width: 80%; min-width: 300px; max-width: 700px;" data-controller="tooltips">
+
+		<h2 class="fs-1 fw-bold mt-3 mb-4">Inscription</h2>
+
+		{{ form_start(registrationForm) }}
+
+		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+            <span class="d-none d-sm-inline-flex d-lg-none input-group-text rounded-start-4 shadow" style="width: 50px;">
+                {{ ux_icon('line-md:email-twotone') }}
+            </span>
+            <span class="d-none d-lg-inline-flex input-group-text rounded-start-4 shadow" style="width: 60px;">
+                {{ ux_icon('line-md:email-twotone') }}
+            </span>
+			<div class="form-floating">
+				{{ form_widget(registrationForm.email, {
+                    'attr': {'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
+				{{ form_label(registrationForm.email) }}
+				{{ form_errors(registrationForm.email) }}
+			</div>
+		</div>
+
+		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+			{% set tooltipMessage = form_help(registrationForm.pseudo) %}
+            <span class="d-none d-sm-inline-flex d-lg-none input-group-text fs-2 rounded-start-4 shadow" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+                {{ ux_icon('line-md:person-add-twotone') }}
+            </span>
+            <span class="d-none d-lg-inline-flex input-group-text fs-2 rounded-start-4 shadow" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+                {{ ux_icon('line-md:person-add-twotone') }}
+            </span>
+            <div class="form-floating">
+				{{ form_widget(registrationForm.pseudo, { 'attr': {
+                    'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow',
+                    'aria-required': 'true',
+                    'aria-describedby': registrationForm.pseudo.vars.id ~ '_help'
+                }}) }}
+				<small id="{{ registrationForm.pseudo.vars.id ~ '_help' }}" class="d-none">
+					{{ form_help(registrationForm.pseudo) }}
+				</small>
+				{{ form_label(registrationForm.pseudo) }}
+				{{ form_errors(registrationForm.pseudo) }}
+			</div>
+		</div>
+
+		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+			{% set tooltipMessage = form_help(registrationForm.plainPassword) %}
+            <span class="d-none d-sm-inline-flex d-lg-none input-group-text fs-2 rounded-start-4 shadow" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+                {{ ux_icon('line-md:question-circle-twotone') }}
+            </span>
+            <span class="d-none d-lg-inline-flex input-group-text fs-2 rounded-start-4 shadow" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+                {{ ux_icon('line-md:question-circle-twotone') }}
+            </span>
+            <div class="form-floating">
+				{{ form_widget(registrationForm.plainPassword, { 'attr': {
+                    'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow',
+                    'placeholder': 'S3cr3t',
+                    'autocomplete': 'new-password',
+                    'aria-required': 'true',
+                    'aria-describedby': registrationForm.plainPassword.vars.id ~ '_help'
+                }}) }}
+				<small id="{{ registrationForm.plainPassword.vars.id ~ '_help' }}" class="d-none">
+					{{ form_help(registrationForm.plainPassword) }}
+				</small>
+				{{ form_label(registrationForm.plainPassword) }}
+				{{ form_errors(registrationForm.plainPassword) }}
+			</div>
+		</div>
+
+		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+			{% set tooltipMessage = form_help(registrationForm.confirmPassword) %}
+            <span class="d-none d-sm-inline-flex d-lg-none input-group-text fs-2 rounded-start-4 shadow" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+                {{ ux_icon('line-md:chevron-down-circle-twotone') }}
+            </span>
+            <span class="d-none d-lg-inline-flex input-group-text fs-2 rounded-start-4 shadow" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+                {{ ux_icon('line-md:chevron-down-circle-twotone') }}
+            </span>
+			<div class="form-floating">
+				{{ form_widget(registrationForm.confirmPassword, { 'attr': {
+                    'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow',
+                    'placeholder': 'S3cr3t',
+                    'autocomplete': 'new-password',
+                    'aria-required': 'true',
+                    'aria-describedby': registrationForm.confirmPassword.vars.id ~ '_help'
+                }}) }}
+				<small id="{{ registrationForm.confirmPassword.vars.id ~ '_help' }}" class="d-none">
+					{{ form_help(registrationForm.confirmPassword) }}
+				</small>
+				{{ form_label(registrationForm.confirmPassword, 'Confirmer
+                        <span class="d-none d-sm-inline-flex">le mot de passe</span>') }}
+				{{ form_errors(registrationForm.confirmPassword) }}
+			</div>
+		</div>
+
+		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+			<div class="input-group-text fs-4 rounded-4 shadow" style="width: 100%;">
+				{{ form_widget(registrationForm.agreeTerms, { 'attr': {
+                    'class': 'ps-4 rounded-5 shadow',
+                    'aria-required': 'true',
+                    'aria-describedby': 'agreeTermsHelp',
+                    'data-bs-toggle': 'tooltip',
+                    'data-bs-title': 'En cochant cette case, vous acceptez nos conditions d\'utilisation.',
+                    'data-bs-placement': 'bottom'
+                } }) }}
+                <label class="d-inline-flex flex-wrap ps-4" style="font-size: 13px;" for="{{ registrationForm.agreeTerms.vars.id }}">
+                    <span class="d-inline-flex flex-wrap d-sm-none">
+                        D'accord avec les&nbsp;
+                        <span class="text-nowrap">
+                            <a href="/terms" class="">
+                                C.G.U.
+                            </a>
+                            &nbsp;?
+                        </span>
+                    </span>
+                    <span class="d-none d-sm-inline-flex flex-wrap">
+                        Je suis d'accord avec les&nbsp;
+                        <a href="/terms" class="text-nowrap">
+                            Conditions Générales d'Utilisation.
+                        </a>
+                    </span>
+                </label>
+                <small id="agreeTermsHelp" class="d-none form-text">
+                    En cochant cette case, vous acceptez nos conditions d'utilisation.
+                </small>
+            </div>
+        </div>
+
+        {# {{ form_errors(registrationForm) }} #}
+
+        {# {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %} #}
+
+        {# {% if registrationForm.vars.errors|length > 0 %}
+            <div role="alert" class="alert alert-danger">
+                <ul>
+                    {% for error in registrationForm.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %} #}
+
+        <button type="submit" class="btn btn-lg btn-primary shadow mt-3 mb-4" aria-label="Valider vos informations d\'inscription" data-bs-toggle="tooltip" data-bs-title="20 crédits offerts en guise de bienvenue !" data-bs-placement="bottom">Valider</button>
+
+        <p class="fst-italic">
+            <small>
+                <a href="" aria-label="Contacter le support">Besoin d'aide ? Contactez-nous !</a>
+            </small>
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}
