@@ -30,7 +30,7 @@
 				<li class="nav-item mx-3">
 					<a class="nav-link {{ controller_name == 'ContactController' ? 'active' }}" href="#" {{ controller_name == 'ContactController' ? 'aria-current="page"' }}>Contact</a>
 				</li>
-				{# visible on smaller screens, replaces user menu #}
+				{# user menu, visible only on smaller screens #}
 				<li role="separator"><hr></li>
 				{% if is_granted('IS_AUTHENTICATED_FULLY') == false %}
 					<li class="nav-item mx-3 d-md-none">
@@ -40,6 +40,9 @@
 						<a class="nav-link {{ controller_name == 'LoginController' ? 'active' }}" href="{{ path('app_login') }}" {{ controller_name == 'LoginController' ? 'aria-current="page"' }} aria-label="Accéder à la page de connexion">Se connecter</a>
 					</li>
 				{% else %}
+					<li class="nav-item mx-3 d-md-none">
+                        <a class="nav-link" href="{{ path('app_user_profile') }}" aria-label="Consulter le compte et les informations utilisateur" role="button">Espace personnel</a>
+                    </li>
 					<li class="nav-item mx-3 d-md-none">
                         <a class="nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
                     </li>
@@ -64,6 +67,10 @@
 						<a class="dropdown-item nav-link {{ controller_name == 'LoginController' ? 'active' }} py-1" href="{{ path('app_login') }}" {{ controller_name == 'LoginController' ? 'aria-current="page"' }} aria-label="Accéder à la page de connexion">Se connecter</a>
 					</li>
 				{% else %}
+					<li>
+                        <a class="dropdown-item nav-link {{ controller_name == 'UserProfileController' ? 'active' }}" href="{{ path('app_user_profile') }}" {{ controller_name == 'UserProfileController' ? 'aria-current="page"' }} aria-label="Consulter le compte et les informations utilisateur"  role="button">Espace personnel</a>
+                    </li>
+					<hr>
 					<li>
                         <a class="dropdown-item nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
                     </li>

@@ -27,6 +27,10 @@ class RegistrationController extends AbstractController
         Security $security,
         SqlBasePathLoader $sqlFileLoader,
     ): Response|RedirectResponse {
+        // If the user is already logged in, redirect them to the homepage
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_user_profile');
+        }
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);

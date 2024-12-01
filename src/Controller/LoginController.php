@@ -17,7 +17,7 @@ class LoginController extends AbstractController
     {
         // If the user is already logged in, redirect them to the homepage
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_user_profile');
         }
 
         // get the login error if there is one
