@@ -42,6 +42,7 @@
         "symfony/process": "6.4.*",
         "symfony/property-access": "6.4.*",
         "symfony/property-info": "6.4.*",
+        "symfony/rate-limiter": "6.4.*",
         "symfony/runtime": "6.4.*",
         "symfony/security-bundle": "6.4.*",
         "symfony/serializer": "6.4.*",
@@ -56,6 +57,7 @@
         "symfony/web-link": "6.4.*",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/yaml": "6.4.*",
+        "symfonycasts/reset-password-bundle": "^1.23",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
     },
@@ -131,6 +133,7 @@
             "php bin/console app:database:execute create/table/role",
             "php bin/console app:database:execute create/table/user",
             "php bin/console app:database:execute create/table/userRole",
+            "php bin/console app:database:execute create/table/resetPasswordRequest",
             "php bin/console app:database:execute create/constraints/car",
             "php bin/console app:database:execute create/constraints/preference",
             "php bin/console app:database:execute create/constraints/userRole"

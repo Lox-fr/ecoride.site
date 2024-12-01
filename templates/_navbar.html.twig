@@ -32,12 +32,18 @@
 				</li>
 				{# visible on smaller screens, replaces user menu #}
 				<li role="separator"><hr></li>
-				<li class="nav-item mx-3 d-md-none">
-					<a class="nav-link {{ controller_name == 'RegistrationController' ? 'active' }}" href="#" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
-				</li>
-				<li class="nav-item mx-3 d-md-none">
-					<a class="nav-link {{ controller_name == 'LoginController' ? 'active' }}" href="#" {{ controller_name == 'LoginController' ? 'aria-current="page"' }}>Se connecter</a>
-				</li>
+				{% if is_granted('IS_AUTHENTICATED_FULLY') == false %}
+					<li class="nav-item mx-3 d-md-none">
+						<a class="nav-link {{ controller_name == 'RegistrationController' ? 'active' }}" href="{{ path('app_register') }}" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }} aria-label="Accéder à la page d'inscription">S'inscrire</a>
+					</li>
+					<li class="nav-item mx-3 d-md-none">
+						<a class="nav-link {{ controller_name == 'LoginController' ? 'active' }}" href="{{ path('app_login') }}" {{ controller_name == 'LoginController' ? 'aria-current="page"' }} aria-label="Accéder à la page de connexion">Se connecter</a>
+					</li>
+				{% else %}
+					<li class="nav-item mx-3 d-md-none">
+                        <a class="nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
+                    </li>
+				{% endif %}
 			</ul>
 		</div>
 
@@ -50,12 +56,18 @@
 				<img src="{{ asset('images/users/default.svg') }}" alt="Icône de l'utilisateur" width="32" height="32">
 			</a>
 			<ul class="dropdown-menu dropdown-menu-end shadow mt-3">
-				<li>
-					<a class="dropdown-item nav-link {{ controller_name == 'RegistrationController' ? 'active' }} py-1" href="#" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }}>S'inscrire</a>
-				</li>
-				<li>
-					<a class="dropdown-item nav-link {{ controller_name == 'LoginController' ? 'active' }} py-1" href="#" {{ controller_name == 'LoginController' ? 'aria-current="page"' }}>Se connecter</a>
-				</li>
+				{% if is_granted('IS_AUTHENTICATED_FULLY') == false %}
+					<li>
+						<a class="dropdown-item nav-link {{ controller_name == 'RegistrationController' ? 'active' }} py-1" href="{{ path('app_register') }}" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }} aria-label="Accéder à la page d'inscription">S'inscrire</a>
+					</li>
+					<li>
+						<a class="dropdown-item nav-link {{ controller_name == 'LoginController' ? 'active' }} py-1" href="{{ path('app_login') }}" {{ controller_name == 'LoginController' ? 'aria-current="page"' }} aria-label="Accéder à la page de connexion">Se connecter</a>
+					</li>
+				{% else %}
+					<li>
+                        <a class="dropdown-item nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
+                    </li>
+				{% endif %}
 			</ul>
 		</div>
 
