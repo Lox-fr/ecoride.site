@@ -22,8 +22,8 @@
 				{{ form_widget(registrationForm.email, {
                     'attr': {'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
 				{{ form_label(registrationForm.email) }}
-				{{ form_errors(registrationForm.email) }}
 			</div>
+            {{ form_errors(registrationForm.email) }}
 		</div>
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
@@ -44,8 +44,8 @@
 					{{ form_help(registrationForm.pseudo) }}
 				</small>
 				{{ form_label(registrationForm.pseudo) }}
-				{{ form_errors(registrationForm.pseudo) }}
 			</div>
+            {{ form_errors(registrationForm.pseudo) }}
 		</div>
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
@@ -68,8 +68,8 @@
 					{{ form_help(registrationForm.plainPassword) }}
 				</small>
 				{{ form_label(registrationForm.plainPassword) }}
-				{{ form_errors(registrationForm.plainPassword) }}
 			</div>
+            {{ form_errors(registrationForm.plainPassword) }}
 		</div>
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
@@ -93,8 +93,8 @@
 				</small>
 				{{ form_label(registrationForm.confirmPassword, 'Confirmer
                         <span class="d-none d-sm-inline-flex">le mot de passe</span>') }}
-				{{ form_errors(registrationForm.confirmPassword) }}
 			</div>
+            {{ form_errors(registrationForm.confirmPassword) }}
 		</div>
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
@@ -130,24 +130,6 @@
             </div>
         </div>
 
-        {# {{ form_errors(registrationForm) }} #}
-
-        {# {% if error %}
-            <div class="alert alert-danger" role="alert">
-                {{ error.messageKey|trans(error.messageData, 'security') }}
-            </div>
-        {% endif %} #}
-
-        {# {% if registrationForm.vars.errors|length > 0 %}
-            <div role="alert" class="alert alert-danger">
-                <ul>
-                    {% for error in registrationForm.vars.errors %}
-                        <li>{{ error.message }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %} #}
-
         <button type="submit" class="btn btn-lg btn-primary shadow mt-3 mb-4" aria-label="Valider vos informations d\'inscription" data-bs-toggle="tooltip" data-bs-title="20 crédits offerts en guise de bienvenue !" data-bs-placement="bottom">Valider</button>
 
         <p class="fst-italic">
@@ -155,6 +137,8 @@
                 <a href="" aria-label="Contacter le support">Besoin d'aide ? Contactez-nous !</a>
             </small>
         </p>
+
+        {{ form_end(registrationForm) }}
 
     </div>
 </section>

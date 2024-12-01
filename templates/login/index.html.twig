@@ -39,7 +39,7 @@
 			</div>
 
 			{% if error %}
-				<div class="alert alert-danger" role="alert">
+				<div class="alert alert-danger mx-auto" role="alert" style="max-width: 200px;">
 					{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 			{% endif %}
 
