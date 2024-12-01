@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block main %}
+
+	<section class="container d-flex flex-row justify-content-center align-items-center flex-fill" id="resetPasswordRequestForm">
+		<div method="post" class="rounded-5 framed shadow-lg p-4 my-5" style="width: 80%; min-width: 300px; max-width: 700px;">
+
+			<h2 class="fs-1 fw-bold mt-3 mb-4">
+				Réinitialisez
+				<span class="text-nowrap">votre mot de passe</span>
+			</h2>
+
+			{{ form_start(resetForm) }}
+			{{ form_row(resetForm.plainPassword) }}
+			<button class="btn btn-primary shadow mt-3 mb-4" aria-label="Accéder au formulaire de mise à jour de votre mot de passe.">Suivez ce lien</button>
+			{{ form_end(resetForm) }}
+
+		</div>
+	</section>
+
+{% endblock %}
