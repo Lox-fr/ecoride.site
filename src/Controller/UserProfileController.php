@@ -14,8 +14,9 @@ class UserProfileController extends AbstractController
     #[Route('/profil', name: 'app_user_profile')]
     public function index(RoleManager $roleManager): Response
     {
-        return $this->render('user_profile/index.html.twig', [
+        return $this->render('userProfile/index.html.twig', [
             'controller_name' => 'UserProfileController',
+            'activeTab' => $activeTab ?? 'personalInformations',
             'roleDescription' => $roleManager->getRoleDescription()
         ]);
     }

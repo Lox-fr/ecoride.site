@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace utilisateur EcoRide{% endblock %}
+
+{% block main %}
+
+	<div class="container d-flex flex-wrap justify-content-center justify-content-lg-start px-0">
+
+		<header class="p-3" style="max-width: 350px;">
+			{% include "userProfile/_hero.html.twig" %}
+			{% include "userProfile/_menu.html.twig" %}
+		</header>
+
+
+		<div class="framed flex-fill rounded-5 ms-3 mt-5">
+
+			<section class="collapse {{ activeTab is same as 'personalInformations' ? 'show' }}" id="informationsPersonnelles">
+				{% include "userProfile/_personalInformation.html.twig" %}
+			</section>
+
+			<section class="collapse {{ activeTab is same as 'becomeDriver' ? 'show' }}" id="devenirChauffeur">
+				{% include "userProfile/_becomeDriver.html.twig" %}
+			</section>
+
+			<section class="collapse {{ activeTab is same as 'addRide' ? 'show' }}" id="proposerTrajet">
+				{% include "userProfile/driver/_addRideForm.html.twig" %}
+			</section>
+
+			<section class="collapse {{ activeTab is same as 'rideHistory' ? 'show' }}" id="historiqueTrajets">
+				{% include "userProfile/_rideHistory.html.twig" %}
+			</section>
+
+		</div>
+
+	</div>
+
+{% endblock %}
