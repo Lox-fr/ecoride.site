@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md bg-body-tertiary p-2 shadow-lg d-flex flex-column" id="mainNavbar">
+<nav class="navbar navbar-expand-md bg-body-tertiary p-2 shadow-lg d-flex flex-column fixed-top" id="mainNavbar">
 
 	{# hidden link for screen readers #}
 	<a href="#mainContent" class="nav-link visually-hidden-focusable text-center mb-2 px-5">
@@ -54,9 +54,14 @@
 		<div class="d-none d-md-flex nav-item dropdown align-items-center" data-bs-toggle="tooltip" data-bs-title="Menu utilisateur" data-bs-placement="left">
 			<div id="userMenuDescription" class="visually-hidden">
 				Menu utilisateur, contient les options d'inscription et de connexion.
+				Contient également des liens vers les pages personnelles pour les utilisateurs connectés.
 			</div>
 			<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-describedby="userMenuDescription" aria-haspopup="true">
-				<img src="{{ asset('images/users/default.svg') }}" alt="Icône de l'utilisateur" width="32" height="32">
+				{% if app.user %}
+					<img src="{{ asset('images/users/' ~ app.user.photoName|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ app.user.pseudo|default('l\'utilisateur') }}" width="42" height="42" class="object-fit-cover rounded-5 border border-black">
+				{% else %}
+					<img src="{{ asset('images/users/default.svg') }}" alt="Icône de l'utilisateur" width="32" height="32">
+				{% endif %}
 			</a>
 			<ul class="dropdown-menu dropdown-menu-end shadow mt-3">
 				{% if is_granted('IS_AUTHENTICATED_FULLY') == false %}
