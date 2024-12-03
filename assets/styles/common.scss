@@ -7,6 +7,8 @@ $border-color: $color-3;
 $focus-shadow-color: $color-2;
 $framed-bg-color: $color-7;
 $popularRide-hover-color: $color-7;
+$userBtn-color: white;
+$userBtn-bg-color: $color-5;
 
 $transition-link-transform-scale: 1.15;
 $transition-link-transform-time: 0.2s;
@@ -24,12 +26,8 @@ $transition-link-transform-time: 0.2s;
     }
 }
 
-ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
 body {
+    padding-top: 56px;
     min-width: 320px;
     min-height: 100vh;
     background: $body-bg-first-color;
@@ -38,11 +36,15 @@ body {
         $body-bg-first-color 33%,
         $body-bg-second-color 66%
     );
+
+    @media (min-width: map-get($grid-breakpoints, "md")) {
+        padding-top: 62px;
+    }
 }
 
-.handwriting {
-    font-family: "Segoe Script", "Bradley Hand", "Lucida Handwriting",
-        "Snell Roundhand", cursive;
+ul {
+    list-style-type: none;
+    padding-left: 0;
 }
 
 .framed {
@@ -50,7 +52,10 @@ body {
     background-color: $framed-bg-color;
 }
 
-@import "_navbar.scss";
+.handwriting {
+    font-family: "Segoe Script", "Bradley Hand", "Lucida Handwriting",
+        "Snell Roundhand", cursive;
+}
 
 .scaleOnFocusAndHover {
     display: inline-block;
@@ -59,6 +64,11 @@ body {
     &:focus {
         transform: scale($transition-link-transform-scale) !important;
     }
+}
+
+.userBtn[aria-expanded="true"] {
+    background-color: $userBtn-bg-color;
+    color: $userBtn-color;
 }
 
 #popularRides {
@@ -73,3 +83,5 @@ body {
         border-bottom-left-radius: 0.85rem !important;
     }
 }
+
+@import "_navbar.scss";

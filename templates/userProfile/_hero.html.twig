@@ -1,0 +1,20 @@
+<img src="{{ asset('images/users/' ~ app.user.photoName|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ app.user.pseudo }}" class="d-none d-md-inline-flex object-fit-cover rounded-pill border border-secondary border-2 shadow-lg mt-5" style="width: 192px; height: 192px;"/> 
+
+<img src="{{ asset('images/users/' ~ app.user.photoName|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ app.user.pseudo }}" class="d-md-none object-fit-cover rounded-pill border border-secondary border-2 shadow-lg mt-5" style="width: 250px; height: 250px;"/>
+
+<h2 class="mt-4 border-bottom border-secondary pb-1 mb-1">
+	Bonjour
+	{{ app.user.pseudo }}
+</h2>
+
+<small class="mt-0">
+	Vous êtes actuellement enregistré comme
+	<span class="fw-bold">{{ roleDescription }}</span>
+	<span class="text-nowrap">
+		et possédez
+		<span class="fw-bold">
+			{{ app.user.credits }}
+			crédits.
+		</span>
+	</span>
+</small>
