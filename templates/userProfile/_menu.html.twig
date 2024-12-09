@@ -4,7 +4,7 @@
 	<ul class="d-flex flex-column align-items-center mx-2 pt-3">
 
 		<li>
-			<a class="{{ navLinkClass }}" href="#informationsPersonnelles" role="button" aria-controls="informationsPersonnelles" data-bs-toggle="collapse" {{ activeTab is same as 'personalInformations' ? 'aria-expanded="true"' }}>
+			<a class="{{ navLinkClass }}" href="#infosPassager" role="button" aria-controls="passager" data-bs-toggle="collapse" {{ activeTab is same as 'passager' ? 'aria-expanded="true"' }}>
 				Vos informations</a>
 		</li>
 
@@ -15,7 +15,7 @@
 
 		{% if not is_granted('ROLE_DRIVER') %}
 			<li>
-				<a class="{{ navLinkClass }}" href="#devenirChauffeur" role="button" aria-controls="devenirChauffeur" data-bs-toggle="collapse" {{ activeTab is same as 'becomeDriver' ? 'aria-expanded="true"' }}>
+				<a class="{{ navLinkClass }}" href="#devenirChauffeur" role="button" aria-controls="chauffeur" data-bs-toggle="collapse" {{ activeTab is same as 'chauffeur' ? 'aria-expanded="true"' }}>
 					Devenir chauffeur</a>
 			</li>
 

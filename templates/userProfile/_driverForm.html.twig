@@ -1,0 +1,22 @@
+<div
+	class="mx-auto">
+
+	{# Smokers allowed switch #}
+	<div class="d-inline-flex form-check form-switch ps-0 ps-sm-3 ps-xl-0 mb-4 mx-5">
+		{{ form_widget(driverProfileForm.smokersAllowed, { 'attr' : {
+			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2', }}) }}
+		{{ form_label(driverProfileForm.smokersAllowed) }}
+		{{ form_errors(driverProfileForm.smokersAllowed) }}
+		{{ form_help(driverProfileForm.smokersAllowed) }}
+	</div>
+
+	{# Pets allowed switch #}
+	<div class="d-inline-flex form-check form-switch ps-0 ps-sm-3 ps-xl-0 mb-3 mx-5">
+		{{ form_widget(driverProfileForm.petsAllowed, { 'attr' : {
+			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2', }}) }}
+		{{ form_label(driverProfileForm.petsAllowed) }}
+		{{ form_errors(driverProfileForm.petsAllowed) }}
+		{{ form_help(driverProfileForm.petsAllowed) }}
+	</div>
+
+</div>

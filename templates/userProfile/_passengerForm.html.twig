@@ -1,0 +1,166 @@
+{{ form_start(passengerProfileForm) }}
+
+<h2 class="fs-3 fw-bold mt-4 mb-3 px-3 pb-2 border-bottom border-primary">
+	<span class="text-nowrap">Vous pouvez</span>
+	<span class="text-nowrap">compléter</span>
+	<span class="text-nowrap">votre profil</span>
+</h2>
+
+<div
+	class="d-flex flex-column flex-lg-row align-items-center mx-sm-3 mt-sm-5">
+
+	{# Email disabed input #}
+	<div class="row text-start pe-lg-5">
+		<h3 class="col-sm-4 col-form-label my-auto">
+			{{ form_label(passengerProfileForm.email, 'Adresse Email', {
+				'label_attr': { 'class': 'fs-6 fw-bold mb-0'}}) }}
+		</h3>
+		<div class="col-sm-8 my-auto">
+			{{ form_widget(passengerProfileForm.email, { 'attr': {
+				'class': 'text-start ps-3 ps-md-4 rounded-3 shadow mx-auto disabled',
+				'readonly': 'true',
+				'style': 'max-width: 320px;' } }) }}
+		</div>
+		{{ form_errors(passengerProfileForm.email) }}
+		<small>
+			<div class="form-text mb-0 help-text text-sm-start p-1 p-sm-2">
+				{{ field_help(passengerProfileForm.email) | raw }}</div>
+		</small>
+	</div>
+
+	{# Button link to reset password request page #}
+	<div class="px-3 py-4">
+		<h3 class="fs-6 fw-bold">Mot de passe</h3>
+		<p class="mx-auto my-0">
+			<a class="btn btn-sm btn-primary" href="{{ path('app_forgot_password_request') }}" style="max-width: 125px;">réinitialiser</a>
+		</p>
+		<small>
+			<div class="form-text mb-0 help-text">Une action de votre part par email sera nécessaire.</div>
+		</small>
+	</div>
+
+</div>
+
+<hr>
+
+<div
+	class="d-flex flex-column flex-lg-row align-items-center mx-sm-3 mt-sm-5">
+
+	{# Pseudo input #}
+	<div class="row text-start pe-lg-5">
+		<h3 class="col-sm-4 col-form-label my-auto">
+			{{ form_label(passengerProfileForm.pseudo, 'Pseudo', {
+				'label_attr': { 'class': 'fs-6 fw-bold mb-0'}}) }}
+		</h3>
+		<div class="col-sm-8 my-auto">
+			{{ form_widget(passengerProfileForm.pseudo, { 'attr': {
+				'class': 'text-start ps-3 ps-md-4 rounded-3 shadow mx-auto',
+				'required': 'true',
+				'style': 'max-width: 320px;' } }) }}
+		</div>
+		{{ form_errors(passengerProfileForm.pseudo) }}
+		<small>
+			<div class="form-text mb-0 help-text text-sm-start p-1 p-sm-2">
+				{{ field_help(passengerProfileForm.pseudo) | raw }}</div>
+		</small>
+	</div>
+
+	{# "Select File" button for the image field: opens the local file explorer to choose a profile picture #}
+	<div class="px-3 py-4" data-controller="fileInput">
+		<h3 class="fs-6 fw-bold">
+			Photo
+		</h3>
+		<p class="mx-auto my-0">
+			<a href="#" class="file-input-trigger btn btn-sm btn-primary" style="max-width: 125px;">
+				Sélectionner un fichier
+			</a>
+		</p>
+		<small>
+			<div class="form-text mb-0 help-text">
+				Attention : après sauvegarde, cette action est irréversible,
+								les photos écrasées ne seront pas retouvées !
+			</div>
+		</small>
+		{{ form_widget(passengerProfileForm.photo, { 'attr': { 'class': 'file-input d-none' } }) }}
+		{{ form_errors(passengerProfileForm.photo) }}
+	</div>
+
+</div>
+
+<hr>
+
+<div
+	class="d-flex flex-wrap justify-content-evenly mt-4 pt-3">
+
+	{# First name input #}
+	<div class="form-floating mx-2 mb-3" style="">
+		{{ form_widget(passengerProfileForm.firstName, { 'attr' : {
+			'class' : 'text-start rounded-3 shadow ps-4',
+			'style' : 'min-width: 260px;' }}) }}
+		{{ form_label(passengerProfileForm.firstName) }}
+		{{ form_errors(passengerProfileForm.firstName) }}
+		{{ form_help(passengerProfileForm.firstName) }}
+	</div>
+
+	{# Last name input #}
+	<div class="form-floating mx-2 mb-3" style="">
+		{{ form_widget(passengerProfileForm.lastName, { 'attr' : {
+			'class' : 'text-start rounded-3 shadow ps-4',
+			'style' : 'min-width: 260px;' }}) }}
+		{{ form_label(passengerProfileForm.lastName) }}
+		{{ form_errors(passengerProfileForm.lastName) }}
+		{{ form_help(passengerProfileForm.lastName) }}
+	</div>
+
+</div>
+
+<div class="d-flex flex-wrap justify-content-evenly">
+
+	<div>
+
+		{# Phone number input #}
+		<div class="form-floating mx-2 mb-3">
+			{{ form_widget(passengerProfileForm.phoneNumber, { 'attr' : {
+				'class' : 'text-start rounded-3 shadow ps-4',
+				'style' : 'min-width: 260px;' }}) }}
+			{{ form_label(passengerProfileForm.phoneNumber) }}
+			{{ form_errors(passengerProfileForm.phoneNumber) }}
+			{{ form_help(passengerProfileForm.phoneNumber) }}
+		</div>
+
+		{# Date of birth input #}
+		<div class="form-floating mx-2 mb-3" data-controller="flatpickr" data-flatpickr-mode="dateOfBirth">
+			{{ form_widget(passengerProfileForm.dateOfBirth, { 'attr' : {
+				'class' : 'text-start rounded-3 shadow ps-4 flatpickr',
+				'placeholder': "now"|date("Y-m-d"),
+				'style' : 'min-width: 260px;' }}) }}
+			{{ form_label(passengerProfileForm.dateOfBirth) }}
+			{{ form_errors(passengerProfileForm.dateOfBirth) }}
+			{{ form_help(passengerProfileForm.dateOfBirth) }}
+		</div>
+
+	</div>
+
+	{# Address input #}
+	<div class="form-floating mx-2 mb-4" style="max-width: 600px;">
+		{{ form_widget(passengerProfileForm.address, { 'attr' : {
+			'class' : 'text-start rounded-3 shadow ps-4',
+			'style' : 'min-height: 132px; min-width: 260px;' }}) }}
+		{{ form_label(passengerProfileForm.address) }}
+		{{ form_errors(passengerProfileForm.address) }}
+		{{ form_help(passengerProfileForm.address) }}
+	</div>
+
+</div>
+
+<hr>
+
+{# submit button #}
+{{ form_row(passengerProfileForm.submit, { 'attr': {
+	'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3' }}) }}
+
+<div class="d-none">
+	{{ form_rest(passengerProfileForm) }}
+</div>
+
+{{ form_end(passengerProfileForm) }}
