@@ -13,79 +13,179 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_USER_PHONENUMBER', fields: ['phoneNumber'])]
-#[ORM\UniqueConstraint(name: 'UNIQ_USER_PHOTONAME', fields: ['photoName'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_USER_PHOTOFILENAME', fields: ['photoFilename'])]
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette adresse email.')]
+#[UniqueEntity(fields: ['phoneNumber'], message: 'Il existe déjà un compte lié à ce numéro de téléphone.')]
+// #[UniqueEntity(fields: ['photoFilename'], message: 'Il existe déjà un compte avec ce nom de photo ...')]
 #[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use IdTrait;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: 'Votre pseudo est requis.')]
+    #[Assert\Length(
+        min: 3, minMessage: 'Votre pseudo doit comporter au minimum {{ limit }} caractères.',
+        max: 30, maxMessage: 'Votre pseudo ne doit pas comporter plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9_]+$/',
+        message: 'Votre pseudo ne peut contenir que des lettres, des chiffres et des underscores.')]
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'Votre adresse email est requise.')]
+    #[Assert\Length(
+        min: 9, minMessage: 'Votre adresse email doit comporter au minimum {{ limit }} caractères.',
+        max: 180, maxMessage: 'Votre adresse email ne doit pas comporter plus de {{ limit }} caractères.')]
+    #[Assert\Email(message: '{{ value }} n\'est pas une adresse e-mail valide.')]
+    #[Assert\NoSuspiciousCharacters]
     private ?string $email = null;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    // #[Assert\NotBlank(message: 'Votre mot de passe est requis.')]
+    #[Assert\Length(max: 255, maxMessage: 'Votre mot de passe ne doit pas comporter plus de {{ limit }} caractères.')]
     private ?string $password = null;
 
     #[ORM\Column]
+    // #[Assert\NotNull(message: 'La date de création est obligatoire.')]
+    // #[Assert\DateTime(message: 'La date de création doit être de type DateTime.')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\DateTime(message: 'La date de mise à jour doit être de type DateTime.')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'Le statut d\'activité doit être défini.')]
+    #[Assert\Type('bool', message: 'Le statut d\'activité doit être un booléen.')]
     private ?bool $active = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(
+        min: 3, minMessage: 'Votre prénom doit comporter au minimum {{ limit }} caractères.',
+        max: 50, maxMessage: 'Votre prénom ne doit pas comporter plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ\s'-]+$/u",
+        message: 'Votre prénom ne peut contenir que des lettres, des espaces, des tirets ou des apostrophes.')]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(
+        min: 3, minMessage: 'Votre nom de famille doit comporter au minimum {{ limit }} caractères.',
+        max: 50, maxMessage: 'Votre nom de famille ne doit pas comporter plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ\s'-]+$/u",
+        message: 'Votre nom de famille ne peut contenir que des lettres, des espaces, des tirets ou des apostrophes.')]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        min: 10, minMessage: 'Votre adresse doit comporter au minimum {{ limit }} caractères.',
+        max: 255, maxMessage: 'Votre adresse ne doit pas comporter plus de {{ limit }} caractères.')]
     private ?string $address = null;
 
     #[ORM\Column(length: 17, nullable: true)]
+    #[Assert\Length(
+        min: 10, minMessage: 'Votre numéro de téléphone doit comporter au minimum {{ limit }} caractères.',
+        max: 17, maxMessage: 'Votre numéro de téléphone ne doit pas comporter plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^(\+33|0)[1-9](\d{2}){4}$/",
+        message: "Le numéro de téléphone n'est pas valide.")]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photoName = null;
+    #[Assert\Length(
+        min: 5, minMessage: 'Le nom du fichier photo doit comporter au minimum {{ limit }} caractères.',
+        max: 255, maxMessage: 'Le nom du fichier photo ne doit pas comporter plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Z0-9-_]+\.(jpg|jpeg|png|webp)$/i",
+        message: 'Le nom du fichier photo doit être valide et avec une extension image correcte (jpg, jpeg, png, webp).')]
+    private ?string $photoFilename = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[Assert\DateTime(message: 'La date de naissance doit être de type DateTime.')]
+    #[Assert\LessThanOrEqual(
+        '-18 years',
+        message: 'En validant les CGU, vous aviez déclaré avoir plus de 18 ans ...')]
+    #[Assert\GreaterThanOrEqual(
+        '-130 years',
+        message: 'La date de naissance indiquée est incohérente. Vous ne pouvez pas avoir plus de 130 ans.')]
     private ?\DateTimeImmutable $dateOfBirth = null;
 
+    #[Assert\Type(
+        type: 'integer',
+        message: 'L\'âge doit être un nombre entier valide.')]
+    #[Assert\GreaterThanOrEqual(
+        value: 18,
+        message: 'Vous devez être majeur.')]
+    #[Assert\LessThanOrEqual(
+        value: 130,
+        message: 'L\'âge ne peut pas dépasser 130 ans.')]
     private ?int $age = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type('bool', message: 'Le choix de préférence (animaux) doit être un booléen.')]
     private ?bool $petsAllowed = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type('bool', message: 'Le choix de préférence (fumeurs) doit être un booléen.')]
     private ?bool $smokersAllowed = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La somme des évaluations doit être un entier valide.')]
+    #[Assert\PositiveOrZero(
+        message: 'La somme des évaluations ne peut pas être négative.')]
+    #[Assert\LessThanOrEqual(
+        value: 2000000,
+        message: 'La somme des évaluations ne peut pas dépasser 2 000 000.')]
     private ?int $sumOfRatings = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'Le nombre d\'évaluations doit être un entier valide.')]
+    #[Assert\PositiveOrZero(
+        message: 'Le nombre d\'évaluations ne peut pas être négative.')]
+    #[Assert\LessThanOrEqual(
+        value: 2000000,
+        message: 'Le nombre d\'évaluations ne peut pas dépasser 2 000 000.')]
     private ?int $numberOfRatings = null;
 
+    #[Assert\Type(
+        type: 'float',
+        message: 'La note moyenne doit être un nombre décimal valide.')]
+    #[Assert\GreaterThanOrEqual(
+        value: 0,
+        message: 'La note moyenne ne peut pas être inférieure à 0.')]
+    #[Assert\LessThanOrEqual(
+        value: 5,
+        message: 'La note moyenne ne peut pas être supérieure à 5.')]
     private ?float $averageRating = null;
 
     #[ORM\Column]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'Les crédits doivent être un entier valide.')]
+    #[Assert\PositiveOrZero(message: 'Les crédits ne peuvent pas être négatifs.')]
+    #[Assert\LessThanOrEqual(
+        value: 2000000,
+        message: 'Les crédits ne peuvent pas dépasser 2 000 000.')]
     private ?int $credits = null;
 
     /**
      * @var Collection<int, Role>
      */
-    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users', fetch: 'EAGER')]
     private Collection $roles;
 
     /**
@@ -264,14 +364,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhotoName(): ?string
+    public function getPhotoFilename(): ?string
     {
-        return $this->photoName;
+        return $this->photoFilename;
     }
 
-    public function setPhotoName(?string $photoName): static
+    public function setPhotoFilename(?string $photoFilename): static
     {
-        $this->photoName = $photoName;
+        $this->photoFilename = $photoFilename;
 
         return $this;
     }
