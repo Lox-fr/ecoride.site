@@ -1,13 +1,13 @@
 -- Admin - id 1
 INSERT INTO user (pseudo, email, password, created_at, active, first_name, last_name, address, phone_number,
-        photo_name, date_of_birth, pets_allowed, smokers_allowed, sum_of_ratings, number_of_ratings, credits)
+        photo_filename, date_of_birth, pets_allowed, smokers_allowed, sum_of_ratings, number_of_ratings, credits)
 VALUES ('José', 'admin@ecoride.site', 'Secret@Pass!123', '2024-07-01', 1, 'José', 'Studi',
         '1 rue des Champs Champs-Élysées, 75008 Paris', '0123456789', 'jose_studi.jpg', '1984-09-12',
         1, 0, 450, 90, 500000);
 
 -- Employees - id 2 and 3
 INSERT INTO user (pseudo, email, password, created_at, active, first_name, last_name, address, phone_number,
-        photo_name, date_of_birth, pets_allowed, smokers_allowed, credits)
+        photo_filename, date_of_birth, pets_allowed, smokers_allowed, credits)
 VALUES
     ('Emma', 'emma@ecoride.site', 'Secret@Pass!456', '2024-07-01', 1, 'Emma', 'Faure',
         '1 rue des Champs Champs-Élysées, 75008 Paris', '0101010101', 'emma_faure.jpg', '1994-03-15', 1, 1, 10000),
@@ -16,7 +16,7 @@ VALUES
 
 -- drivers - id 4 to 15
 INSERT INTO user (pseudo, email, password, created_at, active, first_name, last_name, address, phone_number,
-        photo_name, date_of_birth, pets_allowed, smokers_allowed, sum_of_ratings, number_of_ratings, credits)
+        photo_filename, date_of_birth, pets_allowed, smokers_allowed, sum_of_ratings, number_of_ratings, credits)
 VALUES
     ('Sophie', 'driver@ecoride.site', 'Pass!word@11', '2023-07-05', 1, 'Sophie', 'Moreau',
         '38 Avenue Victor Hugo, 6000 Nice', '06 12 34 56 78', 'sophie_moreau.jpg', '1974-01-12', 0, 1, 45, 10, 300),
@@ -44,7 +44,7 @@ VALUES
         '19 Rue du Château, 80000 Amiens', '06 67 89 01 23', 'victor_da_silva.jpg', '1985-06-27', 0, 1, 10, 10, 2500);
 
 -- passengers - id 16 to 55
-INSERT INTO user (pseudo, email, password, created_at, active, photo_name, date_of_birth, credits)
+INSERT INTO user (pseudo, email, password, created_at, active, photo_filename, date_of_birth, credits)
 VALUES
     ('Fabien', 'passager@ecoride.site', 'p@ssW0rd11', '2023-08-12', 1, 'fabien.jpg', '2003-04-11', 3500),
     ('Clara', 'clara@ecoride.site', 'p@ssW0rd12', '2023-10-06', 1, 'clara.jpg', '1991-01-05', 3500),
