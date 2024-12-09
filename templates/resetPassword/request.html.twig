@@ -14,33 +14,33 @@
 
 			<p class="px-3">
 				Pour mettre à jour votre mot de passe,
-                vous devez valider la demande via votre adresse email
+				vous devez valider la demande via votre adresse email.
 			</p>
 
 			{{ form_start(requestForm) }}
 
-			<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
-				<span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 50px;">
-					{{ ux_icon('line-md:email-twotone') }}
-				</span>
-				<span class="d-none d-lg-inline-flex justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 60px;">
-					{{ ux_icon('line-md:email-twotone') }}
-				</span>
-				<div class="form-floating">
-					{{ form_widget(requestForm.email, {
-                    'attr': {'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true', 'placeholder': 'exemple@mail.com'}}) }}
-					{{ form_label(requestForm.email) }}
+				<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+					<span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 50px;">
+						{{ ux_icon('line-md:email-twotone') }}
+					</span>
+					<span class="d-none d-lg-inline-flex justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 60px;">
+						{{ ux_icon('line-md:email-twotone') }}
+					</span>
+					<div class="form-floating">
+						{{ form_widget(requestForm.email, {
+							'attr': {'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true', 'placeholder': 'exemple@mail.com'}}) }}
+						{{ form_label(requestForm.email) }}
+					</div>
+					{{ form_errors(requestForm.email) }}
 				</div>
-				{{ form_errors(requestForm.email) }}
-			</div>
 
-			<p>
-				Un lien valable 1 heure vous sera envoyé.
-			</p>
+				<p>
+					Un lien valable 1 heure vous sera envoyé.
+				</p>
 
-			<button type="submit" class="btn btn-primary shadow mt-3 mb-4 scaleOnFocusAndHover" aria-label="Demander l'envoi d\'un lien de réinitialisation de mot de passe.">
-				Envoyer un email de Réinitialisation
-			</button>
+				<button type="submit" class="btn btn-primary shadow mt-3 mb-4 scaleOnFocusAndHover" aria-label="Demander l'envoi d\'un lien de réinitialisation de mot de passe.">
+					Envoyer un email de Réinitialisation
+				</button>
 
 			{{ form_end(requestForm) }}
 
