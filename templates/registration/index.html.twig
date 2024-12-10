@@ -12,10 +12,10 @@
 		{{ form_start(registrationForm) }}
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
-            <span class="d-none d-sm-inline-flex d-lg-none input-group-text rounded-start-4 shadow" style="width: 50px;">
+            <span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 50px;">
                 {{ ux_icon('line-md:email-twotone') }}
             </span>
-            <span class="d-none d-lg-inline-flex input-group-text rounded-start-4 shadow" style="width: 60px;">
+            <span class="d-none d-lg-inline-flex justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 60px;">
                 {{ ux_icon('line-md:email-twotone') }}
             </span>
 			<div class="form-floating">
@@ -28,10 +28,10 @@
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
 			{% set tooltipMessage = form_help(registrationForm.pseudo) %}
-            <span class="d-none d-sm-inline-flex d-lg-none input-group-text fs-2 rounded-start-4 shadow" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+            <span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text fs-2 rounded-start-4 shadow fs-1" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
                 {{ ux_icon('line-md:person-add-twotone') }}
             </span>
-            <span class="d-none d-lg-inline-flex input-group-text fs-2 rounded-start-4 shadow" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+            <span class="d-none d-lg-inline-flex justify-content-center input-group-text fs-2 rounded-start-4 shadow fs-1" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
                 {{ ux_icon('line-md:person-add-twotone') }}
             </span>
             <div class="form-floating">
@@ -50,10 +50,10 @@
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
 			{% set tooltipMessage = form_help(registrationForm.plainPassword) %}
-            <span class="d-none d-sm-inline-flex d-lg-none input-group-text fs-2 rounded-start-4 shadow" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+            <span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text fs-2 rounded-start-4 shadow fs-1" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
                 {{ ux_icon('line-md:question-circle-twotone') }}
             </span>
-            <span class="d-none d-lg-inline-flex input-group-text fs-2 rounded-start-4 shadow" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+            <span class="d-none d-lg-inline-flex justify-content-center input-group-text fs-2 rounded-start-4 shadow fs-1" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
                 {{ ux_icon('line-md:question-circle-twotone') }}
             </span>
             <div class="form-floating">
@@ -74,10 +74,10 @@
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
 			{% set tooltipMessage = form_help(registrationForm.confirmPassword) %}
-            <span class="d-none d-sm-inline-flex d-lg-none input-group-text fs-2 rounded-start-4 shadow" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+            <span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text fs-2 rounded-start-4 shadow fs-1" style="width: 50px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
                 {{ ux_icon('line-md:chevron-down-circle-twotone') }}
             </span>
-            <span class="d-none d-lg-inline-flex input-group-text fs-2 rounded-start-4 shadow" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
+            <span class="d-none d-lg-inline-flex justify-content-center input-group-text fs-2 rounded-start-4 shadow fs-1" style="width: 60px;" data-bs-toggle="tooltip" data-bs-title="{{ tooltipMessage|striptags }}" data-bs-placement="bottom">
                 {{ ux_icon('line-md:chevron-down-circle-twotone') }}
             </span>
 			<div class="form-floating">
@@ -98,7 +98,7 @@
 		</div>
 
 		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
-			<div class="input-group-text fs-4 rounded-4 shadow" style="width: 100%;">
+			<div class="input-group-text fs-4 rounded-5 shadow" style="width: 100%;">
 				{{ form_widget(registrationForm.agreeTerms, { 'attr': {
                     'class': 'ps-4 rounded-5 shadow',
                     'aria-required': 'true',

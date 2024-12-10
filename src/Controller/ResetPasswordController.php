@@ -50,7 +50,7 @@ class ResetPasswordController extends AbstractController
             );
         }
 
-        return $this->render('reset_password/request.html.twig', [
+        return $this->render('resetPassword/request.html.twig', [
             'controller_name' => 'ForgotPasswprdRequestController',
             'requestForm' => $form,
         ]);
@@ -68,7 +68,7 @@ class ResetPasswordController extends AbstractController
             $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
         }
 
-        return $this->render('reset_password/check_email.html.twig', [
+        return $this->render('resetPassword/checkEmail.html.twig', [
             'controller_name' => 'ReserPasswordCheckEmailController',
             'resetToken' => $resetToken,
         ]);
@@ -127,7 +127,7 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        return $this->render('reset_password/reset.html.twig', [
+        return $this->render('resetPassword/reset.html.twig', [
             'controller_name' => 'ResetPasswordResetController',
             'resetForm' => $form,
         ]);
@@ -164,7 +164,7 @@ class ResetPasswordController extends AbstractController
             ->from(new Address('mailer@ecoride.site', 'EcoRide Mail Bot'))
             ->to((string) $user->getEmail())
             ->subject('Your password reset request')
-            ->htmlTemplate('reset_password/email.html.twig')
+            ->htmlTemplate('resetPassword/email.html.twig')
             ->context([
                 'resetToken' => $resetToken,
             ])

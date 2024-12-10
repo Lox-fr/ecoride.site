@@ -20,6 +20,8 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                default_target_path: app_user_profile
+                always_use_default_target_path: false
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -34,12 +36,17 @@ security:
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
+    role_hierarchy:
+        ROLE_DRIVER: ROLE_PASSENGER
+        ROLE_EMPLOYEE: ROLE_DRIVER
+        ROLE_ADMIN: ROLE_EMPLOYEE
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/profil, roles: ROLE_PASSENGER }
 
 when@test:
     security:

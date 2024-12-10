@@ -27,14 +27,18 @@ class RegistrationController extends AbstractController
         Security $security,
         SqlBasePathLoader $sqlFileLoader,
     ): Response|RedirectResponse {
+        // If the user is already logged in, redirect them to the profile page
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_user_profile');
+        }
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+        $registrationForm = $this->createForm(RegistrationFormType::class, $user);
+        $registrationForm->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userEmail = (string) $form->get('email')->getData();
-            $plainPassword = (string) $form->get('plainPassword')->getData();
-            $confirmPassword = (string) $form->get('confirmPassword')->getData();
+        if ($registrationForm->isSubmitted() && $registrationForm->isValid()) {
+            $userEmail = (string) $registrationForm->get('email')->getData();
+            $plainPassword = (string) $registrationForm->get('plainPassword')->getData();
+            $confirmPassword = (string) $registrationForm->get('confirmPassword')->getData();
             $hashedPassword = $userPasswordHasher->hashPassword($user, $plainPassword);
 
             if ($plainPassword === $confirmPassword) {
@@ -47,7 +51,7 @@ class RegistrationController extends AbstractController
                     /* Insert user data into 'user' table using a prepared SQL query */
                     $sql = $sqlFileLoader->getSqlFromFile('create/userRegistration', [
                         'email' => $userEmail,
-                        'pseudo' => $form->get('pseudo')->getData(),
+                        'pseudo' => $registrationForm->get('pseudo')->getData(),
                         'password' => $hashedPassword,
                         'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
                         'active' => (int) $user->isActive(),
@@ -101,13 +105,13 @@ class RegistrationController extends AbstractController
             }
 
             // Add error to plainPassword and confirmPassword fields when passwords typed are differents
-            $form->get('plainPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
-            $form->get('confirmPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
+            $registrationForm->get('plainPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
+            $registrationForm->get('confirmPassword')->addError(new FormError('Les mots de passe doivent correspondre.'));
         }
 
         return $this->render('registration/index.html.twig', [
             'controller_name' => 'RegistrationController',
-            'registrationForm' => $form,
+            'registrationForm' => $registrationForm,
         ]);
     }
 }

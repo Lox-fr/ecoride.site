@@ -18,7 +18,7 @@ CREATE TABLE user (
     number_of_ratings INT DEFAULT NULL,
     credits INT NOT NULL,
     PRIMARY KEY(id),
-    UNIQUE INDEX UNIQ_USER_PSEUDO (email),
+    UNIQUE INDEX UNIQ_USER_EMAIL (email),
     UNIQUE INDEX UNIQ_USER_PHONE_NUMBER (phone_number),
-    UNIQUE INDEX UNIQ_USER_PHOTO_NAME (photo_name)
+    UNIQUE INDEX UNIQ_USER_PHOTO_FILENAME (photo_filename)
 );

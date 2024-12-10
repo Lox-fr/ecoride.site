@@ -12,6 +12,7 @@
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^5.0.0",
         "@types/bootstrap": "^5.2.10",
+        "@types/flatpickr": "^3.0.2",
         "@typescript-eslint/eslint-plugin": "^8.15.0",
         "@typescript-eslint/parser": "^8.15.0",
         "autoprefixer": "^10.4.20",
