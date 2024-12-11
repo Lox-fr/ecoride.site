@@ -6,8 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Service\SqlBasePathLoader;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\SqlManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -23,9 +22,8 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager,
         Security $security,
-        SqlBasePathLoader $sqlFileLoader,
+        SqlManager $sqlManager,
     ): Response|RedirectResponse {
         // If the user is already logged in, redirect them to the profile page
         if ($this->getUser()) {
@@ -45,11 +43,8 @@ class RegistrationController extends AbstractController
 
                 /* REGISTRATION */
                 try {
-                    /* Connecting to the database */
-                    $connection = $entityManager->getConnection();
-
                     /* Insert user data into 'user' table using a prepared SQL query */
-                    $sql = $sqlFileLoader->getSqlFromFile('create/userRegistration', [
+                    $sqlManager->execute('userRegistration', 'queries/create', null, [
                         'email' => $userEmail,
                         'pseudo' => $registrationForm->get('pseudo')->getData(),
                         'password' => $hashedPassword,
@@ -57,7 +52,6 @@ class RegistrationController extends AbstractController
                         'active' => (int) $user->isActive(),
                         'credits' => (int) $user->getCredits(),
                     ]);
-                    $connection->executeStatement($sql); // Execute the SQL script
 
                     /* Flash success message after successful registration */
                     $this->addFlash('success',
@@ -74,14 +68,13 @@ class RegistrationController extends AbstractController
                 /* AUTOMATICALLY LOG IN */
                 try {
                     /* Fetch user id from email */
-                    $sql = $sqlFileLoader->getSqlFromFile('read/userIdByEmail', [
+                    $userId = $sqlManager->execute('userIdByEmail', 'queries/read', SqlManager::FETCH_ONE, [
                         'email' => $userEmail, ]);
-                    $userId = $connection->fetchOne($sql); // Execute the SQL script
-                    if (!$userId) {
-                        throw new \Exception('Aucun utilisateur trouvé avec cette adresse e-mail.');
+                    if ($userId === false || $userId === null) {
+                        throw new \Exception('No user found with this email address.');
                     }
 
-                    /* hydrate the user object */
+                    /* Hydrate the user object */
                     $user
                         ->setId((int) $userId)
                         ->setEmail((string) $userEmail)
@@ -91,7 +84,7 @@ class RegistrationController extends AbstractController
                     try {
                         $security->login($user);
                     } catch (\Exception $e) {
-                        throw new \Exception('Erreur lors de l\'authentification après inscription.');
+                        throw new \Exception('Error during authentication after registration.');
                     }
                 } catch (\Exception $e) {
                     // $this->addFlash('error', 'Impossible de vous connecter après l\'inscription: '.$e->getMessage());
