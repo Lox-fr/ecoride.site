@@ -15,9 +15,6 @@ class SqlManagerException extends \RuntimeException
 
 class SqlManager
 {
-    private Connection $connection;
-    private string $sqlBasePath;
-
     // Constants for fetch modes
     public const FETCH_ONE = 'fetchOne';
     public const FETCH_ASSOCIATIVE = 'fetchAssociative';
@@ -28,11 +25,10 @@ class SqlManager
     public const FETCH_ALL_KEY_VALUE = 'fetchAllKeyValue';
     public const FETCH_FIRST_COLUMN = 'fetchFirstColumn';
 
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-        $this->sqlBasePath = __DIR__.'/../sql/'; // Directory for SQL files
-    }
+    public function __construct(
+        private Connection $connection,
+        private string $sqlBasePath = __DIR__.'/../sql/'
+    ) {}
 
     /**
      * Execute a SQL query from an SQL file.
