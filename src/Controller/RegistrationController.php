@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Service\SqlManager;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -23,7 +23,7 @@ class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         Security $security,
-        SqlManager $sqlManager,
+        UserRepository $userRepository,
     ): Response|RedirectResponse {
         // If the user is already logged in, redirect them to the profile page
         if ($this->getUser()) {
@@ -43,23 +43,18 @@ class RegistrationController extends AbstractController
 
                 /* REGISTRATION */
                 try {
+                    $user
+                        ->setEmail($userEmail)
+                        ->setPseudo($registrationForm->get('pseudo')->getData())
+                        ->setPassword($hashedPassword);
                     /* Insert user data into 'user' table using a prepared SQL query */
-                    $sqlManager->execute('userRegistration', 'queries/create', null, [
-                        'email' => $userEmail,
-                        'pseudo' => $registrationForm->get('pseudo')->getData(),
-                        'password' => $hashedPassword,
-                        'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
-                        'active' => (int) $user->isActive(),
-                        'credits' => (int) $user->getCredits(),
-                    ]);
-
+                    $userRepository->register($user);
                     /* Flash success message after successful registration */
                     $this->addFlash('success',
                         'Bienvenue dans la communauté EcoRide.<br/>
                         N\'hésitez pas à compléter votre profil.<br/>
                         Et profitez de vos 20 crédits offerts !');
-                } catch (\Exception $e) {
-                    // $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription : '.$e->getMessage());
+                } catch (\Exception) {
                     $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
 
                     return $this->redirectToRoute('app_register');
@@ -68,26 +63,22 @@ class RegistrationController extends AbstractController
                 /* AUTOMATICALLY LOG IN */
                 try {
                     /* Fetch user id from email */
-                    $userId = $sqlManager->execute('userIdByEmail', 'queries/read', SqlManager::FETCH_ONE, [
-                        'email' => $userEmail, ]);
-                    if ($userId === false || $userId === null) {
+                    $userId = $userRepository->getUserIdByEmail($userEmail);
+                    if (false === $userId || null === $userId) {
                         throw new \Exception('No user found with this email address.');
                     }
-
                     /* Hydrate the user object */
                     $user
                         ->setId((int) $userId)
                         ->setEmail((string) $userEmail)
                         ->setPassword((string) $hashedPassword);
-
                     /* Log the user in using Symfony's authentication system */
                     try {
                         $security->login($user);
-                    } catch (\Exception $e) {
+                    } catch (\Exception) {
                         throw new \Exception('Error during authentication after registration.');
                     }
-                } catch (\Exception $e) {
-                    // $this->addFlash('error', 'Impossible de vous connecter après l\'inscription: '.$e->getMessage());
+                } catch (\Exception) {
                     $this->addFlash('error',
                         'Une erreur est survenue lors de la connexion après inscription. Veuillez réessayer.');
 
