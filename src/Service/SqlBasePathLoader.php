@@ -14,7 +14,7 @@ class SqlBasePathLoader
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->sqlBasePath = __DIR__.'/../sql/'; // Directory for SQL files
+        $this->sqlBasePath = __DIR__.'/../sql/queries/'; // Directory for SQL files
     }
 
     /**

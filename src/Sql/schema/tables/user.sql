@@ -10,7 +10,7 @@ CREATE TABLE user (
     last_name VARCHAR(50) DEFAULT NULL,
     address VARCHAR(255) DEFAULT NULL,
     phone_number VARCHAR(17) DEFAULT NULL,
-    photo_name VARCHAR(255) DEFAULT NULL,
+    photo_filename VARCHAR(255) DEFAULT NULL,
     date_of_birth DATE DEFAULT NULL,
     pets_allowed TINYINT(1) DEFAULT NULL,
     smokers_allowed TINYINT(1) DEFAULT NULL,

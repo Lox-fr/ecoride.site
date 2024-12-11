@@ -1,0 +1,13 @@
+SOURCE tables/brand.sql;
+SOURCE tables/car.sql;
+SOURCE tables/color.sql;
+SOURCE tables/engineType.sql;
+SOURCE tables/messengerMessages.sql;
+SOURCE tables/preference.sql;
+SOURCE tables/resetPassword.sql;
+SOURCE tables/role.sql;
+SOURCE tables/user.sql;
+SOURCE tables/userRole.sql;
+SOURCE constraints/car.sql;
+SOURCE constraints/preference.sql;
+SOURCE constraints/userRole.sql;
