@@ -20,8 +20,8 @@
 				'class': 'text-start ps-3 ps-md-4 rounded-3 shadow mx-auto disabled',
 				'readonly': 'true',
 				'style': 'max-width: 320px;' } }) }}
+			{{ form_errors(passengerProfileForm.email) }}
 		</div>
-		{{ form_errors(passengerProfileForm.email) }}
 		<small>
 			<div class="form-text mb-0 help-text text-sm-start p-1 p-sm-2">
 				{{ field_help(passengerProfileForm.email) | raw }}</div>
@@ -57,8 +57,8 @@
 				'class': 'text-start ps-3 ps-md-4 rounded-3 shadow mx-auto',
 				'required': 'true',
 				'style': 'max-width: 320px;' } }) }}
+			{{ form_errors(passengerProfileForm.pseudo) }}
 		</div>
-		{{ form_errors(passengerProfileForm.pseudo) }}
 		<small>
 			<div class="form-text mb-0 help-text text-sm-start p-1 p-sm-2">
 				{{ field_help(passengerProfileForm.pseudo) | raw }}</div>
@@ -74,6 +74,7 @@
 			<a href="#" class="file-input-trigger btn btn-sm btn-primary" style="max-width: 125px;">
 				Sélectionner un fichier
 			</a>
+			{{ form_errors(passengerProfileForm.photo) }}
 		</p>
 		<small>
 			<div class="form-text mb-0 help-text">
@@ -82,7 +83,6 @@
 			</div>
 		</small>
 		{{ form_widget(passengerProfileForm.photo, { 'attr': { 'class': 'file-input d-none' } }) }}
-		{{ form_errors(passengerProfileForm.photo) }}
 	</div>
 
 </div>
@@ -98,7 +98,9 @@
 			'class' : 'text-start rounded-3 shadow ps-4',
 			'style' : 'min-width: 260px;' }}) }}
 		{{ form_label(passengerProfileForm.firstName) }}
-		{{ form_errors(passengerProfileForm.firstName) }}
+		<div style="max-width: 250px;">
+			{{ form_errors(passengerProfileForm.firstName) }}
+		</div>
 		{{ form_help(passengerProfileForm.firstName) }}
 	</div>
 
@@ -108,7 +110,9 @@
 			'class' : 'text-start rounded-3 shadow ps-4',
 			'style' : 'min-width: 260px;' }}) }}
 		{{ form_label(passengerProfileForm.lastName) }}
-		{{ form_errors(passengerProfileForm.lastName) }}
+		<div style="max-width: 250px;">
+			{{ form_errors(passengerProfileForm.lastName) }}
+		</div>
 		{{ form_help(passengerProfileForm.lastName) }}
 	</div>
 
@@ -124,7 +128,9 @@
 				'class' : 'text-start rounded-3 shadow ps-4',
 				'style' : 'min-width: 260px;' }}) }}
 			{{ form_label(passengerProfileForm.phoneNumber) }}
-			{{ form_errors(passengerProfileForm.phoneNumber) }}
+			<div style="max-width: 250px;">
+				{{ form_errors(passengerProfileForm.phoneNumber) }}
+			</div>
 			{{ form_help(passengerProfileForm.phoneNumber) }}
 		</div>
 
@@ -135,7 +141,9 @@
 				'placeholder': "now"|date("Y-m-d"),
 				'style' : 'min-width: 260px;' }}) }}
 			{{ form_label(passengerProfileForm.dateOfBirth) }}
-			{{ form_errors(passengerProfileForm.dateOfBirth) }}
+			<div style="max-width: 250px;">
+				{{ form_errors(passengerProfileForm.dateOfBirth) }}
+			</div>
 			{{ form_help(passengerProfileForm.dateOfBirth) }}
 		</div>
 
@@ -147,7 +155,9 @@
 			'class' : 'text-start rounded-3 shadow ps-4',
 			'style' : 'min-height: 132px; min-width: 260px;' }}) }}
 		{{ form_label(passengerProfileForm.address) }}
-		{{ form_errors(passengerProfileForm.address) }}
+		<div style="max-width: 250px;">
+			{{ form_errors(passengerProfileForm.address) }}
+		</div>
 		{{ form_help(passengerProfileForm.address) }}
 	</div>
 

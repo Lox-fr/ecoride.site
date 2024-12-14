@@ -55,12 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    // #[Assert\NotNull(message: 'La date de création est obligatoire.')]
-    // #[Assert\DateTime(message: 'La date de création doit être de type DateTime.')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime(message: 'La date de mise à jour doit être de type DateTime.')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
@@ -111,7 +108,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $photoFilename = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    #[Assert\DateTime(message: 'La date de naissance doit être de type DateTime.')]
     #[Assert\LessThanOrEqual(
         '-18 years',
         message: 'En validant les CGU, vous aviez déclaré avoir plus de 18 ans ...')]

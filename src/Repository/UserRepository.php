@@ -59,7 +59,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @param string $email the email of the user whose ID is to be retrieved
      *
-     * @throws \Exception if there is an error executing the SQL query or any issue occurs during the database interaction
+     * @throws \Exception if there is an error executing the SQL query or during the database interaction
      *
      * @return int|null the user ID if found, or null if no user exists with the provided email
      */
@@ -72,7 +72,42 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return $result ? (int) $result : null;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('Error fetching user ID for email "%s": %s', $email, $e->getMessage()));
+            throw new \Exception(\sprintf('
+                Error fetching user ID for email "%s": %s', $email, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Updates the passenger profile in the database using a SQL file.
+     *
+     * This method executes an SQL update query to synchronize the passenger's profile information.
+     * It returns `true` if the update was successful, or `false` otherwise.
+     *
+     * @param User $user the user entity containing the passenger's profile information
+     *
+     * @throws \Exception if the SQL query execution fails, an exception is thrown with details
+     *
+     * @return bool `true` if the update succeeds, `false` otherwise
+     */
+    public function savePassengerProfile(User $user): bool
+    {
+        try {
+            $result = $this->sqlManager->execute('passengerProfile', 'queries/update', null, [
+                'pseudo' => $user->getPseudo(),
+                'photo_filename' => $user->getPhotoFilename(),
+                'first_name' => $user->getFirstName(),
+                'last_name' => $user->getLastName(),
+                'address' => $user->getAddress(),
+                'phone_number' => $user->getPhoneNumber(),
+                'date_of_birth' => $user->getDateOfBirth() ? $user->getDateOfBirth()->format('Y-m-d H:i:s') : null,
+                'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'id' => $user->getId(),
+            ]);
+
+            return true === $result;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Flush of passenger informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
         }
     }
 
