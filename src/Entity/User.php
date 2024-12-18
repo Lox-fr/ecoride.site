@@ -196,6 +196,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Car::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $cars;
 
+    private ?bool $passengerProfileCompleted = null;
+
+    private ?bool $driverProfileCompleted = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -567,5 +571,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Checks if the passenger profile is completed.
+     *
+     * This method ensures that all required attributes for a passenger profile
+     * (photoFilename, firstName, lastName, phoneNumber, address, dateOfBirth) are set.
+     *
+     * @return bool|null returns true if all required attributes are non-null, false if any attribute is null, or null if profile completion is not applicable
+     */
+    public function hasPassengerProfileCompleted(): ?bool
+    {
+        return null !== $this->photoFilename
+            && null !== $this->firstName
+            && null !== $this->lastName
+            && null !== $this->phoneNumber
+            && null !== $this->address
+            && null !== $this->dateOfBirth;
+    }
+
+    public function hasDriverProfileCompleted(): ?bool
+    {
+        return $this->driverProfileCompleted;
     }
 }
