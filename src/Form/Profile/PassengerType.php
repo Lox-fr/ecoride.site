@@ -21,16 +21,16 @@ class PassengerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, [
-                'label' => 'Adresse email',
-                'required' => false,
-                'attr' => ['placeholder' => 'exemple@mail.com'],
-                'help_html' => true,
-                'help' => 'C\'est l\'identifiant de votre compte.
-                    Cette adresse n\'est pas visible par les autres utilisateurs de la plateforme.
-                    Il n\'existe pas encore de procédure automatisée de changement d\'adresse email.
-                    Si besoin, vous devez en faire la demande au <a href="{{ path(\'app_home\') }}">support</a>.',
-            ])
+            // ->add('email', EmailType::class, [
+            //     'label' => 'Adresse email',
+            //     'required' => false,
+            //     'attr' => ['placeholder' => 'exemple@mail.com'],
+            //     'help_html' => true,
+            //     'help' => 'C\'est l\'identifiant de votre compte.
+            //         Cette adresse n\'est pas visible par les autres utilisateurs de la plateforme.
+            //         Il n\'existe pas encore de procédure automatisée de changement d\'adresse email.
+            //         Si besoin, vous devez en faire la demande au <a href="{{ path(\'app_home\') }}">support</a>.',
+            // ])
             ->add('pseudo', TextType::class, [
                 'label' => 'Pseudo',
                 'attr' => ['placeholder' => 'nom d\'utilisateur'],

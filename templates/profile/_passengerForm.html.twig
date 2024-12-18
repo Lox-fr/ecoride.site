@@ -12,19 +12,20 @@
 	{# Email disabed input #}
 	<div class="row text-start pe-lg-5">
 		<h3 class="col-sm-4 col-form-label my-auto">
-			{{ form_label(passengerProfileForm.email, 'Adresse Email', {
-				'label_attr': { 'class': 'fs-6 fw-bold mb-0'}}) }}
-		</h3>
+			<label class="fs-6 fw-bold mb-0 form-label" for="passenger_email">Adresse Email</label>
+		</h3> 
 		<div class="col-sm-8 my-auto">
-			{{ form_widget(passengerProfileForm.email, { 'attr': {
-				'class': 'text-start ps-3 ps-md-4 rounded-3 shadow mx-auto disabled',
-				'readonly': 'true',
-				'style': 'max-width: 320px;' } }) }}
-			{{ form_errors(passengerProfileForm.email) }}
+			<div class="col-sm-8 my-auto">
+				<input type="email" id="passenger_email" name="passenger[email]" placeholder="exemple@mail.com" class="text-start ps-3 ps-md-4 rounded-3 shadow mx-auto disabled form-control" disabled="true" readonly="true" style="max-width: 320px;" value="loic.petit@gmx.com">
+			</div>
 		</div>
 		<small>
 			<div class="form-text mb-0 help-text text-sm-start p-1 p-sm-2">
-				{{ field_help(passengerProfileForm.email) | raw }}</div>
+				C'est l'identifiant de votre compte.
+				Cette adresse n'est pas visible par les autres utilisateurs de la plateforme.
+				Il n'existe pas encore de procédure automatisée de changement d'adresse email.
+				Si besoin, vous devez en faire la demande au <a href="{{ path('app_home') }}">support</a>.
+			</div>
 		</small>
 	</div>
 
