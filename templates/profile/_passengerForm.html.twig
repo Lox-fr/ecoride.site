@@ -32,7 +32,7 @@
 	<div class="px-3 py-4">
 		<h3 class="fs-6 fw-bold">Mot de passe</h3>
 		<p class="mx-auto my-0">
-			<a class="btn btn-sm btn-primary" href="{{ path('app_forgot_password_request') }}" style="max-width: 125px;">réinitialiser</a>
+			<a class="btn btn-sm btn-outline-primary" href="{{ path('app_forgot_password_request') }}" style="max-width: 125px;">réinitialiser</a>
 		</p>
 		<small>
 			<div class="form-text mb-0 help-text">Une action de votre part par email sera nécessaire.</div>
@@ -71,7 +71,7 @@
 			Photo
 		</h3>
 		<p class="mx-auto my-0">
-			<a href="#" class="file-input-trigger btn btn-sm btn-primary" style="max-width: 125px;">
+			<a href="#" class="file-input-trigger btn btn-sm btn-outline-primary" style="max-width: 125px;">
 				Sélectionner un fichier
 			</a>
 			{{ form_errors(passengerProfileForm.photo) }}
@@ -79,7 +79,7 @@
 		<small>
 			<div class="form-text mb-0 help-text">
 				Attention : après sauvegarde, cette action est irréversible,
-								les photos écrasées ne seront pas retouvées !
+												les photos écrasées ne seront pas retouvées !
 			</div>
 		</small>
 		{{ form_widget(passengerProfileForm.photo, { 'attr': { 'class': 'file-input d-none' } }) }}
@@ -165,9 +165,16 @@
 
 <hr>
 
-{# submit button #}
-{{ form_row(passengerProfileForm.submit, { 'attr': {
-	'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3' }}) }}
+<div class="d-inline-flex">
+	{# submit button #}
+	{{ form_row(passengerProfileForm.submit, { 'attr': {
+		'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3' }}) }}
+	{% if app.user.passengerProfileCompleted %}
+		<div class="mb-3">
+			<a href="{{ path('app_profile') }}" class="btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3">Devenir chauffeur</a>
+		</div>
+	{% endif %}
+</div>
 
 <div class="d-none">
 	{{ form_rest(passengerProfileForm) }}
