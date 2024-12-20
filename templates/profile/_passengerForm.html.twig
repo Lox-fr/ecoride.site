@@ -1,9 +1,14 @@
 {{ form_start(passengerProfileForm) }}
 
 <h2 class="fs-3 fw-bold mt-4 mb-3 px-3 pb-2 border-bottom border-primary">
-	<span class="text-nowrap">Vous pouvez</span>
-	<span class="text-nowrap">compléter</span>
-	<span class="text-nowrap">votre profil</span>
+	{% if not app.user.passengerProfileCompleted %}
+		<span class="text-nowrap">Vous pouvez</span>
+		<span class="text-nowrap">compléter</span>
+		<span class="text-nowrap">votre profil</span>
+	{% else %}
+		<span class="text-nowrap">Votre profil</span>
+		<span class="text-nowrap">est complet</span>
+	{% endif %}
 </h2>
 
 <div
@@ -167,12 +172,13 @@
 <hr>
 
 <div class="d-inline-flex">
-	{# submit button #}
+	{# Submit button #}
 	{{ form_row(passengerProfileForm.submit, { 'attr': {
 		'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3' }}) }}
+	{# Become driver button #}
 	{% if app.user.passengerProfileCompleted %}
 		<div class="mb-3">
-			<a href="{{ path('app_profile') }}" class="btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3">Devenir chauffeur</a>
+			<a href="#devenirChauffeur" class="btn btn-lg btn-primary userBtn shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3" role="button" aria-controls="devenirChauffeur" data-bs-toggle="collapse" aria-expanded="false">Devenir chauffeur</a>
 		</div>
 	{% endif %}
 </div>
@@ -182,3 +188,4 @@
 </div>
 
 {{ form_end(passengerProfileForm) }}
+

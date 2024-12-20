@@ -41,7 +41,7 @@
 					</li>
 				{% else %}
 					<li class="nav-item mx-3 d-md-none">
-                        <a class="nav-link" href="{{ path('app_user_profile') }}" aria-label="Consulter le compte et les informations utilisateur" role="button">Espace personnel</a>
+                        <a class="nav-link" href="{{ path('app_profile') }}" aria-label="Consulter le compte et les informations utilisateur" role="button">Compte</a>
                     </li>
 					<li class="nav-item mx-3 d-md-none">
                         <a class="nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
@@ -73,7 +73,7 @@
 					</li>
 				{% else %}
 					<li>
-                        <a class="dropdown-item nav-link {{ controller_name == 'UserProfileController' ? 'active' }}" href="{{ path('app_user_profile') }}" {{ controller_name == 'UserProfileController' ? 'aria-current="page"' }} aria-label="Consulter le compte et les informations utilisateur"  role="button">Espace personnel</a>
+                        <a class="dropdown-item nav-link {{ controller_name == 'UserProfileController' ? 'active' }}" href="{{ path('app_profile') }}" {{ controller_name == 'UserProfileController' ? 'aria-current="page"' }} aria-label="Consulter le compte et les informations utilisateur"  role="button">Compte</a>
                     </li>
 					<hr>
 					<li>
