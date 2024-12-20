@@ -2,7 +2,7 @@
 
 <img src="{{ asset('images/users/' ~ app.user.photoFilename|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ app.user.pseudo }}" class="d-none d-sm-inline-flex d-md-none d-lg-inline-flex object-fit-cover rounded-pill border border-secondary border-2 shadow-lg mt-5" style="width: 250px; height: 250px;"/>
 
-<h2 class="mt-4 border-bottom border-secondary pb-1 mb-1">
+<h2 class="mt-4 border-bottom border-secondary pb-1 mb-1 text-break">
 	Bonjour
 	{{ app.user.pseudo }}
 </h2>

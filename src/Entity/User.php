@@ -55,12 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    // #[Assert\NotNull(message: 'La date de création est obligatoire.')]
-    // #[Assert\DateTime(message: 'La date de création doit être de type DateTime.')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime(message: 'La date de mise à jour doit être de type DateTime.')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
@@ -111,7 +108,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $photoFilename = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    #[Assert\DateTime(message: 'La date de naissance doit être de type DateTime.')]
     #[Assert\LessThanOrEqual(
         '-18 years',
         message: 'En validant les CGU, vous aviez déclaré avoir plus de 18 ans ...')]
@@ -199,6 +195,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Car::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $cars;
+
+    private ?bool $passengerProfileCompleted = null;
+
+    private ?bool $driverProfileCompleted = null;
 
     public function __construct()
     {
@@ -571,5 +571,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Checks if the passenger profile is completed.
+     *
+     * This method ensures that all required attributes for a passenger profile
+     * (photoFilename, firstName, lastName, phoneNumber, address, dateOfBirth) are set.
+     *
+     * @return bool|null returns true if all required attributes are non-null, false if any attribute is null, or null if profile completion is not applicable
+     */
+    public function hasPassengerProfileCompleted(): ?bool
+    {
+        return null !== $this->photoFilename
+            && null !== $this->firstName
+            && null !== $this->lastName
+            && null !== $this->phoneNumber
+            && null !== $this->address
+            && null !== $this->dateOfBirth;
+    }
+
+    public function hasDriverProfileCompleted(): ?bool
+    {
+        return $this->driverProfileCompleted;
     }
 }

@@ -1,0 +1,48 @@
+{% set navLinkClass = 'btn btn-sm btn-outline-primary userBtn rounded scaleOnFocusAndHover px-2 mx-1 my-2 shadow' %}
+
+<nav class="border-top border-secondary mt-2 d-inline-flex" id="userMenu">
+	<ul class="d-flex flex-column align-items-center mx-2 pt-3" data-controller="toggleProfileMenuButtons">
+
+		<li>
+			<a class="{{ navLinkClass }}" href="#infosPassager" role="button" aria-controls="infosPassager" data-bs-toggle="collapse" aria-expanded="{{ activeTab is same as 'informations' ? 'true' : 'false'}}">
+				Vos informations</a>
+		</li>
+
+		{# <li class="d-none d-md-flex">
+			<a class="{{ navLinkClass }}" href="{{ path('app_home') }}">
+				Chercher un covoiturage</a>
+		</li> #}
+
+		<li>
+			<a class="{{ navLinkClass }}" href="#devenirChauffeur" role="button" aria-controls="devenirChauffeur" data-bs-toggle="collapse" aria-expanded="{{ activeTab is same as 'devenir-chauffeur' ? 'true' : 'false'}}">
+				{{ not is_granted('ROLE_DRIVER') ? 'Devenir chauffeur' : 'Vos véhicules' }}
+			</a>
+		</li>
+
+		{# <li>
+			<a class="{{ navLinkClass }}" href="#proposerTrajet" role="button" aria-controls="proposerTrajet" data-bs-toggle="collapse" {{ activeTab is same as 'addRide' ? 'aria-expanded="true"' }}>
+				Proposer un trajet</a>
+		</li> #}
+
+		<li>
+			<a class="{{ navLinkClass }}" href="#historiqueTrajets" role="button" aria-controls="historiqueTrajets" data-bs-toggle="collapse" aria-expanded="{{ activeTab is same as 'historique-trajets' ? 'true' : 'false'}}">
+				Historique de vos trajets</a>
+		</li>
+
+		{# <li class="d-none d-md-flex">
+			<a class="{{ navLinkClass }}" href="{{ path('app_home') }}">
+				Nous contacter</a>
+		</li> #}
+
+		<li class="d-none d-md-flex">
+			<a class="{{ navLinkClass }}" href="{{ path('app_home') }}">
+				Retour à l'accueil</a>
+		</li>
+
+		{# <li class="d-none d-md-flex">
+			<a class="{{ navLinkClass }}" href="{{ path('app_logout') }}">
+				Se déconnecter</a>
+		</li> #}
+
+	</ul>
+</nav>

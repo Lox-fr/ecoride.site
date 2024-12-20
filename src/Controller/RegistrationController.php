@@ -6,8 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Service\SqlBasePathLoader;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -23,9 +22,8 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager,
         Security $security,
-        SqlBasePathLoader $sqlFileLoader,
+        UserRepository $userRepository,
     ): Response|RedirectResponse {
         // If the user is already logged in, redirect them to the profile page
         if ($this->getUser()) {
@@ -45,27 +43,18 @@ class RegistrationController extends AbstractController
 
                 /* REGISTRATION */
                 try {
-                    /* Connecting to the database */
-                    $connection = $entityManager->getConnection();
-
+                    $user
+                        ->setEmail($userEmail)
+                        ->setPseudo($registrationForm->get('pseudo')->getData())
+                        ->setPassword($hashedPassword);
                     /* Insert user data into 'user' table using a prepared SQL query */
-                    $sql = $sqlFileLoader->getSqlFromFile('create/userRegistration', [
-                        'email' => $userEmail,
-                        'pseudo' => $registrationForm->get('pseudo')->getData(),
-                        'password' => $hashedPassword,
-                        'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
-                        'active' => (int) $user->isActive(),
-                        'credits' => (int) $user->getCredits(),
-                    ]);
-                    $connection->executeStatement($sql); // Execute the SQL script
-
+                    $userRepository->register($user);
                     /* Flash success message after successful registration */
                     $this->addFlash('success',
                         'Bienvenue dans la communauté EcoRide.<br/>
                         N\'hésitez pas à compléter votre profil.<br/>
                         Et profitez de vos 20 crédits offerts !');
-                } catch (\Exception $e) {
-                    // $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription : '.$e->getMessage());
+                } catch (\Exception) {
                     $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
 
                     return $this->redirectToRoute('app_register');
@@ -74,27 +63,22 @@ class RegistrationController extends AbstractController
                 /* AUTOMATICALLY LOG IN */
                 try {
                     /* Fetch user id from email */
-                    $sql = $sqlFileLoader->getSqlFromFile('read/userIdByEmail', [
-                        'email' => $userEmail, ]);
-                    $userId = $connection->fetchOne($sql); // Execute the SQL script
-                    if (!$userId) {
-                        throw new \Exception('Aucun utilisateur trouvé avec cette adresse e-mail.');
+                    $userId = $userRepository->getUserIdByEmail($userEmail);
+                    if (false === $userId || null === $userId) {
+                        throw new \Exception('No user found with this email address.');
                     }
-
-                    /* hydrate the user object */
+                    /* Hydrate the user object */
                     $user
                         ->setId((int) $userId)
                         ->setEmail((string) $userEmail)
                         ->setPassword((string) $hashedPassword);
-
                     /* Log the user in using Symfony's authentication system */
                     try {
                         $security->login($user);
-                    } catch (\Exception $e) {
-                        throw new \Exception('Erreur lors de l\'authentification après inscription.');
+                    } catch (\Exception) {
+                        throw new \Exception('Error during authentication after registration.');
                     }
-                } catch (\Exception $e) {
-                    // $this->addFlash('error', 'Impossible de vous connecter après l\'inscription: '.$e->getMessage());
+                } catch (\Exception) {
                     $this->addFlash('error',
                         'Une erreur est survenue lors de la connexion après inscription. Veuillez réessayer.');
 

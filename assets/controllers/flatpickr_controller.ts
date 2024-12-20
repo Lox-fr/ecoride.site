@@ -18,7 +18,7 @@ export default class extends Controller {
                 position: "below center",
                 allowInput: true,
                 altInput: true,
-                dateFormat: "Y-m-d",
+                dateFormat: "Y-m-d H:i:S",
                 ...options });
         });
     }
