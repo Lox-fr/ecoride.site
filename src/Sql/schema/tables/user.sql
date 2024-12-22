@@ -14,6 +14,7 @@ CREATE TABLE user (
     date_of_birth DATE DEFAULT NULL,
     pets_allowed TINYINT(1) DEFAULT NULL,
     smokers_allowed TINYINT(1) DEFAULT NULL,
+    driver_role_chosen TINYINT(1) DEFAULT NULL,
     sum_of_ratings INT DEFAULT NULL,
     number_of_ratings INT DEFAULT NULL,
     credits INT NOT NULL,

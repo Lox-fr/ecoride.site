@@ -200,6 +200,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?bool $driverProfileCompleted = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $driverRoleChosen = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -605,5 +608,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             && null !== $this->petsAllowed
             && null !== $this->smokersAllowed
             && !$this->cars->isEmpty();
+    }
+
+    public function isDriverRoleChosen(): ?bool
+    {
+        return $this->driverRoleChosen;
+    }
+
+    public function setDriverRoleChosen(?bool $driverRoleChosen): static
+    {
+        $this->driverRoleChosen = $driverRoleChosen;
+
+        return $this;
     }
 }
