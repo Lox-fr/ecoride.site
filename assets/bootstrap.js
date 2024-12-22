@@ -4,6 +4,7 @@ import FileInputController from "./controllers/fileInput_controller.ts";
 import PagePreloaderController from "./controllers/pagePreloader_controller.ts";
 import profileMenuController from "./controllers/profileMenu_controller.ts";
 import TooltipsController from "./controllers/tooltips_controller.ts";
+import FormCollectionController from "./controllers/formCollection_controller.ts";
 
 const app = startStimulusApp();
 
@@ -12,3 +13,4 @@ app.register("fileInput", FileInputController);
 app.register("pagePreloader", PagePreloaderController);
 app.register("profileMenu", profileMenuController);
 app.register("tooltips", TooltipsController);
+app.register("formCollection", FormCollectionController);
