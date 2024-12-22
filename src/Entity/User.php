@@ -181,7 +181,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Role>
      */
-    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users', fetch: 'EAGER')]
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
     private Collection $roles;
 
     /**
@@ -591,8 +591,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             && null !== $this->dateOfBirth;
     }
 
+    /**
+     * Checks if the driver profile is completed.
+     *
+     * This method ensures that all required attributes for a driver profile
+     * (one car minimum, required preferences : smokers allowed and animals allowed) are set.
+     *
+     * @return bool|null returns true if all required attributes are set, false if any attribute is missing, or null if profile completion is not applicable
+     */
     public function hasDriverProfileCompleted(): ?bool
     {
-        return $this->driverProfileCompleted;
+        return $this->hasPassengerProfileCompleted()
+            && null !== $this->petsAllowed
+            && null !== $this->smokersAllowed
+            && !$this->cars->isEmpty();
     }
 }
