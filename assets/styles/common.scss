@@ -97,8 +97,17 @@ ul {
 }
 
 #devenirChauffeur {
-    .collectionItemDeleteLink {
-        margin-bottom: 1.8rem;
+    #cars {
+        .collectionItemDeleteLink {
+            margin-bottom: 1.8rem;
+        }
+    }
+
+    #preferences {
+        .collectionItem {
+            display: inline-flex;
+            align-items: center;
+        }
     }
 }
 

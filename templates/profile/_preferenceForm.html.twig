@@ -1,0 +1,12 @@
+{# Custom preference input #}
+<div class="form-floating mx-2 mb-3">
+	{{ form_widget(preference.label, { 'attr' : {
+        'class' : 'text-start rounded-3 shadow ps-4',
+        'aria-describedby' : preference.label.vars.id ~ '_help',
+        'style' : 'min-width: 210px;' }}) }}
+	{{ form_label(preference.label) }}
+	<div style="min-width: 210px;">
+		{{ form_errors(preference.label) }}
+	</div>
+	{{ form_help(preference.label) }}
+</div>

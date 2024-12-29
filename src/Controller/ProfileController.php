@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\User\DriverProfileType;
 use App\Form\User\PassengerProfileType;
 use App\Repository\CarRepository;
+use App\Repository\PreferenceRepository;
 use App\Repository\UserRepository;
 use App\Service\FileUploader;
 use App\Service\RoleManager;
@@ -32,6 +33,7 @@ class ProfileController extends AbstractController
         FileUploader $fileUploader,
         UserRepository $userRepository,
         CarRepository $carRepository,
+        PreferenceRepository $preferenceRepository,
         RoleManager $roleManager,
         ?string $activeTab,
     ): Response|RedirectResponse {
@@ -46,7 +48,7 @@ class ProfileController extends AbstractController
             return $passengerProfileForm;
         }
 
-        $driverProfileForm = $this->handleDriverForm($request, $user, $userRepository, $carRepository, $roleManager);
+        $driverProfileForm = $this->handleDriverForm($request, $user, $userRepository, $carRepository, $preferenceRepository, $roleManager);
         if ($driverProfileForm instanceof RedirectResponse) {
             return $driverProfileForm;
         } elseif ($driverProfileForm->isSubmitted()) {
@@ -98,12 +100,14 @@ class ProfileController extends AbstractController
         User $user,
         UserRepository $userRepository,
         CarRepository $carRepository,
+        PreferenceRepository $preferenceRepository,
         RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
         $driverProfileForm = $this->createForm(DriverProfileType::class, $user);
         $driverProfileForm->handleRequest($request);
         if ($driverProfileForm->isSubmitted() && $driverProfileForm->isValid()) {
             $this->handleCarInputsInDriverForm($user, $carRepository);
+            $this->handlePreferenceInputsInDriverForm($user, $preferenceRepository);
 
             if ($userRepository->saveDriverProfile($user)) {
                 $this->addFlash('success', 'Vos informations chauffeur ont bien été enregistrées.');
@@ -144,6 +148,25 @@ class ProfileController extends AbstractController
     {
         if (!$roleManager->handleProfileFormToBeDriver($form)) {
             $this->addFlash('warning', 'Vous n\'êtes pas/plus considéré(e) comme chauffeur.');
+        }
+    }
+
+    private function handlePreferenceInputsInDriverForm(User $user, PreferenceRepository $preferenceRepository): void
+    {
+        $registeredUserPreferenceLabels = $preferenceRepository->findPreferenceLabelsByUserId($user->getId());
+        $submittedPreferencesLabels = [];
+
+        foreach ($user->getPreferences() as $preference) {
+            $submittedPreferencesLabels[] = $preference->getLabel();
+            if (!\in_array($preference->getLabel(), $registeredUserPreferenceLabels, true)) {
+                $preferenceRepository->createPreference($preference);
+            }
+        }
+
+        foreach ($registeredUserPreferenceLabels as $registeredUserPreferenceLabel) {
+            if (!\in_array($registeredUserPreferenceLabel, $submittedPreferencesLabels, true)) {
+                $preferenceRepository->deletePreferenceById($registeredUserPreferenceLabel);
+            }
         }
     }
 }

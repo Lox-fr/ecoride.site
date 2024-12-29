@@ -180,6 +180,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Preference>
      */
+    #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: Preference::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $preferences;
 

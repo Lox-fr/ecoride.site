@@ -17,7 +17,7 @@
 
 <h3 class="fs-5 fw-bold mt-4 px-3 text-decoration-underline">Vos véhicules</h3>
 
-<div class="d-flex align-items-center align-items-center mx-sm-3 mb-5">
+<div class="d-flex align-items-center align-items-center mx-sm-3 mb-5" id="cars">
 
 	{# Cars #}
 	{% set carFormPrototype %}
@@ -30,7 +30,7 @@
 		<ul {{ stimulus_target('collectionForm', 'collectionContainer') }} class="mt-4 gap-5">
 			{% if app.user.cars|length > 0 %}
 				{% for car in driverProfileForm.cars %}
-					<li class="">
+					<li>
 						{% include "profile/_carForm.html.twig" with { 'car': car } %}
 					</li>
 				{% endfor %}
@@ -47,8 +47,7 @@
 
 <h3 class="fs-5 fw-bold mt-4 px-3 mb-5 text-decoration-underline">Vos préférences</h3>
 
-<div
-	class="d-flex flex-column align-items-center align-items-center mx-sm-3 mb-5">
+<div class="d-flex flex-column align-items-center align-items-center mx-sm-3 mb-5" id="preferences">
 
 	{# Smokers allowed switch button #}
 	<div class="d-inline-flex form-check form-switch ps-0 ps-sm-3 ps-xl-0 mb-4 mx-5">
@@ -68,6 +67,25 @@
 		{{ form_label(driverProfileForm.petsAllowed) }}
 		{{ form_errors(driverProfileForm.petsAllowed) }}
 		{{ form_help(driverProfileForm.petsAllowed) }}
+	</div>
+
+	{# Custom preferences #}
+	{% set preferenceFormPrototype %}
+		{% include "profile/_preferenceForm.html.twig" with { 'preference': driverProfileForm.preferences.vars.prototype } %}
+	{% endset %}
+	<div class="mx-auto mt-0" {{ stimulus_controller('collectionForm') }} data-collectionform-index-value="{{ driverProfileForm.preferences|length > 0 ? driverProfileForm.preferences|last.vars.name + 1 : 0 }}" data-collectionform-prototype-value={{ preferenceFormPrototype|e('html_attr') }} data-trash-icon="{{ ux_icon('f7:trash')|e('html_attr') }}">
+		<ul {{ stimulus_target('collectionForm', 'collectionContainer') }} class="mt-4 gap-5">
+			{% if app.user.preferences|length > 0 %}
+				{% for preference in driverProfileForm.preferences %}
+					<li>
+						{% include "profile/_preferenceForm.html.twig" with { 'preference': preference } %}
+					</li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+		{# Add a custom preference button #}
+		<button class="btn btn-sm btn-outline-primary" type="button" {{ stimulus_action('collectionForm', 'addCollectionElement') }} aria-label="Ajouter une préférence personnalisée" aria-haspopup="true" aria-expanded="false">
+			Ajouter une préférence personnalisée</button>
 	</div>
 
 </div>

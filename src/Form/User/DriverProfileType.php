@@ -6,6 +6,7 @@ namespace App\Form\User;
 
 use App\Entity\User;
 use App\Form\CarType;
+use App\Form\PreferenceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -37,11 +38,17 @@ class DriverProfileType extends AbstractType
                 'help' => 'En tant que chauffeur, acceptez-vous de voyager avec des personnes fumeuses ?',
                 'help_attr' => ['class' => 'visually-hidden'],
             ])
+            ->add('preferences', CollectionType::class, [
+                'entry_type' => PreferenceType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
             ->add('driverRoleChosen', CheckboxType::class, [
                 'label' => 'Accéder au statut "chauffeur" ?',
                 'required' => false,
-                'help' =>
-                    'Accéder au statut "chauffeur" ? Ce statut est public.
+                'help' => 'Accéder au statut "chauffeur" ? Ce statut est public.
                     Seuls les utilisateurs ayant validé un statut "chauffeur"
                     peuvent proposer de nouveaux trajets sur la plateforme.
                     Pour y accéder, vous devez avoir complété votre profil passager
