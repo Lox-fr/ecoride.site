@@ -23,7 +23,6 @@ class PassengerProfileType extends AbstractType
             ->add('pseudo', TextType::class, [
                 'label' => 'Pseudo',
                 'attr' => ['placeholder' => 'nom d\'utilisateur'],
-                'help_html' => true,
                 'help' => 'C\'est votre nom d\'utilisateur, visible par les autres utilisateurs de la plateforme.
                     Il doit contenir entre 3 et 30 caractères -
                     seulement des lettres, des chiffres et des underscores.',
@@ -45,7 +44,6 @@ class PassengerProfileType extends AbstractType
                 'label' => 'Prénom',
                 'required' => false,
                 'attr' => ['placeholder' => 'votre prénom'],
-                'help_html' => true,
                 'help' => 'Votre prénom, il doit contenir entre 3 et 50 caractères -
                     seulement des lettres, des espaces, des tirets ou des apostrophes.',
                 'help_attr' => ['class' => 'visually-hidden'],
@@ -54,7 +52,6 @@ class PassengerProfileType extends AbstractType
                 'label' => 'Nom de famille',
                 'required' => false,
                 'attr' => ['placeholder' => 'votre nom de famille'],
-                'help_html' => true,
                 'help' => 'Votre nom de famille, il doit contenir entre 3 et 50 caractères -
                     seulement des lettres, des espaces, des tirets ou des apostrophes.',
                 'help_attr' => ['class' => 'visually-hidden'],
@@ -63,7 +60,6 @@ class PassengerProfileType extends AbstractType
                 'label' => 'Adresse postale',
                 'required' => false,
                 'attr' => ['placeholder' => 'votre adresse postale'],
-                'help_html' => true,
                 'help' => 'Votre adresse postale complète, incluant code postal et ville.',
                 'help_attr' => ['class' => 'visually-hidden'],
             ])
@@ -71,7 +67,6 @@ class PassengerProfileType extends AbstractType
                 'label' => 'Numéro de téléphone',
                 'required' => false,
                 'attr' => ['placeholder' => 'Votre numéro de téléphone'],
-                'help_html' => true,
                 'help' => 'Votre numéro de téléphone - portable ou fixe.',
                 'help_attr' => ['class' => 'visually-hidden'],
             ])

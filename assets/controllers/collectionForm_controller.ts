@@ -33,6 +33,8 @@ export default class extends Controller {
     private addDeleteLink(item: HTMLElement): void {
         const removeFormButton = document.createElement("button");
         removeFormButton.classList.add("collectionItemDeleteLink");
+        removeFormButton.setAttribute("aria-label", "Supprimer cet élément");
+        removeFormButton.setAttribute("type", "button");
         const trashIconElement = document.querySelector("[data-trash-icon]");
 
         if (trashIconElement) {
@@ -41,7 +43,7 @@ export default class extends Controller {
                 removeFormButton.innerHTML = trashIconHTML;
             }
         } else {
-            removeFormButton.innerText = "Delete this item";
+            removeFormButton.innerText = "Supprimer cet élément";
         }
 
         item.appendChild(removeFormButton);

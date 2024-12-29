@@ -43,7 +43,9 @@ class DriverProfileType extends AbstractType
                 'help' =>
                     'Accéder au statut "chauffeur" ? Ce statut est public.
                     Seuls les utilisateurs ayant validé un statut "chauffeur"
-                    peuvent proposer de nouveaux trajets sur la plateforme.',
+                    peuvent proposer de nouveaux trajets sur la plateforme.
+                    Pour y accéder, vous devez avoir complété votre profil passager
+                    (onglet "Vos informations"), et enregistré au moins un véhicule.',
                 'help_attr' => ['class' => 'visually-hidden'],
             ])
             ->add('submit', SubmitType::class, [

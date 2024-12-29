@@ -26,7 +26,9 @@ class CarType extends AbstractType
                 'label' => 'Marque*',
                 'choice_label' => 'label',
                 'placeholder' => 'Veuillez sélectionner',
-                'required' => true
+                'required' => true,
+                'help' => 'Quelle est la marque du vehicule ? liste déroulante de choix.',
+                'help_attr' => ['class' => 'visually-hidden']
             ])
             ->add('model', TextType::class, [
                 'label' => 'Modèle*',
@@ -41,14 +43,18 @@ class CarType extends AbstractType
                 'label' => 'Couleur*',
                 'choice_label' => 'label',
                 'placeholder' => 'Veuillez sélectionner',
-                'required' => true
+                'required' => true,
+                'help' => 'Quelle est la couleur du vehicule ? liste déroulante de choix.',
+                'help_attr' => ['class' => 'visually-hidden']
             ])
             ->add('engineType', EntityType::class, [
                 'class' => EngineType::class,
                 'label' => 'Motorisation*',
                 'choice_label' => 'label',
                 'placeholder' => 'Veuillez sélectionner',
-                'required' => true
+                'required' => true,
+                'help' => 'Quelle est la motorisation du vehicule ? liste déroulante de choix.',
+                'help_attr' => ['class' => 'visually-hidden']
             ])
             ->add('licensePlate', TextType::class, [
                 'label' => 'Plaque d\'immatriculation*',
