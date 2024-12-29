@@ -29,7 +29,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * If any error occurs during the registration process (e.g., database issues, query execution failure),
      * an exception is thrown.
      *
-     * @param User $user the user entity containing the registration details such as email, pseudo, password, etc
+     * @param User $user The user entity containing the registration details such as email, pseudo, password, etc
      *
      * @throws \Exception If the SQL query execution fails or any other error occurs during registration,
      *                    including issues with the user data (e.g., invalid values).
@@ -37,7 +37,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function register(User $user): void
     {
         try {
-            $this->sqlManager->execute('userRegistration', 'queries/create', null, [
+            $this->sqlManager->execute('create/user', 'queries', null, [
                 'email' => $user->getEmail(),
                 'pseudo' => $user->getPseudo(),
                 'password' => $user->getPassword(),
@@ -51,22 +51,36 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Used to upgrade (rehash) the user's password automatically over time.
+     */
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    {
+        if (!$user instanceof User) {
+            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', $user::class));
+        }
+
+        $user->setPassword($newHashedPassword);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
      * Fetches the user ID based on the provided email using a SQL query stored in a local file.
      *
      * This method queries the database for a user with the given email and
      * retrieves the corresponding user ID using a prepared SQL query.
      * If no user is found with the provided email, the method returns null.
      *
-     * @param string $email the email of the user whose ID is to be retrieved
+     * @param string $email The email of the user whose ID is to be retrieved
      *
-     * @throws \Exception if there is an error executing the SQL query or during the database interaction
+     * @throws \Exception If there is an error executing the SQL query or during the database interaction
      *
-     * @return int|null the user ID if found, or null if no user exists with the provided email
+     * @return int|null The user ID if found, or null if no user exists with the provided email
      */
-    public function getUserIdByEmail(string $email): ?int
+    public function findUserIdByEmail(string $email): ?int
     {
         try {
-            $result = $this->sqlManager->execute('userIdByEmail', 'queries/read', SqlManager::FETCH_ONE, [
+            $result = $this->sqlManager->execute('read/userIdByEmail', 'queries', SqlManager::FETCH_ONE, [
                 'email' => $email,
             ]);
 
@@ -81,18 +95,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * Updates the passenger profile in the database using a SQL file.
      *
      * This method executes an SQL update query to synchronize the passenger's profile information.
-     * It returns `true` if the update was successful, or `false` otherwise.
+     * It returns "true" if the update was successful, or "false" otherwise.
      *
-     * @param User $user the user entity containing the passenger's profile information
+     * @param User $user The user entity containing the passenger's profile information
      *
-     * @throws \Exception if the SQL query execution fails, an exception is thrown with details
+     * @throws \Exception If the SQL query execution fails, an exception is thrown with details
      *
-     * @return bool `true` if the update succeeds, `false` otherwise
+     * @return bool "true" If the update succeeds, "false" otherwise
      */
     public function savePassengerProfile(User $user): bool
     {
         try {
-            $result = $this->sqlManager->execute('passengerProfile', 'queries/update', null, [
+            $result = $this->sqlManager->execute('update/passengerProfile', 'queries', null, [
                 'pseudo' => $user->getPseudo(),
                 'photo_filename' => $user->getPhotoFilename(),
                 'first_name' => $user->getFirstName(),
@@ -112,41 +126,92 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Used to upgrade (rehash) the user's password automatically over time.
+     * Updates the driver profile in the database using a SQL file.
+     *
+     * This method executes an SQL update query to synchronize the driver's profile information.
+     * It returns "true" if the update was successful, or "false" otherwise.
+     *
+     * @param User $user The user entity containing the driver's profile information
+     *
+     * @throws \Exception If the SQL query execution fails, an exception is thrown with details
+     *
+     * @return bool "true" If the update succeeds, "false" otherwise
      */
-    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    public function saveDriverProfile(User $user): bool
     {
-        if (!$user instanceof User) {
-            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', $user::class));
-        }
+        try {
+            $result = $this->sqlManager->execute('update/driverProfile', 'queries', null, [
+                'pets_allowed' => (int) $user->isPetsAllowed(),
+                'smokers_allowed' => (int) $user->isSmokersAllowed(),
+                'driver_role_chosen' => (int) $user->isDriverRoleChosen(),
+                'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'id' => $user->getId(),
+            ]);
 
-        $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+            return true === $result;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Flush of driver informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
+        }
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Checks if a user has the role of driver (ROLE_DRIVER).
+     *
+     * This method uses an SQL query to count the occurrences of the role
+     * 'ROLE_DRIVER' for a given user.
+     *
+     * @param int $userId The ID of the user for whom to check the role
+     *
+     * @throws \Exception If there is an error executing the SQL query
+     *
+     * @return bool Returns true if the user is a driver, otherwise false
+     */
+    public function isDriver(int $userId): bool
+    {
+        try {
+            $result =
+                $this->sqlManager->execute('read/isDriverByUserId', 'queries', SqlManager::FETCH_ONE,
+                    ['user_id' => (int) $userId]);
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+            return $result > 0;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Fetch of user roles failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Remove the driver role for a specific user (identified by the given user ID) in the database using a SQL file.
+     *
+     * @param int $userId The user ID for which the driver role is to be removed
+     *
+     * @throws \Exception If the SQL query execution fails, an exception is thrown with details
+     */
+    public function removeDriverRoleByUserId(int $userId): void
+    {
+        try {
+            $this->sqlManager->execute('delete/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Deletion of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Add the driver role for a specific user (identified by the given user ID) in the database using a SQL file.
+     *
+     * @param int $userId The user ID for which the driver role is to be added
+     *
+     * @throws \Exception If the SQL query execution fails, an exception is thrown with details
+     */
+    public function addDriverRoleByUserId(int $userId): void
+    {
+        try {
+            $this->sqlManager->execute('create/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Creation of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
 }

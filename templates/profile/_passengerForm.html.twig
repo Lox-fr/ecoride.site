@@ -7,6 +7,7 @@
 		<span class="text-nowrap">votre profil</span>
 	{% else %}
 		<span class="text-nowrap">Votre profil</span>
+		<span class="text-nowrap">passager</span>
 		<span class="text-nowrap">est complet</span>
 	{% endif %}
 </h2>
@@ -99,7 +100,7 @@
 	class="d-flex flex-wrap justify-content-evenly mt-4 pt-3">
 
 	{# First name input #}
-	<div class="form-floating mx-2 mb-3" style="">
+	<div class="form-floating mx-2 mb-3">
 		{{ form_widget(passengerProfileForm.firstName, { 'attr' : {
 			'class' : 'text-start rounded-3 shadow ps-4',
 			'style' : 'min-width: 260px;' }}) }}
@@ -111,7 +112,7 @@
 	</div>
 
 	{# Last name input #}
-	<div class="form-floating mx-2 mb-3" style="">
+	<div class="form-floating mx-2 mb-3">
 		{{ form_widget(passengerProfileForm.lastName, { 'attr' : {
 			'class' : 'text-start rounded-3 shadow ps-4',
 			'style' : 'min-width: 260px;' }}) }}
@@ -188,4 +189,3 @@
 </div>
 
 {{ form_end(passengerProfileForm) }}
-

@@ -20,6 +20,7 @@ export default class extends Controller {
 
     addCollectionElement() {
         const item = document.createElement("li");
+        item.classList.add("collectionItem");
         item.innerHTML = this.prototypeValue.replace(
             /__name__/g,
             this.indexValue.toString()
@@ -31,7 +32,17 @@ export default class extends Controller {
 
     private addDeleteLink(item: HTMLElement): void {
         const removeFormButton = document.createElement("button");
-        removeFormButton.innerText = "Delete this item";
+        removeFormButton.classList.add("collectionItemDeleteLink");
+        const trashIconElement = document.querySelector("[data-trash-icon]");
+
+        if (trashIconElement) {
+            const trashIconHTML = trashIconElement.getAttribute("data-trash-icon");
+            if (trashIconHTML) {
+                removeFormButton.innerHTML = trashIconHTML;
+            }
+        } else {
+            removeFormButton.innerText = "Delete this item";
+        }
 
         item.appendChild(removeFormButton);
 

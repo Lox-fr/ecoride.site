@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Form\Profile;
+namespace App\Form\User;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -16,21 +15,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-class PassengerType extends AbstractType
+class PassengerProfileType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // ->add('email', EmailType::class, [
-            //     'label' => 'Adresse email',
-            //     'required' => false,
-            //     'attr' => ['placeholder' => 'exemple@mail.com'],
-            //     'help_html' => true,
-            //     'help' => 'C\'est l\'identifiant de votre compte.
-            //         Cette adresse n\'est pas visible par les autres utilisateurs de la plateforme.
-            //         Il n\'existe pas encore de procédure automatisée de changement d\'adresse email.
-            //         Si besoin, vous devez en faire la demande au <a href="{{ path(\'app_home\') }}">support</a>.',
-            // ])
             ->add('pseudo', TextType::class, [
                 'label' => 'Pseudo',
                 'attr' => ['placeholder' => 'nom d\'utilisateur'],
@@ -97,7 +86,7 @@ class PassengerType extends AbstractType
                     'data-flatpickr-target' => 'dateInput',
                     'aria-describedby' => 'user_dateOfBirth_help',
                     'aria-hidden' => 'true'],
-                'help' => 'Utilisez les flèches pour naviguer dans le sélecteur de date.',
+                'help' => 'Quand êtes-vous né(e) ? Vous pouvez utiliser les flèches pour naviguer dans le sélecteur de date.',
                 'help_attr' => ['class' => 'visually-hidden'],
             ])
             ->add('submit', SubmitType::class, [

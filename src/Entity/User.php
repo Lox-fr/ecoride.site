@@ -186,6 +186,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Car>
      */
+    #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: Car::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $cars;
 
@@ -479,18 +480,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roleLabels);
     }
 
-    public function addRoles(Role $roles): static
+    public function addRole(Role $role): static
     {
-        if (!$this->roles->contains($roles)) {
-            $this->roles->add($roles);
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
         }
 
         return $this;
     }
 
-    public function removeRoles(Role $roles): static
+    public function removeRole(Role $role): static
     {
-        $this->roles->removeElement($roles);
+        $this->roles->removeElement($role);
 
         return $this;
     }
