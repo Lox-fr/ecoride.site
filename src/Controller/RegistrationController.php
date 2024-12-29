@@ -27,7 +27,7 @@ class RegistrationController extends AbstractController
     ): Response|RedirectResponse {
         // If the user is already logged in, redirect them to the profile page
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_user_profile');
+            return $this->redirectToRoute('app_profile');
         }
         $user = new User();
         $registrationForm = $this->createForm(RegistrationFormType::class, $user);
