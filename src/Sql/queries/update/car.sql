@@ -9,4 +9,4 @@ SET license_plate = :license_plate,
     number_of_seats = :number_of_seats,
     created_at = :created_at,
     active = :active
-WHERE id = :id;
+WHERE id = :car_id;

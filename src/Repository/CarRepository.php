@@ -105,7 +105,7 @@ class CarRepository extends ServiceEntityRepository
                 'number_of_seats' => (int) $car->getNumberOfSeats(),
                 'created_at' => $car->getCreatedAt()->format('Y-m-d H:i:s'),
                 'active' => (int) $car->isActive(),
-                'id' => (int) $car->getId()
+                'car_id' => (int) $car->getId()
             ]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf('
