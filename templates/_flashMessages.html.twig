@@ -1,7 +1,7 @@
 {% for label, messages in app.flashes %}
 	{% for message in messages %}
-		<div class="container-fluid bg-light border-top border-bottom border-primary">
-			<div class="container mt-3 flash-{{ label }} alert text-center rounded {{ label == 'success' ? 'alert-success' : 'alert-danger' }}" role="alert">
+		<div class="container-fluid bg-light border-top border-bottom">
+			<div class="container mt-3 flash-{{ label }} alert text-center rounded {{ label == 'error' ? 'alert-danger' : 'alert-' ~ label }}" role="alert">
 				{{ message|raw}}
 			</div>
 		</div>
