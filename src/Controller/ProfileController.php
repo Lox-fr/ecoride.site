@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\User\DriverProfileType;
-use App\Form\User\PassengerProfileType;
+use App\Form\User\DriverProfileFormType;
+use App\Form\User\PassengerProfileFormType;
 use App\Repository\CarRepository;
 use App\Repository\PreferenceRepository;
 use App\Repository\UserRepository;
@@ -71,7 +71,7 @@ class ProfileController extends AbstractController
         FileUploader $fileUploader,
         RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
-        $passengerForm = $this->createForm(PassengerProfileType::class, $user);
+        $passengerForm = $this->createForm(PassengerProfileFormType::class, $user);
         $passengerForm->handleRequest($request);
         if ($passengerForm->isSubmitted() && $passengerForm->isValid()) {
             /** @var UploadedFile $photoFile */
@@ -103,7 +103,7 @@ class ProfileController extends AbstractController
         PreferenceRepository $preferenceRepository,
         RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
-        $driverProfileForm = $this->createForm(DriverProfileType::class, $user);
+        $driverProfileForm = $this->createForm(DriverProfileFormType::class, $user);
         $driverProfileForm->handleRequest($request);
         if ($driverProfileForm->isSubmitted() && $driverProfileForm->isValid()) {
             $this->handleCarInputsInDriverForm($user, $carRepository);

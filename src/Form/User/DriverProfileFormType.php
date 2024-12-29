@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Form\User;
 
 use App\Entity\User;
-use App\Form\CarType;
-use App\Form\PreferenceType;
+use App\Form\CarFormType;
+use App\Form\PreferenceFormType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -14,13 +14,13 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DriverProfileType extends AbstractType
+class DriverProfileFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('cars', CollectionType::class, [
-                'entry_type' => CarType::class,
+                'entry_type' => CarFormType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -39,7 +39,7 @@ class DriverProfileType extends AbstractType
                 'help_attr' => ['class' => 'visually-hidden'],
             ])
             ->add('preferences', CollectionType::class, [
-                'entry_type' => PreferenceType::class,
+                'entry_type' => PreferenceFormType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => true,
                 'allow_delete' => true,
