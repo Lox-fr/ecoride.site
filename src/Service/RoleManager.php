@@ -47,13 +47,16 @@ class RoleManager
 
     /**
      * Handles the form submission to manage the "Driver" role for the user.
-     * Currently, a role change causes the user to be logged out.
+     * If the user already has the role, it validates whether they still meet the criteria.
+     * If the user does not have the role, it checks if they are eligible to acquire it.
      *
-     * @param FormInterface $form the submitted form to handle
+     * Note: Role changes currently cause the user to be logged out due to session updates.
+     *
+     * @param FormInterface $form the submitted form to process
      *
      * @throws \Exception if the user is not authenticated
      *
-     * @return bool true if the user can retain or gain the "Driver" role, false otherwise
+     * @return bool true if the user retains or gains the "Driver" role, false otherwise
      */
     public function handleProfileFormToBeDriver(FormInterface $form): bool
     {
@@ -73,10 +76,12 @@ class RoleManager
                 }
             } else {
                 // If the user does not have the role, check if they meet the criteria to acquire it
-                if (self::canBeDriver($user) && $user->isDriverRoleChosen()) {
-                    $this->userRepository->addDriverRoleByUserId($user->getId());
-                } else {
-                    return false;
+                if ($user->isDriverRoleChosen()) {
+                    if (self::canBeDriver($user)) {
+                        $this->userRepository->addDriverRoleByUserId($user->getId());
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
