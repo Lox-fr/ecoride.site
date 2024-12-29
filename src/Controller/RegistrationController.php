@@ -63,7 +63,7 @@ class RegistrationController extends AbstractController
                 /* AUTOMATICALLY LOG IN */
                 try {
                     /* Fetch user id from email */
-                    $userId = $userRepository->getUserIdByEmail($userEmail);
+                    $userId = $userRepository->findUserIdByEmail($userEmail);
                     if (false === $userId || null === $userId) {
                         throw new \Exception('No user found with this email address.');
                     }

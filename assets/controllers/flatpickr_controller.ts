@@ -24,13 +24,23 @@ export default class extends Controller {
     }
 
     /**
-     * Returns flatpickr options based on the mode ("sinceToday" or "dateOfBirth").
+     * Returns flatpickr options based on the mode ("beforeToday", "sinceToday" or "dateOfBirth").
      * @param mode The configuration mode.
      */
     private getFlatpickrOptions(mode: string) {
         const today = new Date();
 
-        if (mode === "dateOfBirth") {
+        if (mode === "beforeToday") {
+
+            return {
+                maxDate:
+                    this.element.getAttribute("data-flatpickr-max-date") ||
+                    today.toISOString().split("T")[0],
+                altFormat: "j F Y",
+            };
+
+        }
+        else if (mode === "dateOfBirth") {
             const defaultMinDate = new Date(today.getFullYear() - 130, today.getMonth(), today.getDate());
             const defaultMaxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 

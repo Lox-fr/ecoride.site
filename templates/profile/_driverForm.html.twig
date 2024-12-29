@@ -1,22 +1,144 @@
-<div
-	class="mx-auto">
+{{ form_start(driverProfileForm) }}
 
-	{# Smokers allowed switch #}
+<h2 class="fs-3 fw-bold mt-4 mb-3 px-3 pb-2 border-bottom border-primary">
+	{% if app.user.driverProfileCompleted %}
+		{% if is_granted('ROLE_DRIVER') %}
+			<span class="text-nowrap">Votre profil</span>
+			<span class="text-nowrap">chauffeur</span>
+		{% else %}
+			<span class="text-nowrap">Vous pouvez</span>
+			<span class="text-nowrap">accéder au</span>
+			<span class="text-nowrap">statut chauffeur</span>
+		{% endif %}
+	{% else %}
+		Devenez chauffeur
+	{% endif %}
+</h2>
+
+<h3 class="fs-5 fw-bold mt-4 px-3 text-decoration-underline">Vos véhicules</h3>
+
+<div class="d-flex align-items-center align-items-center mx-sm-3 mb-5" id="cars">
+
+	{# Cars #}
+	{% set carFormPrototype %}
+		{% include "profile/_carForm.html.twig" with { 'car': driverProfileForm.cars.vars.prototype } %}
+	{% endset %}
+	<div class="mx-auto mt-0" {{ stimulus_controller('collectionForm') }} data-collectionform-index-value="{{ driverProfileForm.cars|length > 0 ? driverProfileForm.cars|last.vars.name + 1 : 0 }}" data-collectionform-prototype-value={{ carFormPrototype|e('html_attr') }} data-trash-icon="{{ ux_icon('f7:trash')|e('html_attr') }}">
+		{% if app.user.cars|length == 0 %}
+			<span class="fst-italic">Vous n'avez aucun véhicule enregistré pour l'instant ...</span>
+		{% endif %}
+		<ul {{ stimulus_target('collectionForm', 'collectionContainer') }} class="mt-4 gap-5">
+			{% if app.user.cars|length > 0 %}
+				{% for car in driverProfileForm.cars %}
+					<li>
+						{% include "profile/_carForm.html.twig" with { 'car': car } %}
+					</li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+		{# Add a car button #}
+		<button class="btn btn-sm btn-outline-primary" type="button" {{ stimulus_action('collectionForm', 'addCollectionElement') }} aria-label="Ajouter un véhicule" aria-haspopup="true" aria-expanded="false">
+			Ajouter un véhicule</button>
+	</div>
+
+</div>
+
+<hr>
+
+<h3 class="fs-5 fw-bold mt-4 px-3 mb-5 text-decoration-underline">Vos préférences</h3>
+
+<div class="d-flex flex-column align-items-center align-items-center mx-sm-3 mb-5" id="preferences">
+
+	{# Smokers allowed switch button #}
 	<div class="d-inline-flex form-check form-switch ps-0 ps-sm-3 ps-xl-0 mb-4 mx-5">
 		{{ form_widget(driverProfileForm.smokersAllowed, { 'attr' : {
+			'aria-describedby': driverProfileForm.smokersAllowed.vars.id ~ '_help',
 			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2', }}) }}
 		{{ form_label(driverProfileForm.smokersAllowed) }}
 		{{ form_errors(driverProfileForm.smokersAllowed) }}
 		{{ form_help(driverProfileForm.smokersAllowed) }}
 	</div>
 
-	{# Pets allowed switch #}
+	{# Pets allowed switch button #}
 	<div class="d-inline-flex form-check form-switch ps-0 ps-sm-3 ps-xl-0 mb-3 mx-5">
 		{{ form_widget(driverProfileForm.petsAllowed, { 'attr' : {
-			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2', }}) }}
+			'aria-describedby': driverProfileForm.petsAllowed.vars.id ~ '_help',
+			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2' }}) }}
 		{{ form_label(driverProfileForm.petsAllowed) }}
 		{{ form_errors(driverProfileForm.petsAllowed) }}
 		{{ form_help(driverProfileForm.petsAllowed) }}
 	</div>
 
+	{# Custom preferences #}
+	{% set preferenceFormPrototype %}
+		{% include "profile/_preferenceForm.html.twig" with { 'preference': driverProfileForm.preferences.vars.prototype } %}
+	{% endset %}
+	<div class="mx-auto mt-0" {{ stimulus_controller('collectionForm') }} data-collectionform-index-value="{{ driverProfileForm.preferences|length > 0 ? driverProfileForm.preferences|last.vars.name + 1 : 0 }}" data-collectionform-prototype-value={{ preferenceFormPrototype|e('html_attr') }} data-trash-icon="{{ ux_icon('f7:trash')|e('html_attr') }}">
+		<ul {{ stimulus_target('collectionForm', 'collectionContainer') }} class="mt-4 gap-5">
+			{% if app.user.preferences|length > 0 %}
+				{% for preference in driverProfileForm.preferences %}
+					<li>
+						{% include "profile/_preferenceForm.html.twig" with { 'preference': preference } %}
+					</li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+		{# Add a custom preference button #}
+		<button class="btn btn-sm btn-outline-primary" type="button" {{ stimulus_action('collectionForm', 'addCollectionElement') }} aria-label="Ajouter une préférence personnalisée" aria-haspopup="true" aria-expanded="false">
+			Ajouter une préférence personnalisée</button>
+	</div>
+
 </div>
+
+<hr>
+
+<h3 class="fs-5 fw-bold mt-4 px-3 mb-5 text-decoration-underline">Votre statut EcoRide</h3>
+
+{# Role status switch button #}
+<p class="mx-3">
+	{% if not app.user.driverProfileCompleted %}
+		Pour devenir chauffeur
+		<span class="handwriting fw-bold">EcoRide</span>, vous devez
+		{% if not app.user.passengerProfileCompleted %}
+			avoir complété l'onglet "Vos informations",
+			{{ app.user.cars is empty ? 'et ' }}
+		{% endif %}
+		{% if app.user.cars is empty %}
+			avoir enregtistré au moins un véhicule
+		{% endif %}
+	{% else %}
+		{% if is_granted('ROLE_DRIVER') %}
+			Vous pouvez publier vos trajets et partager vos déplacements !
+		{% else %}
+			Si vous souhaitez publier des trajets et rentabiliser vos déplacements,
+			vous devez avoir le statut "chauffeur
+			<span class="handwriting fw-bold">EcoRide</span>"
+		{% endif %}
+	{% endif %}
+</p>
+
+<div class="d-inline-flex form-check form-switch ps-0 ps-sm-3 ps-xl-0 mb-3 mx-5">
+	{% if not app.user.driverProfileCompleted %}
+		{{ form_widget(driverProfileForm.driverRoleChosen, { 'attr' : {
+			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2',
+			'aria-describedby': driverProfileForm.driverRoleChosen.vars.id ~ '_help',
+			'disabled' : 'disabled' }}) }}
+	{% else %}
+		{{ form_widget(driverProfileForm.driverRoleChosen, { 'attr' : {
+			'class' : 'shadow fs-4 mt-0 ms-xl-0 me-xl-2' }}) }}
+	{% endif %}
+	{{ form_errors(driverProfileForm.driverRoleChosen) }}
+	{{ form_help(driverProfileForm.driverRoleChosen) }}
+</div>
+
+<hr>
+
+{# Submit button #}
+{{ form_row(driverProfileForm.submit, { 'attr': {
+	'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3' }}) }}
+
+<div class="d-none">
+	{{ form_rest(driverProfileForm) }}
+</div>
+
+{{ form_end(driverProfileForm) }}

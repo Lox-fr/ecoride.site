@@ -43,7 +43,7 @@ export default class extends Controller {
             fileInput.click();
         } else {
             console.error(
-                `Aucun champ de fichier trouvé avec le sélecteur : ${this.selectors.fileInputSelector}`
+                "Aucun champ de fichier trouvé avec le sélecteur : ${this.selectors.fileInputSelector}"
             );
         }
     }

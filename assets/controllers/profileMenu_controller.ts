@@ -5,6 +5,7 @@ interface Selectors {
     userBtnSelector: string;
 }
 
+// Used to toggle the buttons in the profile page menu
 export default class extends Controller {
     selectors: Selectors = {
         userBtnSelector: ".userBtn",

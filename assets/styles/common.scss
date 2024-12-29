@@ -71,6 +71,18 @@ ul {
     color: $userBtn-color;
 }
 
+.collectionItemDeleteLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    min-width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
 #popularRides {
     li a:hover {
         background-color: $popularRide-hover-color;
@@ -81,6 +93,21 @@ ul {
     .rounded-xs-start {
         border-top-left-radius: 0.85rem !important;
         border-bottom-left-radius: 0.85rem !important;
+    }
+}
+
+#devenirChauffeur {
+    #cars {
+        .collectionItemDeleteLink {
+            margin-bottom: 1.8rem;
+        }
+    }
+
+    #preferences {
+        .collectionItem {
+            display: inline-flex;
+            align-items: center;
+        }
     }
 }
 

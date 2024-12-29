@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Car;
+use App\Service\SqlManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,33 +14,122 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CarRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private SqlManager $sqlManager)
     {
         parent::__construct($registry, Car::class);
     }
 
-    //    /**
-    //     * @return Car[] Returns an array of Car objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Adds a new car in the database using a SQL query stored in a local file.
+     *
+     * This method inserts a car into the 'car' table using a prepared SQL query.
+     * If any error occurs during the registration process (e.g., database issues, query execution failure),
+     * an exception is thrown.
+     *
+     * @param Car $car The flushed car entity
+     *
+     * @throws \Exception If the SQL query execution fails or any other error occurs during registration,
+     *                    including issues with the user data (e.g., invalid values)
+     */
+    public function createCar(Car $car): void
+    {
+        try {
+            $this->sqlManager->execute('create/car', 'queries', null, [
+                'license_plate' => $car->getLicensePlate(),
+                'date_of_first_registration' => $car->getDateOfFirstRegistration()->format('Y-m-d H:i:s'),
+                'model' => $car->getModel(),
+                'user_id' => $car->getUser()->getId(),
+                'brand_id' => $car->getBrand()->getId(),
+                'engine_type_id' => $car->getEngineType()->getId(),
+                'color_id' => $car->getColor()->getId(),
+                'number_of_seats' => (int) $car->getNumberOfSeats(),
+                'created_at' => $car->getCreatedAt()->format('Y-m-d H:i:s'),
+                'active' => (int) $car->isActive(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Creation of new car failed for "%s": %s', $car->getLicensePlate(), $e->getMessage()), 0, $e);
+        }
+    }
 
-    //    public function findOneBySomeField($value): ?Car
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Fetches the licenses plates (LP) associated with a specific user ID using a SQL query stored in a local file.
+     *
+     * This method queries the database for LP linked to the provided user ID
+     * and retrieves them using a prepared SQL query.
+     *
+     * @param int $userId The user id of the LP to retrieve
+     *
+     * @throws \Exception If there is an error executing the SQL query or during the database interaction
+     *
+     * @return array An array of LP with numeric index as keys, or an empty array if no LP are found
+     */
+    public function findLicencePlatesByUserId(int $userId): array
+    {
+        try {
+            $result = $this->sqlManager->execute(
+                'read/licensePlatesByUserId', 'queries', SqlManager::FETCH_FIRST_COLUMN, [
+                    'user_id' => (int) $userId,
+                ]);
+
+            return $result ?: [];
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Error fetching license plates for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Adds a new car in the database using a SQL query stored in a local file.
+     *
+     * This method inserts a car into the 'car' table using a prepared SQL query.
+     * If any error occurs during the registration process (e.g., database issues, query execution failure),
+     * an exception is thrown.
+     *
+     * @param Car $car The flushed car entity
+     *
+     * @throws \Exception If the SQL query execution fails or any other error occurs during registration,
+     *                    including issues with the user data (e.g., invalid values)
+     */
+    public function updateCar(Car $car): void
+    {
+        try {
+            $this->sqlManager->execute('update/car', 'queries', null, [
+                'license_plate' => $car->getLicensePlate(),
+                'date_of_first_registration' => $car->getDateOfFirstRegistration()->format('Y-m-d H:i:s'),
+                'model' => $car->getModel(),
+                'user_id' => $car->getUser()->getId(),
+                'brand_id' => $car->getBrand()->getId(),
+                'engine_type_id' => $car->getEngineType()->getId(),
+                'color_id' => $car->getColor()->getId(),
+                'number_of_seats' => (int) $car->getNumberOfSeats(),
+                'created_at' => $car->getCreatedAt()->format('Y-m-d H:i:s'),
+                'active' => (int) $car->isActive(),
+                'car_id' => (int) $car->getId()
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Creation of new car failed for "%s": %s', $car->getLicensePlate(), $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Deletes the car associated with a specific license plate using a SQL query stored in a local file.
+     *
+     * This method executes a prepared SQL query to delete the car linked to the provided license plate.
+     *
+     * @param string $licensePlate The license plate of the car to delete
+     *
+     * @throws \Exception If there is an error executing the SQL query or during the database interaction
+     */
+    public function deleteCarByLicensePlate(string $licensePlate): void
+    {
+        try {
+            $this->sqlManager->execute(
+                'delete/carByLicensePlate', 'queries', null, ['license_plate' => $licensePlate]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Error deleting car for license plate "%s": %s', $licensePlate, $e->getMessage()), 0, $e);
+        }
+    }
 }
