@@ -1,6 +1,6 @@
 CREATE TABLE reset_password_request (
-    id BIGINT AUTO_INCREMENT NOT NULL,
-    user_id INT NOT NULL,
+    id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
     selector VARCHAR(20) NOT NULL,
     hashed_token VARCHAR(100) NOT NULL,
     requested_at DATETIME NOT NULL,
