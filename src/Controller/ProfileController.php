@@ -25,7 +25,7 @@ class ProfileController extends AbstractController
 {
     #[Route('/{activeTab}',
         name: 'app_profile',
-        requirements: ['activeTab' => 'informations|devenir-chauffeur|historique-trajets'],
+        requirements: ['activeTab' => 'informations|devenir-chauffeur|proposer-trajet|historique-trajets'],
         defaults: ['activeTab' => null]
     )]
     public function index(
@@ -38,6 +38,10 @@ class ProfileController extends AbstractController
         ?string $activeTab,
     ): Response|RedirectResponse {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        if ($activeTab === 'proposer-trajets') {
+            return $this->redirectToRoute('app_carpool_add');
+        }
 
         /** @var User $user */
         $user = $this->getUser() ?? new User();
