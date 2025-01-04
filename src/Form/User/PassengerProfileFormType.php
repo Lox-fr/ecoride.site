@@ -75,7 +75,6 @@ class PassengerProfileFormType extends AbstractType
                 'required' => false,
                 'input' => 'datetime_immutable',
                 'widget' => 'single_text',
-                'label' => 'votre date de naissance',
                 'html5' => false,
                 'attr' => [
                     'data-flatpickr-target' => 'dateInput',
