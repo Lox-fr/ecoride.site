@@ -30,11 +30,11 @@
 				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
 					<li class="nav-item mx-3 text-primary">
 						<a class="nav-link {{ controller_name == 'AddCarpoolController' ? 'active' }}" href="{{ path('app_carpool_add') }}" {{ controller_name == 'AddCarpoolController' ? 'aria-current="page"' }}>
-							<span class="d-none d-md-flex" style="width: 40px;" data-bs-toggle="tooltip" data-bs-title="Proposer un trajet" data-bs-placement="bottom">
+							<span class="d-none d-md-flex" style="width: 40px;" data-bs-toggle="tooltip" data-bs-title="Publier un trajet" data-bs-placement="bottom">
 								{{ ux_icon('line-md:map-marker-plus-twotone') }}
 							</span>
 							<span class="d-md-none">
-								Proposer un trajet
+								Publier un trajet
 							</span>
 						</a>
 					</li>

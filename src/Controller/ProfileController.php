@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Document\Carpool;
+use App\Entity\Car;
 use App\Entity\User;
+use App\Form\CarFormType;
+use App\Form\Carpool\CarpoolAddFormType;
 use App\Form\User\DriverProfileFormType;
 use App\Form\User\PassengerProfileFormType;
 use App\Repository\CarRepository;
@@ -25,7 +29,7 @@ class ProfileController extends AbstractController
 {
     #[Route('/{activeTab}',
         name: 'app_profile',
-        requirements: ['activeTab' => 'informations|devenir-chauffeur|proposer-trajet|historique-trajets'],
+        requirements: ['activeTab' => 'informations|devenir-chauffeur|publier-trajet|historique-trajets'],
         defaults: ['activeTab' => null]
     )]
     public function index(
@@ -39,7 +43,7 @@ class ProfileController extends AbstractController
     ): Response|RedirectResponse {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        if ($activeTab === 'proposer-trajets') {
+        if ('publier-trajets' === $activeTab) {
             return $this->redirectToRoute('app_carpool_add');
         }
 
@@ -65,6 +69,9 @@ class ProfileController extends AbstractController
             'roleDescription' => $roleManager->getRoleDescription(),
             'passengerProfileForm' => $passengerProfileForm,
             'driverProfileForm' => $driverProfileForm,
+            'carpoolForm' => $this->createForm(CarpoolAddFormType::class, new Carpool(),
+                ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]),
+            'carAddFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
         ]);
     }
 
