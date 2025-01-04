@@ -27,5 +27,5 @@ services:
     # please note that last definitions always *replace* previous ones
 
     App\Service\FileUploader:
-            arguments:
-                $targetDirectory: '%user_photos_directory%'
+        arguments:
+            $targetDirectory: '%user_photos_directory%'

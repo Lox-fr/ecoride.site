@@ -78,8 +78,8 @@
 			{{ form_help(car.licensePlate) }}
 		</div>
 
-		{# Date of first registration #}
-		<div class="form-floating mx-2 mb-3" data-controller="flatpickr" data-flatpickr-mode="beforeToday">
+		{# Date of first registration input #}
+		<div class="form-floating mx-2 mb-3" data-controller="flatpickr" data-flatpickr-mode="untilToday">
 			{{ form_widget(car.dateOfFirstRegistration, { 'attr' : {
                 'class' : 'text-start rounded-3 shadow ps-4 flatpickr',
                 'aria-describedby' : car.dateOfFirstRegistration.vars.id ~ '_help',
@@ -94,7 +94,7 @@
 
 	</div>
 
-	{# Number of Seats #}
+	{# Number of Seats input #}
 	<div class="form-floating mx-2 mb-3">
 		{{ form_widget(car.numberOfSeats, { 'attr' : {
 			'class' : 'text-start rounded-3 shadow ps-4',

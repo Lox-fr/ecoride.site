@@ -16,15 +16,19 @@
 
 
 			<section class="collapse {{ activeTab is same as 'informations' ? 'show' }}" id="infosPassager">
-				{% include "profile/_passengerForm.html.twig" %}
+				{% include "profile/_passengerForm/index.html.twig" %}
 			</section>
 
 			<section class="collapse {{ activeTab is same as 'devenir-chauffeur' ? 'show' }}" id="devenirChauffeur">
-				{% include "profile/_driverForm.html.twig" %}
+				{% include "profile/_driverForm/index.html.twig" %}
+			</section>
+
+			<section class="collapse {{ activeTab is same as 'publier-trajet' ? 'show' }}" id="publierTrajet">
+				{% include "profile/_addRideForm/index.html.twig" %}
 			</section>
 
 			<section class="collapse {{ activeTab is same as 'historique-trajets' ? 'show' }}" id="historiqueTrajets">
-				{% include "profile/_rideHistory.html.twig" %}
+				{% include "profile/_rideHistory/index.html.twig" %}
 			</section>
 
 		</div>

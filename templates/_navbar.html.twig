@@ -21,12 +21,24 @@
 		</button>
 
 		<div class="collapse d-md-inline-flex navbar-collapse w-auto" id="navbarSupportedContent">
-			<ul class="navbar-nav mx-auto mb-2 mb-md-0 fs-5 pe-md-5 pe-lg-0">
+			<ul class="d-flex align-items-center navbar-nav mx-auto mb-2 mb-md-0 fs-5 pe-md-5 pe-lg-0">
 				{# visible on all screens #}
 				<li role="separator"><hr></li>
 				<li class="nav-item mx-3">
 					<a class="nav-link {{ controller_name == 'CarpoolsController' ? 'active' }}" href="#" {{ controller_name == 'CarpoolsController' ? 'aria-current="page"' }}>Covoiturages</a>
 				</li>
+				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+					<li class="nav-item mx-3 text-primary">
+						<a class="nav-link {{ controller_name == 'AddCarpoolController' ? 'active' }}" href="{{ path('app_carpool_add') }}" {{ controller_name == 'AddCarpoolController' ? 'aria-current="page"' }}>
+							<span class="d-none d-md-flex" style="width: 40px;" data-bs-toggle="tooltip" data-bs-title="Publier un trajet" data-bs-placement="bottom">
+								{{ ux_icon('line-md:map-marker-plus-twotone') }}
+							</span>
+							<span class="d-md-none">
+								Publier un trajet
+							</span>
+						</a>
+					</li>
+				{% endif %}
 				<li class="nav-item mx-3">
 					<a class="nav-link {{ controller_name == 'ContactController' ? 'active' }}" href="#" {{ controller_name == 'ContactController' ? 'aria-current="page"' }}>Contact</a>
 				</li>
@@ -41,7 +53,7 @@
 					</li>
 				{% else %}
 					<li class="nav-item mx-3 d-md-none">
-                        <a class="nav-link" href="{{ path('app_profile') }}" aria-label="Consulter le compte et les informations utilisateur" role="button">Compte</a>
+                        <a class="nav-link" href="{{ path('app_profile') }}" aria-label="Naviguez vers la page profil de votre compte pour modifier vos informations, vos préférences, vos véhicules - Consultez votre historique et proposez des trajets" role="button">Profil</a>
                     </li>
 					<li class="nav-item mx-3 d-md-none">
                         <a class="nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
@@ -53,8 +65,8 @@
 		{# user menu, visible only on larger screens #}
 		<div class="d-none d-md-flex nav-item dropdown align-items-center" data-bs-toggle="tooltip" data-bs-title="Menu utilisateur" data-bs-placement="left">
 			<div id="userMenuDescription" class="visually-hidden">
-				Menu utilisateur, contient les options d'inscription et de connexion.
-				Contient également des liens vers les pages personnelles pour les utilisateurs connectés.
+				Menu utilisateur, contient les liens vers les pages d'inscription et de connexion.
+				Contient également des liens vers le profil pour les utilisateurs connectés.
 			</div>
 			<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-describedby="userMenuDescription" aria-haspopup="true">
 				{% if app.user %}
@@ -66,14 +78,17 @@
 			<ul class="dropdown-menu dropdown-menu-end shadow mt-3">
 				{% if is_granted('IS_AUTHENTICATED_FULLY') == false %}
 					<li>
-						<a class="dropdown-item nav-link {{ controller_name == 'RegistrationController' ? 'active' }} py-1" href="{{ path('app_register') }}" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }} aria-label="Accéder à la page d'inscription">S'inscrire</a>
+						<a class="dropdown-item nav-link py-1 {{ controller_name == 'RegistrationController' ? 'active' }}" href="{{ path('app_register') }}" {{ controller_name == 'RegistrationController' ? 'aria-current="page"' }} aria-label="Accéder à la page d'inscription">S'inscrire</a>
 					</li>
 					<li>
-						<a class="dropdown-item nav-link {{ controller_name == 'LoginController' ? 'active' }} py-1" href="{{ path('app_login') }}" {{ controller_name == 'LoginController' ? 'aria-current="page"' }} aria-label="Accéder à la page de connexion">Se connecter</a>
+						<a class="dropdown-item nav-link py-1 {{ controller_name == 'LoginController' ? 'active' }}" href="{{ path('app_login') }}" {{ controller_name == 'LoginController' ? 'aria-current="page"' }} aria-label="Accéder à la page de connexion">Se connecter</a>
 					</li>
 				{% else %}
 					<li>
-                        <a class="dropdown-item nav-link {{ controller_name == 'UserProfileController' ? 'active' }}" href="{{ path('app_profile') }}" {{ controller_name == 'UserProfileController' ? 'aria-current="page"' }} aria-label="Consulter le compte et les informations utilisateur"  role="button">Compte</a>
+                        <a class="dropdown-item nav-link py-1 {{ controller_name == 'UserProfileController' ? 'active' }}" href="{{ path('app_profile') }}" {{ controller_name == 'UserProfileController' ? 'aria-current="page"' }} aria-label="Naviguez vers la page profil de votre compte pour modifier vos informations, vos préférences, vos véhicules.">Profil</a>
+                    </li>
+					<li>
+                        <a class="dropdown-item nav-link {{ controller_name == 'CarpoolHistoryController' ? 'active' }}" href="{{ path('app_profile', {'activeTab': 'historique-trajets'}) }}" {{ controller_name == 'CarpoolHistoryController' ? 'aria-current="page"' }} aria-label="Consultez l'historique de vos trajets passés et à venir.">Historique</a>
                     </li>
 					<hr>
 					<li>

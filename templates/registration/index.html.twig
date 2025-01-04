@@ -7,11 +7,16 @@
 <section class="container d-flex flex-row justify-content-center align-items-center flex-fill" id="registrationForm">
 	<div method="post" class="rounded-5 framed shadow-lg p-4 my-5" style="width: 80%; min-width: 300px; max-width: 700px;" data-controller="tooltips">
 
-		<h2 class="fs-1 fw-bold mt-3 mb-4">Inscription</h2>
+		<h2 class="fs-1 fw-bold mt-3 mb-0">Inscription</h2>
+
+        <small class="fst-italic mb-4">
+            déjà membre ?
+            <a href="{{ path('app_login') }}" aria-label="Connectez-vous pour profiter pleinement des services">Connectez-vous</a>
+        </small>
 
 		{{ form_start(registrationForm) }}
 
-		<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+		<div class="input-group my-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
             <span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 50px;">
                 {{ ux_icon('line-md:email-twotone') }}
             </span>
@@ -134,7 +139,8 @@
 
         <p class="fst-italic">
             <small>
-                <a href="" aria-label="Contacter le support">Besoin d'aide ? Contactez-nous !</a>
+                Besoin d'aide ?
+                <a href="" aria-label="Contacter le support">Contactez-nous</a>
             </small>
         </p>
 

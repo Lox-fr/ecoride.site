@@ -1,4 +1,4 @@
-{{ form_start(passengerProfileForm) }}
+{{ form_start(passengerProfileForm, { 'action': path('app_profile') }) }}
 
 <h2 class="fs-3 fw-bold mt-4 mb-3 px-3 pb-2 border-bottom border-primary">
 	{% if not app.user.passengerProfileCompleted %}
@@ -178,17 +178,24 @@
 
 <hr>
 
-<div class="d-inline-flex">
+<div class="d-inline-flex flex-wrap justify-content-center mb-3">
 
 	{# Submit button #}
 	{{ form_row(passengerProfileForm.submit, { 'attr': {
-		'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3' }}) }}
+		'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mx-3' }}) }}
 
-	{# Become driver button #}
 	{% if app.user.passengerProfileCompleted %}
-		<div class="mb-3">
-			<a href="#devenirChauffeur" class="btn btn-lg btn-primary userBtn shadow mt-1 scaleOnFocusAndHover mt-2 mb-3 mx-3" role="button" aria-controls="devenirChauffeur" data-bs-toggle="collapse" aria-expanded="false">Devenir chauffeur</a>
-		</div>
+		{% if is_granted('ROLE_DRIVER') %}
+			{# Add a ride button #}
+			<div class="mb-3">
+				<a href="#publierTrajet" class="btn btn-lg btn-primary userBtn shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="publierTrajet" data-bs-toggle="collapse" aria-expanded="false">Publier un trajet</a>
+			</div>
+		{% else %}
+			{# Become driver button #}
+			<div class="mb-3">
+				<a href="#devenirChauffeur" class="btn btn-lg btn-primary userBtn shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="devenirChauffeur" data-bs-toggle="collapse" aria-expanded="false">Devenir chauffeur</a>
+			</div>
+		{% endif %}
 	{% endif %}
 
 </div>

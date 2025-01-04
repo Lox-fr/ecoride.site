@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Document\Carpool;
+use App\Entity\Car;
 use App\Entity\User;
-use App\Form\User\DriverProfileType;
-use App\Form\User\PassengerProfileType;
+use App\Form\CarFormType;
+use App\Form\Carpool\CarpoolAddFormType;
+use App\Form\User\DriverProfileFormType;
+use App\Form\User\PassengerProfileFormType;
 use App\Repository\CarRepository;
 use App\Repository\PreferenceRepository;
 use App\Repository\UserRepository;
@@ -25,7 +29,7 @@ class ProfileController extends AbstractController
 {
     #[Route('/{activeTab}',
         name: 'app_profile',
-        requirements: ['activeTab' => 'informations|devenir-chauffeur|historique-trajets'],
+        requirements: ['activeTab' => 'informations|devenir-chauffeur|publier-trajet|historique-trajets'],
         defaults: ['activeTab' => null]
     )]
     public function index(
@@ -38,6 +42,10 @@ class ProfileController extends AbstractController
         ?string $activeTab,
     ): Response|RedirectResponse {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        if ('publier-trajets' === $activeTab) {
+            return $this->redirectToRoute('app_carpool_add');
+        }
 
         /** @var User $user */
         $user = $this->getUser() ?? new User();
@@ -61,6 +69,9 @@ class ProfileController extends AbstractController
             'roleDescription' => $roleManager->getRoleDescription(),
             'passengerProfileForm' => $passengerProfileForm,
             'driverProfileForm' => $driverProfileForm,
+            'carpoolForm' => $this->createForm(CarpoolAddFormType::class, new Carpool(),
+                ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]),
+            'carAddFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
         ]);
     }
 
@@ -71,7 +82,7 @@ class ProfileController extends AbstractController
         FileUploader $fileUploader,
         RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
-        $passengerForm = $this->createForm(PassengerProfileType::class, $user);
+        $passengerForm = $this->createForm(PassengerProfileFormType::class, $user);
         $passengerForm->handleRequest($request);
         if ($passengerForm->isSubmitted() && $passengerForm->isValid()) {
             /** @var UploadedFile $photoFile */
@@ -103,7 +114,7 @@ class ProfileController extends AbstractController
         PreferenceRepository $preferenceRepository,
         RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
-        $driverProfileForm = $this->createForm(DriverProfileType::class, $user);
+        $driverProfileForm = $this->createForm(DriverProfileFormType::class, $user);
         $driverProfileForm->handleRequest($request);
         if ($driverProfileForm->isSubmitted() && $driverProfileForm->isValid()) {
             $this->handleCarInputsInDriverForm($user, $carRepository);

@@ -1,0 +1,8 @@
+<div class="form-floating mx-2 mb-3">
+	{{ form_widget(form, { 'attr' : {
+        'class' : 'text-start rounded-3 shadow ps-4',
+        'aria-describedby' : form.vars.id ~ '_help' }}) }}
+	{{ form_label(form) }}
+	{{ form_errors(form) }}
+	{{ form_help(form) }}
+</div>

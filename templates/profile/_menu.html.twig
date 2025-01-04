@@ -19,10 +19,10 @@
 			</a>
 		</li>
 
-		{# <li>
-			<a class="{{ navLinkClass }}" href="#proposerTrajet" role="button" aria-controls="proposerTrajet" data-bs-toggle="collapse" {{ activeTab is same as 'addRide' ? 'aria-expanded="true"' }}>
-				Proposer un trajet</a>
-		</li> #}
+		<li>
+			<a class="{{ navLinkClass }}" href="#publierTrajet" role="button" aria-controls="publierTrajet" data-bs-toggle="collapse" aria-expanded="{{ controller_name is same as 'AddCarpoolController' ? 'true' : 'false'}}">
+				Publiez un trajet</a>
+		</li>
 
 		<li>
 			<a class="{{ navLinkClass }}" href="#historiqueTrajets" role="button" aria-controls="historiqueTrajets" data-bs-toggle="collapse" aria-expanded="{{ activeTab is same as 'historique-trajets' ? 'true' : 'false'}}">
