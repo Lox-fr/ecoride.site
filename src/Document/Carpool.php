@@ -16,42 +16,62 @@ class Carpool
     #[MongoDB\Id]
     private ?string $id = null;
 
+    #[Assert\NotNull(message: 'La date de départ est requise.')]
     #[MongoDB\Field(type: 'date_immutable')]
-    #[Assert\NotNull(message: 'La date de départ est obligatoire.')]
-    #[Assert\Type(\DateTimeImmutable::class, message: "La date de départ doit être un objet DateTimeImmutable.")]
     private ?\DateTimeImmutable $departureTime = null;
 
-    #[MongoDB\Field(type: 'string')]
-    #[Assert\NotBlank(message: 'La ville de départ est obligatoire.')]
+    #[Assert\NotBlank(message: 'La ville de départ est requise.')]
     #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
-    #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville de départ ne doit pas excéder {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville ne peut pas contenir plus de {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
-        message: "Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d'union."
-    )]
+        message: 'Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
+    #[MongoDB\Field(type: 'string')]
     private ?string $departureCity = null;
 
+    #[Assert\Length(min: 5, minMessage: 'Veuillez saisir une adresse d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'L\'adresse ne peut pas contenir plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[A-Za-zÀ-ÿ0-9\- ']+$/",
+        message: 'L\'adresse ne peut contenir que
+            des lettres, des chiffres, des espaces, des apostrophes et des traits d\'union.')]
     #[MongoDB\Field(type: 'string')]
     private ?string $departurePlace = null;
+
+    #[Assert\NotBlank(message: 'Le temps de trajet est requis.')]
+    #[Assert\GreaterThanOrEqual(
+        value: 2, message: 'Le temps de trajet doit être supérieur ou égal à {{ compared_value }} minutes.')]
+    #[MongoDB\Field(type: 'int')]
+    private ?int $estimatedRideTime = null;
 
     #[MongoDB\Field(type: 'date_immutable')]
     private ?\DateTimeImmutable $arrivalTime = null;
 
     #[MongoDB\Field(type: 'string')]
-    #[Assert\NotBlank(message: 'La ville d\'arrivée est obligatoire.')]
+    #[Assert\NotBlank(message: 'La ville d\'arrivée est requise.')]
     #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
     #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville d\arrivée ne doit pas excéder {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
-        message: "Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d'union."
-    )]
+        message: 'Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
     private ?string $arrivalCity = null;
 
+    #[Assert\Length(min: 5, minMessage: 'Veuillez saisir une adresse d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(max: 50, maxMessage: 'L\'adresse ne peut pas contenir plus de {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: "/^[A-Za-zÀ-ÿ0-9\- ']+$/",
+        message: 'L\'adresse ne peut contenir que
+            des lettres, des chiffres, des espaces, des apostrophes et des traits d\'union.')]
     #[MongoDB\Field(type: 'string')]
     private ?string $arrivalPlace = null;
 
+    #[Assert\NotBlank(message: 'Le tarif par personne est requis.')]
+    #[Assert\GreaterThanOrEqual(
+        value: 2, message: 'Le tarif par personne doit être supérieur ou égal à {{ compared_value }}.')]
+    #[Assert\LessThanOrEqual(
+        value: 150, message: 'Le tarif par personne ne peut pas dépasser {{ compared_value }}.')]
     #[MongoDB\Field(type: 'float')]
-    private ?float $pricePerPerson = null;
+    private ?int $pricePerPerson = null;
 
     #[MongoDB\Field(type: 'int')]
     private ?int $totalNumberOfSeats = null;
@@ -146,11 +166,21 @@ class Carpool
         return $this->departurePlace;
     }
 
-    public function setDeparturePlace(string $departurePlace): static
+    public function setDeparturePlace(?string $departurePlace): static
     {
         $this->departurePlace = $departurePlace;
 
         return $this;
+    }
+
+    public function setEstimatedRideTime(int $estimatedRideTime): void
+    {
+        $this->estimatedRideTime = $estimatedRideTime;
+    }
+    
+    public function getEstimatedRideTime(): ?int
+    {
+        return $this->estimatedRideTime;
     }
 
     public function getArrivalTime(): ?\DateTimeImmutable
@@ -182,19 +212,19 @@ class Carpool
         return $this->arrivalPlace;
     }
 
-    public function setArrivalPlace(string $arrivalPlace): static
+    public function setArrivalPlace(?string $arrivalPlace): static
     {
         $this->arrivalPlace = $arrivalPlace;
 
         return $this;
     }
 
-    public function getPricePerPerson(): ?float
+    public function getPricePerPerson(): ?int
     {
         return $this->pricePerPerson;
     }
 
-    public function setPricePerPerson(float $pricePerPerson): static
+    public function setPricePerPerson(int $pricePerPerson): static
     {
         $this->pricePerPerson = $pricePerPerson;
 
