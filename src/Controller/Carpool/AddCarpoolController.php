@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Carpool;
 
 use App\Entity\Car;
 use App\Entity\User;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CarpoolController extends AbstractController
+class AddCarpoolController extends AbstractController
 {
     public function __construct(
         private Security $security,
@@ -103,7 +103,7 @@ class CarpoolController extends AbstractController
         if ($carpoolForm->isSubmitted() && $carpoolForm->isValid()) {
             // Check if the user has the 'ROLE_DRIVER'
             if (!$this->security->isGranted('ROLE_DRIVER')) {
-                $this->addFlash('info', 'Il vous faut changer de statut pour proposer des covoiturages.<br/>
+                $this->addFlash('warning', 'Il vous faut changer de statut pour proposer des covoiturages.<br/>
                     Devenez chauffeur EcoRide et rentabilisez vos trajets !');
                 $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
@@ -111,7 +111,7 @@ class CarpoolController extends AbstractController
             }
             // Check if a car was selected
             if (!$carpoolForm->get('car')->getData()) {
-                $this->addFlash('warning', 'Veuillez sélectionner un véhicule.');
+                $this->addFlash('error', 'Veuillez sélectionner un véhicule.');
                 $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
                 return $this->redirectToRoute('app_carpool_add');
@@ -119,7 +119,7 @@ class CarpoolController extends AbstractController
             // Check the departure time
             $departureTime = $carpoolForm->get('departureTime')->getData();
             if (!$departureTime instanceof \DateTimeImmutable || $departureTime <= new \DateTimeImmutable()) {
-                $this->addFlash('warning', $departureTime instanceof \DateTimeImmutable
+                $this->addFlash('error', $departureTime instanceof \DateTimeImmutable
                     ? 'Vous ne pouvez pas publier de trajet passé.'
                     : 'L\'heure de départ est invalide.');
                 $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
