@@ -38,7 +38,6 @@ class Carpool
     #[MongoDB\Field(type: 'string')]
     private ?string $departurePlace = null;
 
-    #[Assert\NotBlank(message: 'Le temps de trajet est requis.')]
     #[Assert\GreaterThanOrEqual(
         value: 2, message: 'Le temps de trajet doit être supérieur ou égal à {{ compared_value }} minutes.')]
     #[MongoDB\Field(type: 'int')]
@@ -65,9 +64,8 @@ class Carpool
     #[MongoDB\Field(type: 'string')]
     private ?string $arrivalPlace = null;
 
-    #[Assert\NotBlank(message: 'Le tarif par personne est requis.')]
     #[Assert\GreaterThanOrEqual(
-        value: 2, message: 'Le tarif par personne doit être supérieur ou égal à {{ compared_value }}.')]
+        value: 3, message: 'Le tarif par personne doit être supérieur ou égal à {{ compared_value }}.')]
     #[Assert\LessThanOrEqual(
         value: 150, message: 'Le tarif par personne ne peut pas dépasser {{ compared_value }}.')]
     #[MongoDB\Field(type: 'float')]

@@ -109,9 +109,23 @@ class AddCarpoolController extends AbstractController
 
                 return $this->redirectToRoute('app_profile', ['activeTab' => 'devenir-chauffeur']);
             }
+            // Check if an estimated ride time is provided
+            if (!$carpoolForm->get('estimatedRideTime')->getData()) {
+                $this->addFlash('error', 'Veuillez fournir un temps de trajet estimatif.');
+                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
+
+                return $this->redirectToRoute('app_carpool_add');
+            }
             // Check if a car was selected
             if (!$carpoolForm->get('car')->getData()) {
                 $this->addFlash('error', 'Veuillez sélectionner un véhicule.');
+                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
+
+                return $this->redirectToRoute('app_carpool_add');
+            }
+            // Check if a price per person is provided
+            if (!$carpoolForm->get('pricePerPerson')->getData()) {
+                $this->addFlash('error', 'Veuillez fournir le prix demandé à chaque passager.');
                 $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
                 return $this->redirectToRoute('app_carpool_add');
