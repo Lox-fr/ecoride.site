@@ -93,6 +93,7 @@ class CarFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Car::class,
+            'csrf_token_id' => 'user_car',
         ]);
     }
 }

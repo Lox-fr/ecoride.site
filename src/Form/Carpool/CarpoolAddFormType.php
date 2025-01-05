@@ -126,6 +126,7 @@ class CarpoolAddFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Carpool::class,
             'user_cars' => [],
+            'csrf_token_id' => 'carpool_add',
         ]);
     }
 }

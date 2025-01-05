@@ -68,6 +68,7 @@ class DriverProfileFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'csrf_token_id' => 'driver_profile',
         ]);
     }
 }
