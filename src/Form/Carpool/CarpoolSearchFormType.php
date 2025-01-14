@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-// use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class CarpoolSearchFormType extends AbstractType
 {
@@ -43,10 +42,10 @@ class CarpoolSearchFormType extends AbstractType
                 ],
             ])
             ->add('departureTime', DateTimeType::class, [
+                'label' => 'Date et heure de départ',
                 'required' => true,
                 'input' => 'datetime_immutable',
                 'widget' => 'single_text',
-                'label' => 'Date de départ',
                 'html5' => false,
                 'attr' => [
                     'data-flatpickr-target' => 'dateInput',
@@ -54,15 +53,7 @@ class CarpoolSearchFormType extends AbstractType
                     'aria-hidden' => 'true',
                 ],
                 'help' => 'Utilisez les flèches pour naviguer dans le sélecteur de date.',
-                'help_attr' => [
-                    'class' => 'visually-hidden',
-                ],
-                // 'constraints' => [
-                //     new GreaterThanOrEqual([
-                //         'value' => 'today',
-                //         'message' => 'La date de départ doit être ultérieure à la date actuelle.',
-                //     ]),
-                // ],
+                'help_attr' => ['class' => 'visually-hidden'],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Rechercher un trajet',
@@ -77,7 +68,7 @@ class CarpoolSearchFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Carpool::class,
-            'csrf_token_id' => 'carpool_search', // salt for improve security
+            'csrf_token_id' => 'carpool_search',
         ]);
     }
 }

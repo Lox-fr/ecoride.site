@@ -7,27 +7,33 @@
 
     <div class="d-md-flex flex-row justify-content-center">
 
-        <div class="input-group mb-4 rounded-4 px-3 mx-auto mx-md-0" style="max-width: 500px;">
-            <span class="input-group-text fs-2 justify-content-center rounded-start-4 shadow" style="width: 60px;">
-                {{ ux_icon('gis:route-start') }}
-            </span>
-            <div class="form-floating">
-                {{ form_widget(carpoolSearchForm.departureCity, {
-                    'attr': {'class': 'text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
-                {{ form_label(carpoolSearchForm.departureCity) }}
+        {# Departure city input #}
+        <div class="d-flex flex-column mb-4 mb-md-0" style="max-width: 500px;">
+            <div class="input-group mb-0 pb-0 rounded-4 px-3 mx-auto mx-md-0">
+                <span class="input-group-text fs-2 justify-content-center rounded-start-4 shadow" style="width: 60px;">
+                    {{ ux_icon('gis:route-start') }}
+                </span>
+                <div class="form-floating">
+                    {{ form_widget(carpoolSearchForm.departureCity, {
+                        'attr': {'class': 'text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
+                    {{ form_label(carpoolSearchForm.departureCity) }}
+                </div>
             </div>
             <small>{{ form_help(carpoolSearchForm.departureCity) }}</small>
             {{ form_errors(carpoolSearchForm.departureCity) }}
         </div>
 
-        <div class="input-group input-group-lg mb-4 rounded-4 px-3 mx-auto mx-md-0" style="max-width: 500px;">
-            <span class="input-group-text fs-1 justify-content-center rounded-start-4 shadow" style="width: 60px;">
-                {{ ux_icon('gis:route-end') }}
-            </span>
-            <div class="form-floating">
-                {{ form_widget(carpoolSearchForm.arrivalCity, {
-                    'attr': {'class': 'text-start px-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
-                {{ form_label(carpoolSearchForm.arrivalCity, null, {'attr': {'class': 'text-start text-md-end'}}) }}
+        {# Arrival city input #}
+        <div class="d-flex flex-column mb-4 mb-md-0" style="max-width: 500px;">
+            <div class="input-group mb-0 pb-0 rounded-4 px-3 mx-auto mx-md-0">
+                <span class="input-group-text fs-1 justify-content-center rounded-start-4 shadow" style="width: 60px;">
+                    {{ ux_icon('gis:route-end') }}
+                </span>
+                <div class="form-floating">
+                    {{ form_widget(carpoolSearchForm.arrivalCity, {
+                        'attr': {'class': 'text-start px-4 rounded-end-4 shadow', 'aria-required': 'true'}}) }}
+                    {{ form_label(carpoolSearchForm.arrivalCity, null, {'attr': {'class': 'text-start text-md-end'}}) }}
+                </div>
             </div>
             <small>{{ form_help(carpoolSearchForm.arrivalCity) }}</small>
             {{ form_errors(carpoolSearchForm.arrivalCity) }}
@@ -35,7 +41,8 @@
 
     </div>
 
-    <div class="input-group input-group-lg mb-5 mb-md-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+    {# Datetime of start input #}
+    <div class="input-group mb-5 my-md-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
         <span class="input-group-text fs-3 justify-content-center rounded-start-4 shadow" style="width: 60px;">
             {{ ux_icon('uiw:date') }}
         </span>
@@ -43,7 +50,7 @@
             {{ form_widget(carpoolSearchForm.departureTime, {
                 'attr': {
                     'class': 'text-start ps-4 rounded-end-4 flatpickr shadow',
-                    'placeholder': "now"|date("Y-m-d"),
+                    'placeholder': "now"|date("Y-m-d\\TH:i", "Europe/Paris"),
                     'aria-required': 'true' }}) }}
             {{ form_label(carpoolSearchForm.departureTime) }}
         </div>
@@ -51,6 +58,7 @@
         {{ form_errors(carpoolSearchForm.departureTime) }}
     </div>
 
+    {# Sunmit button #}
     {{ form_row(carpoolSearchForm.submit, { 'attr': {
         'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover'
     }}) }}
