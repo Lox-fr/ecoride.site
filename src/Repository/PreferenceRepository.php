@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Preference;
-use App\Service\SqlManager;
+use App\Service\SqlHandler;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PreferenceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private SqlManager $sqlManager)
+    public function __construct(ManagerRegistry $registry, private SqlHandler $sqlHandler)
     {
         parent::__construct($registry, Preference::class);
     }
@@ -34,7 +34,7 @@ class PreferenceRepository extends ServiceEntityRepository
     public function createPreference(Preference $preference): void
     {
         try {
-            $this->sqlManager->execute('create/preference', 'queries', null, [
+            $this->sqlHandler->execute('create/preference', 'queries', null, [
                 'label' => $preference->getLabel(),
                 'user_id' => (int) $preference->getUser()->getId(),
             ]);
@@ -56,11 +56,11 @@ class PreferenceRepository extends ServiceEntityRepository
      *
      * @return array An array of PL with numeric index as keys, or an empty array if no PL are found
      */
-    public function findPreferenceLabelsByUserId(int $userId): array
+    public function findPreferenceIdsByUserId(int $userId): array
     {
         try {
-            $result = $this->sqlManager->execute(
-                'read/preferenceLabelsByUserId', 'queries', SqlManager::FETCH_FIRST_COLUMN, [
+            $result = $this->sqlHandler->execute(
+                'read/preferenceIdsByUserId', 'queries', SqlHandler::FETCH_FIRST_COLUMN, [
                     'user_id' => (int) $userId,
                 ]);
 
@@ -72,18 +72,14 @@ class PreferenceRepository extends ServiceEntityRepository
     }
 
     /**
-     * Deletes the preference associated with a specific license plate using a SQL query stored in a local file.
+     * Deletes a preference from the database based on its id.
      *
-     * This method executes a prepared SQL query to delete the preference linked to the provided license plate.
-     *
-     * @param int $preferenceId The id of the preference to delete
-     *
-     * @throws \Exception If there is an error executing the SQL query or during the database interaction
+     * @throws \Exception If an error occurs during the deletion process
      */
     public function deletePreferenceById(int $preferenceId): void
     {
         try {
-            $this->sqlManager->execute(
+            $this->sqlHandler->execute(
                 'delete/preferenceById', 'queries', null, ['preference_id' => (int) $preferenceId]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf('

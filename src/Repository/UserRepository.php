@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Service\SqlManager;
+use App\Service\SqlHandler;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry, private SqlManager $sqlManager)
+    public function __construct(ManagerRegistry $registry, private SqlHandler $sqlHandler)
     {
         parent::__construct($registry, User::class);
     }
@@ -37,7 +37,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function register(User $user): void
     {
         try {
-            $this->sqlManager->execute('create/user', 'queries', null, [
+            $this->sqlHandler->execute('create/user', 'queries', null, [
                 'email' => $user->getEmail(),
                 'pseudo' => $user->getPseudo(),
                 'password' => $user->getPassword(),
@@ -80,7 +80,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findUserIdByEmail(string $email): ?int
     {
         try {
-            $result = $this->sqlManager->execute('read/userIdByEmail', 'queries', SqlManager::FETCH_ONE, [
+            $result = $this->sqlHandler->execute('read/userIdByEmail', 'queries', SqlHandler::FETCH_ONE, [
                 'email' => $email,
             ]);
 
@@ -106,7 +106,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function savePassengerProfile(User $user): bool
     {
         try {
-            $result = $this->sqlManager->execute('update/passengerProfile', 'queries', null, [
+            $result = $this->sqlHandler->execute('update/passengerProfile', 'queries', null, [
                 'pseudo' => $user->getPseudo(),
                 'photo_filename' => $user->getPhotoFilename(),
                 'first_name' => $user->getFirstName(),
@@ -140,7 +140,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function saveDriverProfile(User $user): bool
     {
         try {
-            $result = $this->sqlManager->execute('update/driverProfile', 'queries', null, [
+            $result = $this->sqlHandler->execute('update/driverProfile', 'queries', null, [
                 'pets_allowed' => (int) $user->isPetsAllowed(),
                 'smokers_allowed' => (int) $user->isSmokersAllowed(),
                 'driver_role_chosen' => (int) $user->isDriverRoleChosen(),
@@ -158,8 +158,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * Checks if a user has the role of driver (ROLE_DRIVER).
      *
-     * This method uses an SQL query to count the occurrences of the role
-     * 'ROLE_DRIVER' for a given user.
+     * This method uses an SQL query to count the occurrences of the role 'ROLE_DRIVER' for a given user.
      *
      * @param int $userId The ID of the user for whom to check the role
      *
@@ -171,7 +170,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         try {
             $result =
-                $this->sqlManager->execute('read/isDriverByUserId', 'queries', SqlManager::FETCH_ONE,
+                $this->sqlHandler->execute('read/isDriverByUserId', 'queries', SqlHandler::FETCH_ONE,
                     ['user_id' => (int) $userId]);
 
             return $result > 0;
@@ -191,7 +190,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function removeDriverRoleByUserId(int $userId): void
     {
         try {
-            $this->sqlManager->execute('delete/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
+            $this->sqlHandler->execute('delete/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf('
                 Deletion of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
@@ -208,7 +207,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function addDriverRoleByUserId(int $userId): void
     {
         try {
-            $this->sqlManager->execute('create/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
+            $this->sqlHandler->execute('create/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf('
                 Creation of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);

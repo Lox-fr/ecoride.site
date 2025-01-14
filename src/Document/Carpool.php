@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Document;
 
+use App\Repository\CarpoolRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[MongoDB\Document]
+#[MongoDB\Document(repositoryClass: CarpoolRepository::class)]
 class Carpool
 {
     #[MongoDB\Id]
@@ -21,11 +22,12 @@ class Carpool
     private ?\DateTimeImmutable $departureTime = null;
 
     #[Assert\NotBlank(message: 'La ville de départ est requise.')]
-    #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(
+        min: 2, minMessage: 'Veuillez saisir un nom de ville de départ d\'au moins {{ limit }} caractères.')]
     #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville ne peut pas contenir plus de {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
-        message: 'Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
+        message: 'Le nom de la ville de départ ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
     #[MongoDB\Field(type: 'string')]
     private ?string $departureCity = null;
 
@@ -48,11 +50,12 @@ class Carpool
 
     #[MongoDB\Field(type: 'string')]
     #[Assert\NotBlank(message: 'La ville d\'arrivée est requise.')]
-    #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(
+        min: 2, minMessage: 'Veuillez saisir un nom de ville d\'arrivée d\'au moins {{ limit }} caractères.')]
     #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville d\arrivée ne doit pas excéder {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
-        message: 'Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
+        message: 'Le nom de la ville d\'arrivée ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
     private ?string $arrivalCity = null;
 
     #[Assert\Length(min: 5, minMessage: 'Veuillez saisir une adresse d\'au moins {{ limit }} caractères.')]
@@ -85,6 +88,9 @@ class Carpool
 
     #[MongoDB\Field(type: 'int')]
     private ?int $driverUserId = null;
+
+    #[MongoDB\Field(type: 'string')]
+    private ?string $driverPseudo = null;
 
     #[MongoDB\Field(type: 'string')]
     private ?string $driverPhotoName = null;
@@ -175,7 +181,7 @@ class Carpool
     {
         $this->estimatedRideTime = $estimatedRideTime;
     }
-    
+
     public function getEstimatedRideTime(): ?int
     {
         return $this->estimatedRideTime;
@@ -285,6 +291,18 @@ class Carpool
     public function setDriverUserId(int $driverUserId): static
     {
         $this->driverUserId = $driverUserId;
+
+        return $this;
+    }
+
+    public function getDriverPseudo(): ?string
+    {
+        return $this->driverPseudo;
+    }
+
+    public function setDriverPseudo(?string $driverPseudo): static
+    {
+        $this->driverPseudo = $driverPseudo;
 
         return $this;
     }

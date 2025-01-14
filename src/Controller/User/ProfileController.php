@@ -4,29 +4,37 @@ declare(strict_types=1);
 
 namespace App\Controller\User;
 
-use App\Document\Carpool;
 use App\Entity\Car;
 use App\Entity\User;
+use App\Document\Carpool;
 use App\Form\CarFormType;
+use App\Service\FileUploader;
+use App\Service\User\CarManager;
+use App\Service\User\RoleManager;
+use App\Repository\UserRepository;
+use App\Service\User\PreferenceManager;
 use App\Form\Carpool\CarpoolAddFormType;
 use App\Form\User\DriverProfileFormType;
-use App\Form\User\PassengerProfileFormType;
-use App\Repository\CarRepository;
-use App\Repository\PreferenceRepository;
-use App\Repository\UserRepository;
-use App\Service\FileUploader;
-use App\Service\RoleManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Form\User\PassengerProfileFormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/profil')]
 class ProfileController extends AbstractController
 {
+    public function __construct(
+        private RoleManager $roleManager,
+        private CarManager $carManager,
+        private PreferenceManager $preferenceManager,
+        private FileUploader $fileUploader,
+    ) {
+    }
+
     #[Route('/{activeTab}',
         name: 'app_profile',
         requirements: ['activeTab' => 'informations|devenir-chauffeur|publier-trajet|historique-trajets'],
@@ -34,11 +42,7 @@ class ProfileController extends AbstractController
     )]
     public function index(
         Request $request,
-        FileUploader $fileUploader,
         UserRepository $userRepository,
-        CarRepository $carRepository,
-        PreferenceRepository $preferenceRepository,
-        RoleManager $roleManager,
         ?string $activeTab,
     ): Response|RedirectResponse {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -51,12 +55,12 @@ class ProfileController extends AbstractController
         $user = $this->getUser() ?? new User();
 
         $passengerProfileForm =
-            $this->handlePassengerForm($request, $user, $userRepository, $fileUploader, $roleManager);
+            $this->handlePassengerForm($request, $user, $userRepository);
         if ($passengerProfileForm instanceof RedirectResponse) {
             return $passengerProfileForm;
         }
 
-        $driverProfileForm = $this->handleDriverForm($request, $user, $userRepository, $carRepository, $preferenceRepository, $roleManager);
+        $driverProfileForm = $this->handleDriverForm($request, $user, $userRepository);
         if ($driverProfileForm instanceof RedirectResponse) {
             return $driverProfileForm;
         } elseif ($driverProfileForm->isSubmitted()) {
@@ -66,12 +70,12 @@ class ProfileController extends AbstractController
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'UserProfileController',
             'activeTab' => $activeTab ?? 'informations',
-            'roleDescription' => $roleManager->getRoleDescription(),
+            'roleDescription' => $this->roleManager->getRoleDescription(),
             'passengerProfileForm' => $passengerProfileForm,
             'driverProfileForm' => $driverProfileForm,
             'carpoolForm' => $this->createForm(CarpoolAddFormType::class, new Carpool(),
                 ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]),
-            'carAddFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
+            'addCarFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
         ]);
     }
 
@@ -79,8 +83,6 @@ class ProfileController extends AbstractController
         Request $request,
         User $user,
         UserRepository $userRepository,
-        FileUploader $fileUploader,
-        RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
         $passengerForm = $this->createForm(PassengerProfileFormType::class, $user);
         $passengerForm->handleRequest($request);
@@ -88,13 +90,13 @@ class ProfileController extends AbstractController
             /** @var UploadedFile $photoFile */
             $photoFile = $passengerForm->get('photo')->getData();
             if ($photoFile) {
-                $photoFileName = $fileUploader->upload($photoFile);
+                $photoFileName = $this->fileUploader->upload($photoFile);
                 $user->setPhotoFilename($photoFileName);
             }
 
             if ($userRepository->savePassengerProfile($user)) {
                 $this->addFlash('success', 'Vos informations passager ont bien été enregistrées.');
-                $this->updateUserRoles($passengerForm, $roleManager);
+                $this->updateUserRoles($passengerForm, $this->roleManager);
             } else {
                 $this->addFlash('error',
                     'Une erreur est survenue lors de la sauvegarde de votre profil passager. Veuillez recommencer.');
@@ -110,19 +112,16 @@ class ProfileController extends AbstractController
         Request $request,
         User $user,
         UserRepository $userRepository,
-        CarRepository $carRepository,
-        PreferenceRepository $preferenceRepository,
-        RoleManager $roleManager,
     ): FormInterface|RedirectResponse {
         $driverProfileForm = $this->createForm(DriverProfileFormType::class, $user);
         $driverProfileForm->handleRequest($request);
         if ($driverProfileForm->isSubmitted() && $driverProfileForm->isValid()) {
-            $this->handleCarInputsInDriverForm($user, $carRepository);
-            $this->handlePreferenceInputsInDriverForm($user, $preferenceRepository);
+            $this->handleCarInputsInDriverForm($user);
+            $this->handlePreferenceInputsInDriverForm($user);
 
             if ($userRepository->saveDriverProfile($user)) {
                 $this->addFlash('success', 'Vos informations chauffeur ont bien été enregistrées.');
-                $this->updateUserRoles($driverProfileForm, $roleManager);
+                $this->updateUserRoles($driverProfileForm, $this->roleManager);
             } else {
                 $this->addFlash('error',
                     'Une erreur est survenue lors de la sauvegarde de votre profil chauffeur. Veuillez recommencer.');
@@ -134,49 +133,49 @@ class ProfileController extends AbstractController
         return $driverProfileForm;
     }
 
-    private function handleCarInputsInDriverForm(User $user, CarRepository $carRepository): void
+    private function handleCarInputsInDriverForm(User $user): void
     {
-        $registeredUserLicensePlates = $carRepository->findLicencePlatesByUserId($user->getId());
+        $registeredUserLicensePlates = $this->carManager->findLicencePlatesByUserId($user->getId());
         $submittedLicensePlates = [];
 
         foreach ($user->getCars() as $car) {
             $submittedLicensePlates[] = $car->getLicensePlate();
             if (!\in_array($car->getLicensePlate(), $registeredUserLicensePlates, true)) {
-                $carRepository->createCar($car);
+                $this->carManager->saveNewCar($car);
             } else {
-                $carRepository->updateCar($car);
+                $this->carManager->updateCar($car);
             }
         }
 
         foreach ($registeredUserLicensePlates as $registeredUserLicensePlate) {
             if (!\in_array($registeredUserLicensePlate, $submittedLicensePlates, true)) {
-                $carRepository->deleteCarByLicensePlate($registeredUserLicensePlate);
+                $this->carManager->deleteCarByLicensePlate($registeredUserLicensePlate);
             }
         }
     }
 
-    private function updateUserRoles(FormInterface $form, RoleManager $roleManager): void
+    private function updateUserRoles(FormInterface $form): void
     {
-        if (!$roleManager->handleProfileFormToBeDriver($form)) {
+        if (!$this->roleManager->handleProfileFormToBeDriver($form)) {
             $this->addFlash('warning', 'Vous n\'êtes pas/plus considéré(e) comme chauffeur.');
         }
     }
 
-    private function handlePreferenceInputsInDriverForm(User $user, PreferenceRepository $preferenceRepository): void
+    private function handlePreferenceInputsInDriverForm(User $user): void
     {
-        $registeredUserPreferenceLabels = $preferenceRepository->findPreferenceLabelsByUserId($user->getId());
-        $submittedPreferencesLabels = [];
+        $registeredUserPreferenceIds = $this->preferenceManager->findPreferenceIdsByUserId($user->getId());
+        $submittedPreferencesIds = [];
 
         foreach ($user->getPreferences() as $preference) {
-            $submittedPreferencesLabels[] = $preference->getLabel();
-            if (!\in_array($preference->getLabel(), $registeredUserPreferenceLabels, true)) {
-                $preferenceRepository->createPreference($preference);
+            $submittedPreferencesIds[] = $preference->getId();
+            if (!\in_array($preference->getId(), $registeredUserPreferenceIds, true)) {
+                $this->preferenceManager->saveNewPreference($preference);
             }
         }
 
-        foreach ($registeredUserPreferenceLabels as $registeredUserPreferenceLabel) {
-            if (!\in_array($registeredUserPreferenceLabel, $submittedPreferencesLabels, true)) {
-                $preferenceRepository->deletePreferenceById($registeredUserPreferenceLabel);
+        foreach ($registeredUserPreferenceIds as $registeredUserPreferenceId) {
+            if (!\in_array($registeredUserPreferenceId, $submittedPreferencesIds, true)) {
+                $this->preferenceManager->deletePreferenceById($registeredUserPreferenceId);
             }
         }
     }

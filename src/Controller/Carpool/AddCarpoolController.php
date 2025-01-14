@@ -10,11 +10,10 @@ use App\Form\CarFormType;
 use App\Form\Carpool\CarpoolAddFormType;
 use App\Form\User\DriverProfileFormType;
 use App\Form\User\PassengerProfileFormType;
-use App\Repository\CarRepository;
-use App\Service\CarpoolManager;
-use App\Service\FormSessionHandler;
-use App\Service\RoleManager;
-use Doctrine\ODM\MongoDB\DocumentManager;
+use App\Service\Carpool\CarpoolAddService;
+use App\Service\Carpool\CarpoolSessionDataManager;
+use App\Service\User\CarManager;
+use App\Service\User\RoleManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
@@ -25,13 +24,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AddCarpoolController extends AbstractController
 {
+    public const CARPOOL_ADD_FORM_SESSION_KEY = 'formData_carpoolAdd';
+
     public function __construct(
         private Security $security,
-        private CarRepository $carRepository,
-        private DocumentManager $documentManager,
         private RoleManager $roleManager,
-        private CarpoolManager $carpoolManager,
-        private FormSessionHandler $formSessionHandler,
+        private CarManager $carManager,
+        private CarpoolAddService $carpoolAddService,
+        private CarpoolSessionDataManager $carpoolSessionDataManager,
     ) {
     }
 
@@ -43,17 +43,16 @@ class AddCarpoolController extends AbstractController
         if (!$user) {
             $this->addFlash('info', 'Veuillez vous connecter pour proposer un covoiturage.');
 
-            return $this->redirectToRoute('app_login', [
-                '_target_path' => $this->generateUrl('app_carpool_add'),
-            ]);
+            return $this->redirectToRoute('app_login', ['_target_path' => $this->generateUrl('app_carpool_add')]);
         }
 
-        $carAddFormInCarpoolForm = $this->handlecarAddFormInCarpoolForm($request, $user, $this->carRepository);
-        if ($carAddFormInCarpoolForm instanceof RedirectResponse) {
-            return $carAddFormInCarpoolForm;
+        // Handle add car form submission
+        $addCarFormInCarpoolForm = $this->handleAddCarFormInAddCarpoolForm($request, $user);
+        if ($addCarFormInCarpoolForm instanceof RedirectResponse) {
+            return $addCarFormInCarpoolForm;
         }
-
-        $carpoolForm = $this->handleCarpoolForm($request, $user);
+        // Handle add carpool form submission
+        $carpoolForm = $this->handleAddCarpoolForm($request, $user);
         if ($carpoolForm instanceof RedirectResponse) {
             return $carpoolForm;
         }
@@ -65,21 +64,37 @@ class AddCarpoolController extends AbstractController
             'passengerProfileForm' => $this->createForm(PassengerProfileFormType::class, $user),
             'driverProfileForm' => $this->createForm(DriverProfileFormType::class, $user),
             'carpoolForm' => $carpoolForm,
-            'carAddFormInCarpoolForm' => $carAddFormInCarpoolForm,
+            'addCarFormInCarpoolForm' => $addCarFormInCarpoolForm,
         ]);
     }
 
-    private function handlecarAddFormInCarpoolForm(Request $request, User $user, CarRepository $carRepository,
+    /**
+     * Handles the "Add Car" form submission within the carpool publishing process.
+     *
+     * This function creates and manages the form for adding a new car.
+     * It validates the form data, saves the new car to the database if the form is valid,
+     * and provides appropriate feedback to the user via flash messages.
+     *
+     * @param Request $request the HTTP request object containing form data
+     * @param User    $user    the currently authenticated user
+     *
+     * @return FormInterface|RedirectResponse the form object for rendering or a redirect response
+     */
+    private function handleAddCarFormInAddCarpoolForm(Request $request, User $user,
     ): FormInterface|RedirectResponse {
         $newCar = new Car();
-        $carAddFormInCarpoolForm = $this->createForm(CarFormType::class, $newCar);
 
-        $carAddFormInCarpoolForm->handleRequest($request);
+        // Create the "Add Car" form and bind it to the new Car instance
+        $addCarFormInCarpoolForm = $this->createForm(CarFormType::class, $newCar);
 
-        if ($carAddFormInCarpoolForm->isSubmitted()) {
-            if ($carAddFormInCarpoolForm->isValid()) {
+        // Handle the form submission
+        $addCarFormInCarpoolForm->handleRequest($request);
+
+        if ($addCarFormInCarpoolForm->isSubmitted()) {
+            // If the form is valid, save the new car and notify the user
+            if ($addCarFormInCarpoolForm->isValid()) {
                 $newCar->setUser($user);
-                $carRepository->createCar($newCar);
+                $this->carManager->saveNewCar($newCar); // Save the car in the database
                 $this->addFlash('success', 'Votre nouveau véhicule a été enregistré avec succès.');
 
                 return $this->redirectToRoute('app_carpool_add');
@@ -89,65 +104,78 @@ class AddCarpoolController extends AbstractController
                 Veuillez recommencer.');
         }
 
-        return $carAddFormInCarpoolForm;
+        return $addCarFormInCarpoolForm;
     }
 
-    private function handleCarpoolForm(Request $request, User $user): FormInterface|RedirectResponse
+    /**
+     * Handles the carpool publishing form submission process.
+     *
+     * This function manages the "Add Carpool" form, validates user input, and processes the carpool publication.
+     * It also provides user feedback, handles invalid inputs, and stores form data in the session for future use.
+     *
+     * @param Request $request the HTTP request object containing form data
+     * @param User    $user    the currently authenticated user
+     *
+     * @return FormInterface|RedirectResponse the form object for rendering or a redirect response
+     */
+    private function handleAddCarpoolForm(Request $request, User $user): FormInterface|RedirectResponse
     {
-        $carpool = $this->formSessionHandler->hydrateCarpoolFromSessionData('carpool');
-        $carpoolForm = $this->createForm(CarpoolAddFormType::class, $carpool,
+        // Create a new carpool instance with session data, if available
+        $newCarpool = $this->carpoolSessionDataManager
+            ->createNewCarpoolInstanceWithSessionData(self::CARPOOL_ADD_FORM_SESSION_KEY);
+
+        // Initialize the "Add Carpool" form with the user's cars
+        $carpoolForm = $this->createForm(CarpoolAddFormType::class, $newCarpool,
             ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]);
 
+        // Handle the form submission
         $carpoolForm->handleRequest($request);
 
         if ($carpoolForm->isSubmitted() && $carpoolForm->isValid()) {
-            // Check if the user has the 'ROLE_DRIVER'
+            // Store form data in session to retain it for later use if needed.
+            $this->carpoolSessionDataManager
+                ->storeCarpoolFormDataInSession(self::CARPOOL_ADD_FORM_SESSION_KEY, $carpoolForm);
+
+            // Ensure the user has the 'ROLE_DRIVER'
             if (!$this->security->isGranted('ROLE_DRIVER')) {
                 $this->addFlash('warning', 'Il vous faut changer de statut pour proposer des covoiturages.<br/>
                     Devenez chauffeur EcoRide et rentabilisez vos trajets !');
-                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
                 return $this->redirectToRoute('app_profile', ['activeTab' => 'devenir-chauffeur']);
             }
-            // Check if an estimated ride time is provided
+            // Validate estimated ride time
             if (!$carpoolForm->get('estimatedRideTime')->getData()) {
                 $this->addFlash('error', 'Veuillez fournir un temps de trajet estimatif.');
-                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
                 return $this->redirectToRoute('app_carpool_add');
             }
-            // Check if a car was selected
+            // Ensure a car is selected
             if (!$carpoolForm->get('car')->getData()) {
                 $this->addFlash('error', 'Veuillez sélectionner un véhicule.');
-                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
                 return $this->redirectToRoute('app_carpool_add');
             }
-            // Check if a price per person is provided
+            // Ensure a price per person is provided
             if (!$carpoolForm->get('pricePerPerson')->getData()) {
                 $this->addFlash('error', 'Veuillez fournir le prix demandé à chaque passager.');
-                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
 
                 return $this->redirectToRoute('app_carpool_add');
             }
-            // Check the departure time
+            // Validate the departure time
             $departureTime = $carpoolForm->get('departureTime')->getData();
-            if (!$departureTime instanceof \DateTimeImmutable || $departureTime <= new \DateTimeImmutable()) {
+            if (!$this->carpoolAddService->isValidDepartureTime($departureTime)) {
                 $this->addFlash('error', $departureTime instanceof \DateTimeImmutable
                     ? 'Vous ne pouvez pas publier de trajet passé.'
-                    : 'L\'heure de départ est invalide.');
-                $this->formSessionHandler->storeCarpoolFormDataInSession($carpoolForm);
+                    : 'La date et/ou l\'heure du départ sont invalides.');
 
                 return $this->redirectToRoute('app_carpool_add');
             }
-            // Populate and save the carpool
-            $hydratedCarpool = $this->carpoolManager->populateCarpoolWithDriverAndFormDetails(
-                $carpool, $carpoolForm, $user);
-            $this->documentManager->persist($hydratedCarpool);
-            $this->documentManager->flush();
-
+            // Populate the Carpool instance with data from the driver and submitted form. Save it in database.
+            $this->carpoolAddService->populateAndSaveCarpool($newCarpool, $user, $carpoolForm);
             $this->addFlash('success', 'Votre covoiturage a été publié avec succès !');
-            $this->formSessionHandler->removeFormDataFromSession('carpool');
+
+            // Clear form data from session to reset the form
+            $this->carpoolSessionDataManager->removeCarpoolFormDataFromSession(self::CARPOOL_ADD_FORM_SESSION_KEY);
 
             return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
         }
