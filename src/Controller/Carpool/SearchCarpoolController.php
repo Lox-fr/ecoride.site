@@ -106,7 +106,11 @@ class SearchCarpoolController extends AbstractController
 
             // Add a warning message if no results are found
             if (empty($carpoolSearchResults)) {
-                $this->addFlash('warning', 'Aucun résultat n\'a été trouvé avec les paramètres souhaités.');
+                $this->addFlash('warning',
+                    '<span class="text-nowrap">Il n\'y a pas de trajet à venir</span>
+                    <span class="text-nowrap">entre les villes souhaitées.</span><br/>
+                    <span class="text-nowrap">Veuillez réessayer en changeant</span>
+                    <span class="text-nowrap">un/des paramètres de la recherche.</span>');
             }
 
             // Store the search results in the session

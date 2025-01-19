@@ -116,6 +116,6 @@ class CarpoolSessionDataManager
 
     public function isExecutableCarpoolSearch(): bool
     {
-        return $this->sessionHandler->getFromSession('carpoolSearch_mustBeExecuted');
+        return $this->sessionHandler->getFromSession('carpoolSearch_mustBeExecuted') ?? false;
     }
 }

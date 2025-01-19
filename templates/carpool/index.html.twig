@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Trouvez votre prochain covoiturage avec EcoRide !{% endblock %}
+{% block title %}Trouvez votre prochain covoiturage avec EcoRide !
+{% endblock %}
 
 {% block main %}
 
@@ -8,6 +9,14 @@
 		{% include "_common/carpoolSearchForm.html.twig" %}
 	</header>
 
-
+	<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="carpoolSearchResults">
+		{% if carpoolSearchResults is not empty %}
+			{% include "carpool/_searchResults.html.twig" %}
+		{% else %}
+			<div id="popularRides">
+				{% include "_common/popularRides.html.twig" %}
+			<div>
+		{% endif %}
+	</section>
 
 {% endblock %}

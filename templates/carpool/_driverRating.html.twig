@@ -1,0 +1,27 @@
+{% if (carpool.driverAverageRating) %}
+	<ul class="d-flex flex-row flex-nowrap justify-content-center" title="{{ carpool.driverAverageRating }} sur 5">
+		{% set fullStars = carpool.driverAverageRating|round(0, 'floor') %}
+		{% set halfStar = (carpool.driverAverageRating - fullStars) >= 0.5 %}
+		{% set emptyStars = 5 - fullStars - (halfStar ? 1 : 0) %}
+
+		{% for i in 1..fullStars %}
+			<li class="" style="width: 15px;">
+				{{ ux_icon('line-md:star-filled') }}
+			</li>
+		{% endfor %}
+
+		{% if halfStar %}
+			<li class="" style="width: 15px;">
+				{{ ux_icon('line-md:star-filled-half') }}
+			</li>
+		{% endif %}
+
+		{% for i in 1..emptyStars %}
+			<li class="" style="width: 15px;">
+				{{ ux_icon('line-md:star') }}
+			</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<small class="fst-italic mb-0">Non évalué(e)</small>
+{% endif %}

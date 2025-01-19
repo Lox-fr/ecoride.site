@@ -35,6 +35,7 @@ class CarpoolRepository extends DocumentRepository
                 'driverPhotoName',
                 'driverAverageRating',
                 'numberOfAvailableSeats',
+                'totalNumberOfSeats',
                 'pricePerPerson',
                 'carEngineType'
             )

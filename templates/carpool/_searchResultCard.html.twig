@@ -1,0 +1,61 @@
+<li class="card m-2 pt-2 shadow {{ carpool.carEngineType is same as 'Électrique' ? 'highlightBg' }}" style="min-width: 280px;">
+	<div
+		class="card-body d-flex flex-column">
+
+		{# Departure and arrival times #}
+		<div class="d-inline-flex framed rounded border-primary px-3 py-2 mx-auto mb-4 shadow">
+			<strong class="fs-4">
+				{{ carpool.departureTime|date('H:i') }}
+				⇢
+				{{ carpool.arrivalTime|date('H:i') }}
+			</strong>
+		</div>
+
+		<div class="d-inline-flex align-items-center justify-content-around">
+
+			<div class="d-flex flex-column">
+
+				{# Driver pseudo #}
+				<span class="text-nowrap">Proposé par</span>
+				<strong class="fs-4">{{ carpool.driverPseudo }}</strong>
+
+                {# Driver rating #}
+                {% include "carpool/_driverRating.html.twig" %}
+
+			</div>
+
+			{# Driver thumbnail #}
+			<img src="{{ asset('images/users/' ~ carpool.driverPhotoName|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ carpool.driverPseudo }}" class="float-end object-fit-cover rounded-pill border border-secondary border-2 align-bottom" style="width: 72px; height: 72px;"/>
+
+		</div>
+
+		<hr>
+
+        {# Ecological ride ? #}
+        {% if (carpool.carEngineType is same as 'Électrique') %}
+		<div class="d-inline-flex align-items-center justify-content-center">
+            <img src="{{ asset('images/favicons/apple-icon-76x76.png') }}" alt="vignette signalant un voyage écologique" class="me-2" style="width: 36px; height: 36px;"/>
+            <span class="text-primary fw-bold">Voyage écologique</span>
+        </div>
+        <hr>
+        {% endif %}
+
+		{# Car #}
+		<div class="">
+			Place{{ carpool.numberOfAvailableSeats > 1 ? 's' }}
+            restante{{ carpool.numberOfAvailableSeats > 1 ? 's' }} -
+			<strong>{{ carpool.numberOfAvailableSeats }} sur {{ carpool.totalNumberOfSeats }}</strong>
+            <br/>
+			Prix -
+			<strong>{{ carpool.pricePerPerson }} crédits</strong>
+		</div>
+
+		<hr>
+
+        {# Detail button #}
+		<div class="mb-3">
+			<a href="#" class="btn btn-outline-primary shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="">Voir plus en détails</a>
+		</div>
+
+	</div>
+</li>

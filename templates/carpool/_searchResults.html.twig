@@ -1,0 +1,23 @@
+<h2 class="fw-light">
+	<span class="text-nowrap">
+		Il existe <span class="text-primary">{{ carpoolSearchResults|length }}</span>
+		trajet{{ carpoolSearchResults|length > 1 ? 's' }}
+	</span>
+	<span class="text-nowrap">
+		entre <span class="text-primary">{{ carpoolSearchForm.departureCity.vars.value|capitalize }}</span>
+	</span>
+	<span class="text-nowrap">
+		et <span class="text-primary">{{ carpoolSearchForm.arrivalCity.vars.value|capitalize }}</span>
+	</span>
+	<span class="text-nowrap">
+		le <span class="fst-italic">{{ carpoolSearchForm.departureTime.vars.value|format_datetime(pattern='EEEE d MMMM', locale='fr') }}</span>
+	</span>
+</h2>
+
+<hr class="text-primary border-2 mb-4">
+
+<ul class="d-flex flex-wrap justify-content-center align-items-start mb-5">
+	{% for carpool in carpoolSearchResults %}
+		{% include "carpool/_searchResultCard.html.twig" %}
+	{% endfor %}
+</ul>
