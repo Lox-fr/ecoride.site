@@ -53,7 +53,7 @@ class SearchCarpoolController extends AbstractController
     /**
      * Handles the submission of the carpool search form :
      * save search form data in session, capture potential validation errors
-     * and determine if the search is executable after redirection
+     * and determine if the search is executable after redirection.
      *
      * @param FormInterface $carpoolSearchForm The submitted carpool search form
      */
@@ -90,19 +90,40 @@ class SearchCarpoolController extends AbstractController
      * Executes the carpool search or retrieves previous search results from the session.
      *
      * If the search is marked as executable in the session, it performs the query,
-     * stores the results, and updates the session state. Otherwise, it retrieves the
-     * last search results stored in the session.
+     * stores the results, and updates the session state. Additionally, it verifies
+     * if any search results match the exact requested date and adds a flash message
+     * if no matches are found. If no search results are returned at all, it also
+     * displays a warning flash message. Otherwise, it retrieves the last search
+     * results stored in the session.
      *
      * @param FormInterface $carpoolSearchForm the carpool search form containing user inputs
      *
-     * @return array The results of the carpool search. Returns an empty array if no results are found.
+     * @return array The results of the carpool search. Returns an empty array if no results are found
      */
     private function handleCarpoolSearchExecution(FormInterface $carpoolSearchForm): array
     {
         if ($this->carpoolSessionDataManager->isExecutableCarpoolSearch()) {
-
             // Execute the search query with data from the submitted form (store in session)
             $carpoolSearchResults = $this->carpoolSearchService->executeSearchQueryWithFormData($carpoolSearchForm);
+
+            // Retrieve the date requested in the form
+            $requestedDate = $carpoolSearchForm->get('departureTime')->getData();
+            $requestedDateString = $requestedDate instanceof \DateTimeInterface
+                ? $requestedDate->format('Y-m-d')
+                : null;
+
+            // Check if results match the exact date requested
+            $hasResultsForRequestedDate = false;
+
+            if ($requestedDateString) {
+                foreach ($carpoolSearchResults as $carpool) {
+                    // Access the property/method of the Carpool object
+                    if ($carpool->getDepartureTime()->format('Y-m-d') === $requestedDateString) {
+                        $hasResultsForRequestedDate = true;
+                        break;
+                    }
+                }
+            }
 
             // Add a warning message if no results are found
             if (empty($carpoolSearchResults)) {
@@ -111,6 +132,19 @@ class SearchCarpoolController extends AbstractController
                     <span class="text-nowrap">entre les villes souhaitées.</span><br/>
                     <span class="text-nowrap">Veuillez réessayer en changeant</span>
                     <span class="text-nowrap">un/des paramètres de la recherche.</span>');
+            }
+
+            // Add a message if no results are available for the requested date
+            elseif (!$hasResultsForRequestedDate) {
+                $this->addFlash(
+                    'info',
+                    \sprintf(
+                        '<span class="text-nowrap">Aucun covoiturage n\'est disponible</span>
+                        <span class="text-nowrap">pour la date exacte %s,</span><br/>
+                        <span class="text-nowrap">mais il en existe pour des dates ultérieures.</span>',
+                        $requestedDate instanceof \DateTimeInterface ? 'du'.$requestedDate->format('d/m/Y') : 'demandée'
+                    )
+                );
             }
 
             // Store the search results in the session
