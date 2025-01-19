@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Document;
 
+use App\Repository\CarpoolRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceMany;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[MongoDB\Document]
+#[MongoDB\Document(repositoryClass: CarpoolRepository::class)]
 class Carpool
 {
     #[MongoDB\Id]
@@ -21,11 +22,12 @@ class Carpool
     private ?\DateTimeImmutable $departureTime = null;
 
     #[Assert\NotBlank(message: 'La ville de départ est requise.')]
-    #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(
+        min: 2, minMessage: 'Veuillez saisir un nom de ville de départ d\'au moins {{ limit }} caractères.')]
     #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville ne peut pas contenir plus de {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
-        message: 'Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
+        message: 'Le nom de la ville de départ ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
     #[MongoDB\Field(type: 'string')]
     private ?string $departureCity = null;
 
@@ -38,7 +40,6 @@ class Carpool
     #[MongoDB\Field(type: 'string')]
     private ?string $departurePlace = null;
 
-    #[Assert\NotBlank(message: 'Le temps de trajet est requis.')]
     #[Assert\GreaterThanOrEqual(
         value: 2, message: 'Le temps de trajet doit être supérieur ou égal à {{ compared_value }} minutes.')]
     #[MongoDB\Field(type: 'int')]
@@ -49,11 +50,12 @@ class Carpool
 
     #[MongoDB\Field(type: 'string')]
     #[Assert\NotBlank(message: 'La ville d\'arrivée est requise.')]
-    #[Assert\Length(min: 2, minMessage: 'Veuillez saisir un nom de ville d\'au moins {{ limit }} caractères.')]
+    #[Assert\Length(
+        min: 2, minMessage: 'Veuillez saisir un nom de ville d\'arrivée d\'au moins {{ limit }} caractères.')]
     #[Assert\Length(max: 50, maxMessage: 'Le nom de la ville d\arrivée ne doit pas excéder {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: "/^[A-Za-zÀ-ÿ\- ']+$/",
-        message: 'Le nom de la ville ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
+        message: 'Le nom de la ville d\'arrivée ne peut contenir que des lettres, des espaces, des apostrophes et des traits d\'union.')]
     private ?string $arrivalCity = null;
 
     #[Assert\Length(min: 5, minMessage: 'Veuillez saisir une adresse d\'au moins {{ limit }} caractères.')]
@@ -65,9 +67,8 @@ class Carpool
     #[MongoDB\Field(type: 'string')]
     private ?string $arrivalPlace = null;
 
-    #[Assert\NotBlank(message: 'Le tarif par personne est requis.')]
     #[Assert\GreaterThanOrEqual(
-        value: 2, message: 'Le tarif par personne doit être supérieur ou égal à {{ compared_value }}.')]
+        value: 3, message: 'Le tarif par personne doit être supérieur ou égal à {{ compared_value }}.')]
     #[Assert\LessThanOrEqual(
         value: 150, message: 'Le tarif par personne ne peut pas dépasser {{ compared_value }}.')]
     #[MongoDB\Field(type: 'float')]
@@ -87,6 +88,9 @@ class Carpool
 
     #[MongoDB\Field(type: 'int')]
     private ?int $driverUserId = null;
+
+    #[MongoDB\Field(type: 'string')]
+    private ?string $driverPseudo = null;
 
     #[MongoDB\Field(type: 'string')]
     private ?string $driverPhotoName = null;
@@ -177,7 +181,7 @@ class Carpool
     {
         $this->estimatedRideTime = $estimatedRideTime;
     }
-    
+
     public function getEstimatedRideTime(): ?int
     {
         return $this->estimatedRideTime;
@@ -287,6 +291,18 @@ class Carpool
     public function setDriverUserId(int $driverUserId): static
     {
         $this->driverUserId = $driverUserId;
+
+        return $this;
+    }
+
+    public function getDriverPseudo(): ?string
+    {
+        return $this->driverPseudo;
+    }
+
+    public function setDriverPseudo(?string $driverPseudo): static
+    {
+        $this->driverPseudo = $driverPseudo;
 
         return $this;
     }

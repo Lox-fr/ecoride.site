@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Carpool;
 
 use App\Document\Carpool;
 use App\Entity\User;
 use Symfony\Component\Form\FormInterface;
 
-class CarpoolManager
+class CarpoolHandler
 {
     /**
      * Populates a given Carpool instance with data from the driver and submitted form.
@@ -38,6 +38,7 @@ class CarpoolManager
             ->setNumberOfAvailableSeats($car->getNumberOfSeats())
             ->setStatus('Available')
             ->setDriverUserId($driver->getId())
+            ->setDriverPseudo($driver->getPseudo())
             ->setDriverPhotoName($driver->getPhotoFilename())
             ->setDriverAge($driver->getAge())
             ->setDriverPetsAllowed($driver->isPetsAllowed())

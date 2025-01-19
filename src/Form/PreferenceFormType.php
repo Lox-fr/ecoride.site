@@ -45,6 +45,7 @@ class PreferenceFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Preference::class,
+            'csrf_token_id' => 'user_preference',
         ]);
     }
 }

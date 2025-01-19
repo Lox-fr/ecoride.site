@@ -7,13 +7,13 @@ namespace App\Service;
 use Doctrine\DBAL\Connection;
 
 /**
- * Custom exception for the SqlManager service.
+ * Custom exception for the SqlHandler service.
  */
-class SqlManagerException extends \RuntimeException
+class SqlHandlerException extends \RuntimeException
 {
 }
 
-class SqlManager
+class SqlHandler
 {
     // Constants for fetch modes
     public const FETCH_ONE = 'fetchOne';
@@ -27,8 +27,9 @@ class SqlManager
 
     public function __construct(
         private Connection $connection,
-        private string $sqlBasePath = __DIR__.'/../sql/'
-    ) {}
+        private string $sqlBasePath = __DIR__.'/../sql/',
+    ) {
+    }
 
     /**
      * Execute a SQL query from an SQL file.
@@ -39,7 +40,7 @@ class SqlManager
      * @param array       $params       (Optional) Parameters to bind to the query (for prepared statements)
      *
      * @throws \InvalidArgumentException If the SQL file is not found or if the fetch mode is invalid
-     * @throws SqlManagerException       If an error occurs during query execution
+     * @throws SqlHandlerException       If an error occurs during query execution
      *
      * @return mixed The result of the query, or `true` if no result is expected
      */
@@ -83,7 +84,7 @@ class SqlManager
             // Query executed successfully without fetching
             return true;
         } catch (\Throwable $e) {
-            throw new SqlManagerException("Error executing SQL query from file '$fileName': ".$e->getMessage(), 0, $e);
+            throw new SqlHandlerException("Error executing SQL query from file '$fileName': ".$e->getMessage(), 0, $e);
         }
     }
 

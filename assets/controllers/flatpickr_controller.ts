@@ -35,7 +35,7 @@ export default class extends Controller {
 
         if (mode === "sinceToday") {
             return {
-                minDate: "today",
+                minDate: today,
                 defaultDate: today.toISOString().split("T")[0],
                 altFormat: "l j F Y",
             };
@@ -44,7 +44,7 @@ export default class extends Controller {
 
             return {
                 enableTime: true,
-                minDate: "today",
+                minDate: today,
                 maxDate: maxDate,
                 altFormat: "l j F à H\\hi",
             };
@@ -71,12 +71,8 @@ export default class extends Controller {
         } else {
             return {
                 // Default configuration
-                minDate:
-                    this.element.getAttribute("data-flatpickr-min-date") ||
-                    "today",
-                defaultDate:
-                    this.element.getAttribute("data-flatpickr-default-date") ||
-                    today.toISOString().split("T")[0],
+                minDate: this.element.getAttribute("data-flatpickr-min-date") || today,
+                defaultDate: this.element.getAttribute("data-flatpickr-default-date") || today,
                 altFormat: "l j F Y",
             };
         }

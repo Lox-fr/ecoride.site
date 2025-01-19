@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Espace utilisateur EcoRide
-{% endblock %}
+{% block title %}Espace utilisateur EcoRide{% endblock %}
 
 {% block main %}
 
@@ -13,7 +12,6 @@
 		</header>
 
 		<div class="col-md-8 framed flex-fill rounded-5 shadow-lg mt-5">
-
 
 			<section class="collapse {{ activeTab is same as 'informations' ? 'show' }}" id="infosPassager">
 				{% include "profile/_passengerForm/index.html.twig" %}

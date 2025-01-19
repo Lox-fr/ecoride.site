@@ -6,16 +6,19 @@ $text-color: $color-3;
 $border-color: $color-3;
 $focus-shadow-color: $color-2;
 $framed-bg-color: $color-7;
-$popularRide-hover-color: $color-7;
+$hoverable-bg-white-color: white;
+$hoverable-bg-light-color: $color-7;
 $userBtn-color: white;
 $userBtn-bg-color: $color-5;
+$highlight-bg-first-color: $color-1;
+$highlight-bg-second-color: $color-7;
 
+$page-min-width: 320px;
 $transition-link-transform-scale: 1.15;
 $transition-link-transform-time: 0.2s;
 
 * {
-    font-family: "Helvetica Neue", "Helvetica", Arial, "Liberation Sans",
-        "Segoe UI", Roboto, sans-serif;
+    font-family: "Helvetica Neue", "Helvetica", Arial, "Liberation Sans", "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -28,7 +31,7 @@ $transition-link-transform-time: 0.2s;
 
 body {
     padding-top: 56px;
-    min-width: 320px;
+    min-width: $page-min-width;
     min-height: 100vh;
     background: $body-bg-first-color;
     background: linear-gradient(
@@ -50,6 +53,15 @@ ul {
 /* Hide arrows on number inputs */
 input[type="number"] {
     appearance: textfield;
+}
+
+.highlightBg {
+    background: $highlight-bg-first-color;
+    background: linear-gradient(
+        135deg,
+        $highlight-bg-first-color 33%,
+        $highlight-bg-second-color 66%
+    );
 }
 
 .framed {
@@ -88,9 +100,20 @@ input[type="number"] {
     cursor: pointer;
 }
 
-#popularRides {
-    li a:hover {
-        background-color: $popularRide-hover-color;
+.rounded-lg-5 {
+    border-radius: 0;
+
+    @media (min-width: map-get($grid-breakpoints, "lg")) {
+        border-radius: 12px;
+    }
+}
+
+.hoverableLinksInListItemContainer {
+    a.whiteHoverBg:hover {
+        background-color: $hoverable-bg-white-color;
+    }
+    a.lightHoverBg:hover {
+        background-color: $hoverable-bg-light-color;
     }
 }
 

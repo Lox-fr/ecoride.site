@@ -106,7 +106,7 @@ class CarpoolAddFormType extends AbstractType
                 'attr' => [
                     'class' => 'shadow',
                     'aria-label' => 'Nombre de crédits demandés à chaque passager.',
-                    'min' => 2,
+                    'min' => 3,
                 ],
                 'help' => 'Prix demandé par passager.',
                 'help_attr' => ['class' => 'visually-hidden'],
@@ -126,6 +126,7 @@ class CarpoolAddFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Carpool::class,
             'user_cars' => [],
+            'csrf_token_id' => 'carpool_add',
         ]);
     }
 }
