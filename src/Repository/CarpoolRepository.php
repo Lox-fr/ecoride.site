@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use MongoDB\BSON\Regex;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
 /**
@@ -40,8 +41,8 @@ class CarpoolRepository extends DocumentRepository
                 'carEngineType'
             )
             ->readOnly()
-            ->field('departureCity')->equals($departureCity)
-            ->field('arrivalCity')->equals($arrivalCity)
+            ->field('departureCity')->equals(new Regex('^' . preg_quote($departureCity) . '$', 'i'))
+            ->field('arrivalCity')->equals(new Regex('^' . preg_quote($arrivalCity) . '$', 'i'))
             ->field('departureTime')->gte($departureTime)
             ->field('numberOfAvailableSeats')->gt(0)
             ->sort('departureTime', 'asc')
