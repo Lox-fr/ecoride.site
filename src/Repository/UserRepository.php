@@ -86,8 +86,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return $result ? (int) $result : null;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('
-                Error fetching user ID for email "%s": %s', $email, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf(
+                'Error fetching user ID for email "%s": %s', $email, $e->getMessage()), 0, $e);
         }
     }
 
@@ -120,8 +120,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return true === $result;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('
-                Flush of passenger informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf(
+                'Flush of passenger informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
         }
     }
 
@@ -150,8 +150,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return true === $result;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('
-                Flush of driver informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf(
+                'Flush of driver informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
         }
     }
 
@@ -175,8 +175,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return $result > 0;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('
-                Fetch of user roles failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf(
+                'Fetch of user roles failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
         }
     }
 
@@ -192,8 +192,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         try {
             $this->sqlHandler->execute('delete/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('
-                Deletion of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf(
+                'Deletion of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
         }
     }
 
@@ -204,13 +204,81 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @throws \Exception If the SQL query execution fails, an exception is thrown with details
      */
-    public function addDriverRoleByUserId(int $userId): void
+    public function grantDriverRoleByUserId(int $userId): void
     {
         try {
             $this->sqlHandler->execute('create/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf('
-                Creation of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf(
+                'Creation of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Load a driver fixture into the database.
+     *
+     * This method inserts driver-related data into the database fixtures table.
+     * It includes personal information such as pseudo, email, first name, last name,
+     * and additional details like address, phone number, and ratings.
+     *
+     * @param User $user The driver user entity containing the necessary fixture data.
+     *
+     * @throws \Exception If an error occurs during the execution of the SQL statement.
+     */
+    public function loadDriverFixtures(User $user): void
+    {
+        try {
+            $this->sqlHandler->execute('driver', 'fixtures', null, [
+                'pseudo' => $user->getPseudo(),
+                'email' => $user->getEmail(),
+                'password' => $user->getPassword(),
+                'created_at' => $user->getCreatedAt()->format('Y-m-d'),
+                'active' => (int) $user->isActive(),
+                'first_name' => $user->getFirstName(),
+                'last_name' => $user->getLastName(),
+                'address' => $user->getAddress(),
+                'phone_number' => $user->getPhoneNumber(),
+                'photo_filename' => $user->getPhotoFilename(),
+                'date_of_birth' => $user->getDateOfBirth()->format('Y-m-d'),
+                'pets_allowed' => (int) $user->isPetsAllowed(),
+                'smokers_allowed' => (int) $user->isSmokersAllowed(),
+                'driver_role_chosen' => (int) $user->isDriverRoleChosen(),
+                'sum_of_ratings' => $user->getSumOfRatings(),
+                'number_of_ratings' => $user->getNumberOfRatings(),
+                'credits' => $user->getCredits(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf(
+                'Loading of user fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Load a passenger fixture into the database.
+     *
+     * This method inserts passenger-related data into the database fixtures table.
+     * It contains limited personal information compared to drivers, focusing on pseudo,
+     * email, creation date, and profile photo.
+     *
+     * @param User $user The passenger user entity containing the necessary fixture data.
+     *
+     * @throws \Exception If an error occurs during the execution of the SQL statement.
+     */
+    public function loadPassengerFixtures(User $user): void
+    {
+        try {
+            $this->sqlHandler->execute('passenger', 'fixtures', null, [
+                'pseudo' => $user->getPseudo(),
+                'email' => $user->getEmail(),
+                'password' => $user->getPassword(),
+                'created_at' => $user->getCreatedAt()->format('Y-m-d'),
+                'active' => (int) $user->isActive(),
+                'photo_filename' => $user->getPhotoFilename(),
+                'credits' => $user->getCredits(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf(
+                'Loading of user fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
 }
