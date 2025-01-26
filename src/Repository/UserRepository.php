@@ -249,12 +249,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf(
-                'Loading of user fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
+                'Loading of driver fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
 
     /**
-     * Load a passenger fixture into the database.
+     * Load a passenger fixture into the database using a SQL query stored in a local file.
      *
      * This method inserts passenger-related data into the database fixtures table.
      * It contains limited personal information compared to drivers, focusing on pseudo,
@@ -278,7 +278,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf(
-                'Loading of user fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
+                'Loading of passenger fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
 }
