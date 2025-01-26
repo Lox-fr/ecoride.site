@@ -4,66 +4,43 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Document\Carpool;
-use App\Service\SqlDataFixturesService;
+use App\Service\DataFixtures\NoSqlDataFixturesService;
+use App\Service\DataFixtures\SqlDataFixturesService;
 use Doctrine\Bundle\MongoDBBundle\Fixture\Fixture;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
     public function __construct(
         private SqlDataFixturesService $sqlDataFixturesService,
-        private EntityManagerInterface $entityManager,
+        private NoSqlDataFixturesService $noSqlDataFixturesService,
     ) {
     }
 
+    /**
+     * Loads data fixtures into both SQL and NoSQL databases.
+     *
+     * @param ObjectManager $manager from Doctrine, which should be an instance of DocumentManager for MongoDB
+     *
+     * @throws \RuntimeException if the manager is not an instance of DocumentManager
+     */
     public function load(ObjectManager $manager): void
     {
-        /* SQL side */
+        /*
+         * Ensures that the command is executed with the Doctrine ODM (Object Document Mapper),
+         * and not with the ORM (Object Relational Mapper).
+         */
+        if (!$manager instanceof DocumentManager) {
+            throw new \RuntimeException('Expected DocumentManager');
+        }
+
+        /* SQL side - using custom SQL queries */
         $drivers = $this->sqlDataFixturesService->loadDriversAndReturnCollection();
         $passengers = $this->sqlDataFixturesService->loadPassengersAndReturnCollection();
 
-        /* NoSQL side */
-        $this->loadPopularCarpools($drivers, $passengers);
-        $this->loadPastCarpoolsAndReturnCollection($drivers, $passengers);
-    }
-
-    /**
-     * @param ArrayCollection<User> $drivers
-     * @param ArrayCollection<User> $passengers
-     *
-     * @return ArrayCollection<Carpool>
-     */
-    private function loadPopularCarpools(ArrayCollection $drivers, ArrayCollection $passengers,
-    ): ArrayCollection {
-        $carpools = new ArrayCollection();
-        $carpools->add(new Carpool());
-
-        return new ArrayCollection();
-    }
-
-    /**
-     * @param ArrayCollection<User> $drivers
-     * @param ArrayCollection<User> $passengers
-     *
-     * @return ArrayCollection<Carpool>
-     */
-    private function loadPastCarpoolsAndReturnCollection(ArrayCollection $drivers, ArrayCollection $passengers,
-    ): ArrayCollection {
-        $carpools = new ArrayCollection();
-        $carpools->add(new Carpool());
-        $this->loadReviewsOnCarpool($carpools);
-
-        return new ArrayCollection();
-    }
-
-    /**
-     * @param ArrayCollection<Carpool> $carpools
-     */
-    private function loadReviewsOnCarpool(ArrayCollection $carpools): void
-    {
-        // Future implementation for MongoDB fixtures
+        /* NoSQL side - using document manager */
+        $this->noSqlDataFixturesService->loadPastCarpoolsForLast3Years($drivers, $passengers);
+        $this->noSqlDataFixturesService->loadPopularCarpoolsForNextMonth($drivers, $passengers);
     }
 }
