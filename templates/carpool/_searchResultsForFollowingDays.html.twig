@@ -19,10 +19,10 @@
 
 <hr class="text-primary border-2 mb-4">
 
-<ul class="d-flex flex-wrap justify-content-center align-items-start mb-5">
+<ul class="d-flex flex-wrap justify-content-center align-items-stretch mb-5">
 	{% for carpool in carpoolSearchResults %}
 		{% if carpool.departureTime|date('Y-m-d') > "now"|date('Y-m-d') %}
-			{% include "carpool/_searchResultCard.html.twig" %}
+			{% include "carpool/_searchResultCard.html.twig" with {dateTimeDisplay: 'dateTime'} %}
 		{% endif %}
 	{% endfor %}
 </ul>

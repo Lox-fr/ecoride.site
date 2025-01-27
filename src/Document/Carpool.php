@@ -93,7 +93,7 @@ class Carpool
     private ?string $driverPseudo = null;
 
     #[MongoDB\Field(type: 'string')]
-    private ?string $driverPhotoName = null;
+    private ?string $driverPhotoFilename = null;
 
     #[MongoDB\Field(type: 'int')]
     private ?int $driverAge = null;
@@ -177,15 +177,17 @@ class Carpool
         return $this;
     }
 
-    public function setEstimatedRideTime(int $estimatedRideTime): void
-    {
-        $this->estimatedRideTime = $estimatedRideTime;
-    }
-
     public function getEstimatedRideTime(): ?int
     {
         return $this->estimatedRideTime;
     }
+
+    public function setEstimatedRideTime(int $estimatedRideTime): static
+    {
+        $this->estimatedRideTime = $estimatedRideTime;
+
+        return $this;
+    }    
 
     public function getArrivalTime(): ?\DateTimeImmutable
     {
@@ -307,14 +309,14 @@ class Carpool
         return $this;
     }
 
-    public function getDriverPhotoName(): ?string
+    public function getDriverPhotoFilename(): ?string
     {
-        return $this->driverPhotoName;
+        return $this->driverPhotoFilename;
     }
 
-    public function setDriverPhotoName(?string $driverPhotoName): static
+    public function setDriverPhotoFilename(?string $driverPhotoFilename): static
     {
-        $this->driverPhotoName = $driverPhotoName;
+        $this->driverPhotoFilename = $driverPhotoFilename;
 
         return $this;
     }

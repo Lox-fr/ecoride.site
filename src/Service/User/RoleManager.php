@@ -78,7 +78,7 @@ class RoleManager
                 // If the user does not have the role, check if they meet the criteria to acquire it
                 if ($user->isDriverRoleChosen()) {
                     if (self::canBeDriver($user)) {
-                        $this->userRepository->addDriverRoleByUserId($user->getId());
+                        $this->userRepository->grantDriverRoleByUserId($user->getId());
                     } else {
                         return false;
                     }

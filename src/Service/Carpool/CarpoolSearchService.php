@@ -21,7 +21,7 @@ class CarpoolSearchService
         /** @var CarpoolRepository $carpoolRepository */
         $carpoolRepository = $this->documentManager->getRepository(Carpool::class);
 
-        $departureTime = $carpoolSearchForm->get('departureTime')->getData();
+        $departureTime = $carpoolSearchForm->get('departureTime')->getData() ?? new \DateTimeImmutable('+1 hour');
         $departureCity = $carpoolSearchForm->get('departureCity')->getData();
         $arrivalCity = $carpoolSearchForm->get('arrivalCity')->getData();
 

@@ -20,6 +20,33 @@ class CarRepository extends ServiceEntityRepository
     }
 
     /**
+     * Load a car fixture into the database using a SQL query stored in a local file.
+     *
+     * @param Car $car the car entity containing the necessary fixture data
+     *
+     * @throws \Exception if an error occurs during the execution of the SQL statement
+     */
+    public function loadCarFixtures(Car $car): void
+    {
+        try {
+            $this->sqlHandler->execute('car', 'fixtures', null, [
+                'license_plate' => $car->getLicensePlate(),
+                'date_of_first_registration' => $car->getDateOfFirstRegistration()->format('Y-m-d H:i:s'),
+                'model' => $car->getModel(),
+                'user_id' => $car->getUser()->getId(),
+                'brand_id' => $car->getBrand()->getId(),
+                'engine_type_id' => $car->getEngineType()->getId(),
+                'color_id' => $car->getColor()->getId(),
+                'number_of_seats' => (int) $car->getNumberOfSeats(),
+                'created_at' => $car->getCreatedAt()->format('Y-m-d H:i:s'),
+                'active' => (int) $car->isActive(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Loading of car fixture failed for "%s": %s', $car->getUser()->getPseudo(), $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
      * Adds a new car in the database using a SQL query stored in a local file.
      *
      * This method inserts a car into the 'car' table using a prepared SQL query.

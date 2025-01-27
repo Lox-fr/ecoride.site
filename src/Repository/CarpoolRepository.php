@@ -33,7 +33,7 @@ class CarpoolRepository extends DocumentRepository
                 'arrivalCity',
                 'arrivalTime',
                 'driverPseudo',
-                'driverPhotoName',
+                'driverPhotoFilename',
                 'driverAverageRating',
                 'numberOfAvailableSeats',
                 'totalNumberOfSeats',

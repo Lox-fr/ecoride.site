@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service\Carpool;
 
-use App\Entity\User;
 use App\Document\Carpool;
 use App\Service\SessionHandler;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\FormInterface;
 
 class CarpoolSessionDataManager
 {
     public function __construct(
-        private DocumentManager $documentManager,
         private SessionHandler $sessionHandler,
-        private CarpoolHandler $carpoolHandler,
     ) {
     }
 

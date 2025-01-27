@@ -20,6 +20,26 @@ class PreferenceRepository extends ServiceEntityRepository
     }
 
     /**
+     * Load a preference fixture into the database using a SQL query stored in a local file.
+     *
+     * @param Preference $preference the preference entity containing the necessary fixture data
+     *
+     * @throws \Exception if an error occurs during the execution of the SQL statement
+     */
+    public function loadPreferenceFixtures(Preference $preference): void
+    {
+        try {
+            $this->sqlHandler->execute('preference', 'fixtures', null, [
+                'label' => $preference->getLabel(),
+                'user_id' => (int) $preference->getUser()->getId(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('
+                Loading of preference fixture failed for "%s": %s', $preference->getLabel(), $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
      * Adds a new custom preference in the database using a SQL query stored in a local file.
      *
      * This method inserts a preference into the 'preference' table using a prepared SQL query.
