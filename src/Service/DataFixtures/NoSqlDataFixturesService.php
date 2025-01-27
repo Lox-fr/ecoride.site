@@ -12,6 +12,7 @@ use App\Service\Carpool\CarpoolHandler;
 use App\Service\DataFixtures\DataProviders\CarpoolPlacesProvider;
 use App\Service\DataFixtures\DataProviders\CarpoolReviewMessagesProvider;
 use App\Service\DataFixtures\DataProviders\CarpoolRidesProvider;
+use App\Service\User\RatingManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Faker\Factory;
@@ -36,6 +37,7 @@ class NoSqlDataFixturesService
         private CarpoolPlacesProvider $carpoolPlacesProvider,
         private CarpoolRidesProvider $carpoolRidesProvider,
         private CarpoolReviewMessagesProvider $carpoolReviewMessagesProvider,
+        private RatingManager $ratingManager,
     ) {
         $this->faker = Factory::create('fr_FR');
         $this->carpoolStatusArray = $this->generateStatusArray(self::CARPOOL_STATUSES);
@@ -102,7 +104,7 @@ class NoSqlDataFixturesService
                 // Each carpool had one or more passengers
                 $carpoolPassengers = $this->addPassengersToCarpool($newCarpool, $passengers, $car);
                 // 2 out of 3 passengers leave a review, and 1 out of 2 reviews contains a comment
-                $this->handleReviewsFixtures($carpoolPassengers, $newCarpool);
+                $this->handleReviewsFixtures($carpoolPassengers, $newCarpool, $driver);
 
                 $this->documentManager->persist($newCarpool);
             }
@@ -220,7 +222,7 @@ class NoSqlDataFixturesService
      * Handle load of reviews fixtures.
      * 2 out of 3 passengers leave a review, and 1 out of 2 reviews contains a comment.
      */
-    private function handleReviewsFixtures(array $carpoolPassengers, Carpool $ratedCarpool,
+    private function handleReviewsFixtures(array $carpoolPassengers, Carpool $ratedCarpool, User $driver
     ): void {
         foreach ($carpoolPassengers as $passenger) {
             // 2 out of 3 passengers leave a review
@@ -251,6 +253,12 @@ class NoSqlDataFixturesService
                             ->getRandomPositiveReviewMessage());
                     }
                 }
+
+                // record the rating in user entity (SQL database) if the review is approved
+                if ($review->getStatus() === 'approved') {
+                    $this->ratingManager->addARating($driver, $review->getRating());
+                }
+
                 $this->documentManager->persist($review);
                 $ratedCarpool->addReview($review);
             }

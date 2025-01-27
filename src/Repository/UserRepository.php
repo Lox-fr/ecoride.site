@@ -86,8 +86,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return $result ? (int) $result : null;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Error fetching user ID for email "%s": %s', $email, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Error fetching user ID for email "%s": %s', $email, $e->getMessage()), 0, $e);
         }
     }
 
@@ -120,8 +119,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return true === $result;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Flush of passenger informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Flush of passenger informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
         }
     }
 
@@ -150,8 +148,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return true === $result;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Flush of driver informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Flush of driver informations failed for "%s": %s', $user->getEmail(), $e->getMessage()), 0, $e);
         }
     }
 
@@ -175,8 +172,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return $result > 0;
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Fetch of user roles failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Fetch of user roles failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
         }
     }
 
@@ -192,8 +188,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         try {
             $this->sqlHandler->execute('delete/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Deletion of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Deletion of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
         }
     }
 
@@ -209,8 +204,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         try {
             $this->sqlHandler->execute('create/driverRoleByUserId', 'queries', null, ['user_id' => (int) $userId]);
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Creation of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Creation of driver role failed for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
         }
     }
 
@@ -221,9 +215,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * It includes personal information such as pseudo, email, first name, last name,
      * and additional details like address, phone number, and ratings.
      *
-     * @param User $user The driver user entity containing the necessary fixture data.
+     * @param User $user the driver user entity containing the necessary fixture data
      *
-     * @throws \Exception If an error occurs during the execution of the SQL statement.
+     * @throws \Exception if an error occurs during the execution of the SQL statement
      */
     public function loadDriverFixtures(User $user): void
     {
@@ -248,8 +242,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 'credits' => $user->getCredits(),
             ]);
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Loading of driver fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Loading of driver fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
 
@@ -264,21 +257,33 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @throws \Exception If an error occurs during the execution of the SQL statement.
      */
-    public function loadPassengerFixtures(User $user): void
+    public function loadPassengerFixtures(User $passenger): void
     {
         try {
             $this->sqlHandler->execute('passenger', 'fixtures', null, [
-                'pseudo' => $user->getPseudo(),
-                'email' => $user->getEmail(),
-                'password' => $user->getPassword(),
-                'created_at' => $user->getCreatedAt()->format('Y-m-d'),
-                'active' => (int) $user->isActive(),
-                'photo_filename' => $user->getPhotoFilename(),
-                'credits' => $user->getCredits(),
+                'pseudo' => $passenger->getPseudo(),
+                'email' => $passenger->getEmail(),
+                'password' => $passenger->getPassword(),
+                'created_at' => $passenger->getCreatedAt()->format('Y-m-d'),
+                'active' => (int) $passenger->isActive(),
+                'photo_filename' => $passenger->getPhotoFilename(),
+                'credits' => $passenger->getCredits(),
             ]);
         } catch (\Exception $e) {
-            throw new \Exception(\sprintf(
-                'Loading of passenger fixture failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
+            throw new \Exception(\sprintf('Loading of passenger fixture failed for "%s": %s', $passenger->getPseudo(), $e->getMessage()), 0, $e);
+        }
+    }
+
+    public function updateDriverRatings(User $driver): void
+    {
+        try {
+            $this->sqlHandler->execute('update/numberAndSumOfRatings', 'queries', null, [
+                'number_of_ratings' => $driver->getNumberOfRatings(),
+                'sum_of_ratings'    => $driver->getSumOfRatings(),
+                'user_id'           => $driver->getId(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Update of rating values failed for "%s": %s', $driver->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
 }

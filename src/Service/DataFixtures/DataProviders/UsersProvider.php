@@ -52,9 +52,6 @@ class UsersProvider
     {
         $driversCollection = new ArrayCollection();
         for ($i = 0; $i < \count(self::DRIVERS_PSEUDOS); ++$i) {
-            $numberOfRatings = $this->fakerFactory->numberBetween(3, 300);
-            $sumOfRatings = (int) ($numberOfRatings * $this->fakerFactory->randomFloat(1, 2, 5));
-
             $newDriver = new User();
             $newDriver->setPseudo(self::DRIVERS_PSEUDOS[$i])
                 ->setEmail('driver'.$i.'@ecoride.site')
@@ -71,8 +68,6 @@ class UsersProvider
                 ->setPetsAllowed($this->fakerFactory->boolean())
                 ->setSmokersAllowed($this->fakerFactory->boolean())
                 ->setDriverRoleChosen(true)
-                ->setSumOfRatings($sumOfRatings)
-                ->setNumberOfRatings($numberOfRatings)
                 ->setCredits($this->fakerFactory->numberBetween(50, 190));
 
             $driversCollection->add($newDriver);
