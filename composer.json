@@ -122,13 +122,11 @@
             "php bin/console app:database:delete --no-interaction",
             "php bin/console app:database:create",
             "@sqlTablesCreation",
-            "@sqlFixturesLoading",
-            "@mongoCollectionsCreation"
+            "@fixturesLoading"
         ],
-        "mongoCollectionsCreation" :[
-            "php bin/console doctrine:mongodb:schema:drop",
+        "fixturesLoading" :[
             "php bin/console doctrine:mongodb:schema:create",
-            "php bin/console doctrine:mongodb:fixtures:load"
+            "php bin/console doctrine:mongodb:fixtures:load --no-interaction"
         ],
         "sqlTablesCreation": [
             "php bin/console app:database:execute schema/tables/brand",
@@ -145,27 +143,15 @@
             "php bin/console app:database:execute schema/constraints/preference",
             "php bin/console app:database:execute schema/constraints/userRole"
         ],
-        "sqlFixturesLoading": [
-            "php bin/console app:database:execute fixtures/brands",
-            "php bin/console app:database:execute fixtures/colors",
-            "php bin/console app:database:execute fixtures/engineTypes",
-            "php bin/console app:database:execute fixtures/roles",
-            "php bin/console app:database:execute fixtures/users",
-            "php bin/console app:database:execute fixtures/cars",
-            "php bin/console app:database:execute fixtures/preferences",
-            "php bin/console app:database:execute fixtures/userRoles"
-        ],
         "testDbPrepare": [
             "php bin/console app:database:delete --no-interaction --env=test",
             "php bin/console app:database:create --env=test",
             "@testSqlTablesCreation",
-            "@testSqlFixturesLoading",
-            "@testMongoCollectionsCreation"
+            "@testFixturesLoading"
         ],
-        "testMongoCollectionsCreation" :[
-            "php bin/console doctrine:mongodb:schema:drop --env=test",
+        "testFixturesLoading" :[
             "php bin/console doctrine:mongodb:schema:create --env=test",
-            "php bin/console doctrine:mongodb:fixtures:load --env=test"
+            "php bin/console doctrine:mongodb:fixtures:load --no-interaction --env=test"
         ],
         "testSqlTablesCreation": [
             "php bin/console app:database:execute schema/tables/brand --env=test",
@@ -181,16 +167,6 @@
             "php bin/console app:database:execute schema/constraints/car --env=test",
             "php bin/console app:database:execute schema/constraints/preference --env=test",
             "php bin/console app:database:execute schema/constraints/userRole --env=test"
-        ],
-        "testSqlFixturesLoading": [
-            "php bin/console app:database:execute fixtures/brands --env=test",
-            "php bin/console app:database:execute fixtures/colors --env=test",
-            "php bin/console app:database:execute fixtures/engineTypes --env=test",
-            "php bin/console app:database:execute fixtures/roles --env=test",
-            "php bin/console app:database:execute fixtures/users --env=test",
-            "php bin/console app:database:execute fixtures/cars --env=test",
-            "php bin/console app:database:execute fixtures/preferences --env=test",
-            "php bin/console app:database:execute fixtures/userRoles --env=test"
         ],
         "lint": [
             "php bin/console lint:twig templates",
