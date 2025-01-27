@@ -24,12 +24,20 @@ class SearchCarpoolController extends AbstractController
     ) {
     }
 
-    #[Route('/rechercher-trajet', name: 'app_carpool_search')]
-    public function index(Request $request): Response
+    #[Route('/rechercher-trajet/{departureCity?}/{arrivalCity?}', name: 'app_carpool_search')]
+    public function index(Request $request, ?string $departureCity = null, ?string $arrivalCity = null): Response
     {
         // Create a new carpool instance from session data if available and initialize the search form
         $newCarpool = $this->carpoolSessionDataManager
             ->createNewCarpoolInstanceWithSessionData('formData_carpoolSearch');
+
+        // If cities are passed in the URL, we add them to the form data
+        if ($departureCity) {
+            $newCarpool->setDepartureCity($departureCity);
+        }
+        if ($arrivalCity) {
+            $newCarpool->setArrivalCity($arrivalCity);
+        }
         $carpoolSearchForm = $this->createForm(CarpoolSearchFormType::class, $newCarpool);
 
         // Handle the form submission
@@ -41,7 +49,8 @@ class SearchCarpoolController extends AbstractController
         }
 
         // Execute the carpool search if applicable or retrieve previous results
-        $carpoolSearchResults = $this->handleCarpoolSearchExecution($carpoolSearchForm);
+        $carpoolSearchResults = $this->handleCarpoolSearchExecution(
+            $carpoolSearchForm, (bool) $departureCity && (bool) $arrivalCity);
 
         return $this->render('carpool/index.html.twig', [
             'controller_name' => 'SearchCarpoolController',
@@ -100,11 +109,16 @@ class SearchCarpoolController extends AbstractController
      *
      * @return array The results of the carpool search. Returns an empty array if no results are found
      */
-    private function handleCarpoolSearchExecution(FormInterface $carpoolSearchForm): array
-    {
-        if ($this->carpoolSessionDataManager->isExecutableCarpoolSearch()) {
-            // Execute the search query with data from the submitted form (store in session)
-            $carpoolSearchResults = $this->carpoolSearchService->executeSearchQueryWithFormData($carpoolSearchForm);
+    private function handleCarpoolSearchExecution(FormInterface $carpoolSearchForm, bool $autoExecute = false,
+    ): array {
+        if ($this->carpoolSessionDataManager->isExecutableCarpoolSearch() || $autoExecute) {
+            if ($autoExecute) {
+                // Execute the search query for today with data retieve form GET parameters
+                $carpoolSearchResults = $this->carpoolSearchService->executeSearchQueryWithFormData($carpoolSearchForm);
+            } else {
+                // Execute the search query with data from the submitted form (store in session)
+                $carpoolSearchResults = $this->carpoolSearchService->executeSearchQueryWithFormData($carpoolSearchForm);
+            }
 
             // Retrieve the date requested in the form
             $requestedDate = $carpoolSearchForm->get('departureTime')->getData();
@@ -140,9 +154,9 @@ class SearchCarpoolController extends AbstractController
                     'info',
                     \sprintf(
                         '<span class="text-nowrap">Aucun covoiturage n\'est disponible</span>
-                        <span class="text-nowrap">pour la date exacte %s,</span><br/>
+                        <span class="text-nowrap">pour la date exacte du %s,</span><br/>
                         <span class="text-nowrap">mais il en existe pour des dates ultérieures.</span>',
-                        $requestedDate instanceof \DateTimeInterface ? 'du'.$requestedDate->format('d/m/Y') : 'demandée'
+                        $requestedDate instanceof \DateTimeInterface ? $requestedDate->format('d/m/Y') : 'demandée'
                     )
                 );
             }

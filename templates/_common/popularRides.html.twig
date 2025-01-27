@@ -53,7 +53,7 @@
 				{% for departure in destination.departures %}
 					<li class="bg-light rounded p-0 mb-2 hoverableLinksInListItemContainer">
 
-						<a href="{{ departure.link }}" class="d-flex align-items-center justify-content-between text-decoration-none w-100 h-100 p-2 {{ controller_name is same as 'SearchCarpoolController' ? 'whiteHoverBg' : 'lightHoverBg' }}" aria-label="Trajet depuis {{ departure.city }} pour {{ departure.credits }} crédits" title="voir les disponibilités actuelles">
+						<a href="{{ path('app_carpool_search', { 'departureCity': departure.city, 'arrivalCity': destination.name }) }}" class="d-flex align-items-center justify-content-between text-decoration-none w-100 h-100 p-2 {{ controller_name is same as 'SearchCarpoolController' ? 'whiteHoverBg' : 'lightHoverBg' }}" aria-label="Trajet depuis {{ departure.city }} pour {{ departure.credits }} crédits" title="voir les disponibilités actuelles">
 							<div class="text-start">
 								<span class="visually-hidden">Point de départ :</span>
 								<span class="fw-bold">»</span>
