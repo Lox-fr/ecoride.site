@@ -176,6 +176,7 @@ class NoSqlDataFixturesService
             ->setArrivalPlace($this->carpoolPlacesProvider->getRandomCarpoolPlace())
             ->setPricePerPerson($pricePerPerson)
             ->setTotalNumberOfSeats($car->getNumberOfSeats())
+            ->setNumberOfAvailableSeats($car->getNumberOfSeats())
             ->setStatus($carpoolStatus)
             ->setCreatedAt(new \DateTimeImmutable())
             ->setDriverUserId($driver->getId())

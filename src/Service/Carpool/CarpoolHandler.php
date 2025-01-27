@@ -39,7 +39,7 @@ class CarpoolHandler
             ->setStatus('Available')
             ->setDriverUserId($driver->getId())
             ->setDriverPseudo($driver->getPseudo())
-            ->setDriverPhotoName($driver->getPhotoFilename())
+            ->setDriverPhotoFilename($driver->getPhotoFilename())
             ->setDriverAge($driver->getAge())
             ->setDriverPetsAllowed($driver->isPetsAllowed())
             ->setDriverSmokersAllowed($driver->isSmokersAllowed())

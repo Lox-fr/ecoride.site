@@ -50,7 +50,7 @@ class CarpoolRidesProvider
             ['from' => 'Nice',          'averageTimeInMinutes' => 250],
             ['from' => 'Lille',         'averageTimeInMinutes' => 380],
             ['from' => 'Montpellier',   'averageTimeInMinutes' => 170],
-            ['from' => 'Saint-Étienne', 'averageTimeInMinutes' => 50],
+            ['from' => 'St-Étienne',    'averageTimeInMinutes' => 50],
         ],
         'Toulouse' => [
             ['from' => 'Paris',         'averageTimeInMinutes' => 400],
@@ -150,7 +150,7 @@ class CarpoolRidesProvider
             ['from' => 'Nantes',     'averageTimeInMinutes' => 450],
             ['from' => 'Marseille',  'averageTimeInMinutes' => 600],
         ],
-        'Saint-Étienne' => [
+        'St-Étienne' => [
             ['from' => 'Lyon',              'averageTimeInMinutes' => 50],
             ['from' => 'Clermont-Ferrand',  'averageTimeInMinutes' => 90],
             ['from' => 'Grenoble',          'averageTimeInMinutes' => 110],
@@ -195,7 +195,7 @@ class CarpoolRidesProvider
         'Grenoble' => [
             ['from' => 'Lyon',              'averageTimeInMinutes' => 90],
             ['from' => 'Chambéry',          'averageTimeInMinutes' => 50],
-            ['from' => 'Saint-Étienne',     'averageTimeInMinutes' => 110],
+            ['from' => 'St-Étienne',        'averageTimeInMinutes' => 110],
             ['from' => 'Marseille',         'averageTimeInMinutes' => 180],
             ['from' => 'Toulouse',          'averageTimeInMinutes' => 360],
             ['from' => 'Paris',             'averageTimeInMinutes' => 320],
@@ -217,7 +217,7 @@ class CarpoolRidesProvider
         ],
         'Lyon' => [
             ['from' => 'Paris',         'averageTimeInMinutes' => 270],
-            ['from' => 'Saint-Étienne', 'averageTimeInMinutes' => 50],
+            ['from' => 'St-Étienne',    'averageTimeInMinutes' => 50],
             ['from' => 'Grenoble',      'averageTimeInMinutes' => 80],
             ['from' => 'Marseille',     'averageTimeInMinutes' => 180],
         ],

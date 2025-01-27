@@ -29,13 +29,16 @@ class Review
     private ?Carpool $carpool = null;
 
     #[MongoDB\Field(type: 'int')]
+    private ?int $driverUserId = null;
+
+    #[MongoDB\Field(type: 'int')]
     private ?int $authorUserId = null;
 
     #[MongoDB\Field(type: 'string')]
     private ?string $authorPseudo = null;
 
     #[MongoDB\Field(type: 'string')]
-    private ?string $authorPhotoPath = null;
+    private ?string $authorPhotoFilename = null;
 
     public function getId(): ?string
     {
@@ -102,6 +105,18 @@ class Review
         return $this;
     }
 
+    public function getDriverUserId(): ?int
+    {
+        return $this->driverUserId;
+    }
+
+    public function setDriverUserId(int $driverUserId): static
+    {
+        $this->driverUserId = $driverUserId;
+
+        return $this;
+    }
+
     public function getAuthorUserId(): ?int
     {
         return $this->authorUserId;
@@ -126,14 +141,14 @@ class Review
         return $this;
     }
 
-    public function getAuthorPhotoPath(): ?string
+    public function getAuthorPhotoFilename(): ?string
     {
-        return $this->authorPhotoPath;
+        return $this->authorPhotoFilename;
     }
 
-    public function setAuthorPhotoPath(?string $authorPhotoPath): static
+    public function setAuthorPhotoFilename(?string $authorPhotoFilename): static
     {
-        $this->authorPhotoPath = $authorPhotoPath;
+        $this->authorPhotoFilename = $authorPhotoFilename;
 
         return $this;
     }
