@@ -77,10 +77,10 @@ class NoSqlDataFixturesService
     }
 
     /**
-     * Loads past carpools for the 3 last years.
+     * Loads past carpools for the 6 last months.
      *
-     * This method generates a set number of carpool rides for 3 last years
-     * by randomly selecting drivers and their cars (currently 29400 carpools for max 192 rides).
+     * This method generates a set number of carpool rides for 6 last months
+     * by randomly selecting drivers and their cars (currently 2520 carpools for max 192 rides).
      * Each carpool have one or more passengers.
      * These passengers rate the carpools with 2 out of 3 leaving a rating note.
      * In this case, 1 out of 2 including a comment.
@@ -88,14 +88,14 @@ class NoSqlDataFixturesService
      * @param ArrayCollection $drivers    collection of available drivers
      * @param ArrayCollection $passengers collection of potential passengers
      */
-    public function loadPastCarpoolsForLast3Years(ArrayCollection $drivers, ArrayCollection $passengers,
+    public function loadPastCarpoolsForLast6Month(ArrayCollection $drivers, ArrayCollection $passengers,
     ): void {
         $carpoolRides = $this->carpoolRidesProvider->getCollectionOfCarpools();
         foreach ($carpoolRides as $carpoolRide) {
-            for ($i = 0; $i < 175; ++$i) {
+            for ($i = 0; $i < 15; ++$i) {
                 $driver = $this->getRandomDriver($drivers);
                 $car = $this->faker->randomElement($driver->getCars());
-                $departureTime = $this->faker->dateTimeBetween('-3 year', 'now');
+                $departureTime = $this->faker->dateTimeBetween('-6 months', 'now');
 
                 $newCarpool = $this->createCarpoolInstance($carpoolRide, $departureTime, $driver, $car);
 

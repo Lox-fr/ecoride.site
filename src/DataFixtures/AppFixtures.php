@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
         $passengers = $this->sqlDataFixturesService->loadPassengersAndReturnCollection();
 
         /* NoSQL side - using document manager */
-        $this->noSqlDataFixturesService->loadPastCarpoolsForLast3Years($drivers, $passengers);
+        $this->noSqlDataFixturesService->loadPastCarpoolsForLast6Month($drivers, $passengers);
         $this->noSqlDataFixturesService->loadPopularCarpoolsForNextMonth($drivers, $passengers);
     }
 }
