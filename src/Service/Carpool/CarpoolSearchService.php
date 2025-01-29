@@ -9,23 +9,23 @@ use App\Repository\CarpoolRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\FormInterface;
 
-class CarpoolSearchService
+final class CarpoolSearchService
 {
+    private CarpoolRepository $carpoolRepository;
+
     public function __construct(
         private DocumentManager $documentManager,
     ) {
+        $this->carpoolRepository = $documentManager->getRepository(Carpool::class);
     }
 
     public function executeSearchQueryWithFormData(FormInterface $carpoolSearchForm): array
     {
-        /** @var CarpoolRepository $carpoolRepository */
-        $carpoolRepository = $this->documentManager->getRepository(Carpool::class);
-
         $departureTime = $carpoolSearchForm->get('departureTime')->getData() ?? new \DateTimeImmutable('+1 hour');
         $departureCity = $carpoolSearchForm->get('departureCity')->getData();
         $arrivalCity = $carpoolSearchForm->get('arrivalCity')->getData();
 
-        $carpoolSearchResults = $carpoolRepository->searchCarpools($departureCity, $arrivalCity, $departureTime);
+        $carpoolSearchResults = $this->carpoolRepository->searchCarpools($departureCity, $arrivalCity, $departureTime);
 
         return $carpoolSearchResults ?? [];
     }
@@ -36,5 +36,15 @@ class CarpoolSearchService
     public function isValidDepartureTime(?\DateTimeImmutable $departureTime): bool
     {
         return $departureTime instanceof \DateTimeImmutable && $departureTime > new \DateTimeImmutable();
+    }
+
+    /**
+     * Finds a carpool by its ID.
+     *
+     * @throws \InvalidArgumentException if the carpool is not found.
+     */
+    public function findOneById(string $carpoolId): ?Carpool
+    {
+        return $this->carpoolRepository->find($carpoolId);
     }
 }
