@@ -1,25 +1,25 @@
 {% if (carpool.driverAverageRating) %}
-	<ul class="d-flex flex-row flex-nowrap justify-content-center" title="{{ carpool.driverAverageRating|number_format(1, '.', '') }} sur 5">
+	<ul class="d-flex flex-row flex-nowrap justify-content-center {{ subtitled ? 'mb-0' }}" title="{{ carpool.driverAverageRating|number_format(1, '.', '') }} sur 5">
 		{% set roundedRating = (carpool.driverAverageRating * 2)|round(0, 'ceil') / 2 %}
 		{% set fullStars = roundedRating|round(0, 'floor') %}
 		{% set halfStar = (roundedRating - fullStars) >= 0.5 %}
 		{% set emptyStars = 5 - fullStars - (halfStar ? 1 : 0) %}
 
 		{% for i in 1..fullStars %}
-			<li class="" style="width: 15px;">
+			<li class="" style="width: {{ starWidth ?? '15px' }};">
 				{{ ux_icon('line-md:star-filled') }}
 			</li>
 		{% endfor %}
 
 		{% if halfStar %}
-			<li class="" style="width: 15px;">
+			<li class="" style="width: {{ starWidth ?? '15px' }};">
 				{{ ux_icon('line-md:star-filled-half') }}
 			</li>
 		{% endif %}
 
 		{% if roundedRating < 4.5 %}
 			{% for i in 1..emptyStars %}
-				<li class="" style="width: 15px;">
+				<li class="" style="width: {{ starWidth ?? '15px' }};">
 					{{ ux_icon('line-md:star') }}
 				</li>
 			{% endfor %}

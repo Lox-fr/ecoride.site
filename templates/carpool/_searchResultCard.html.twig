@@ -31,7 +31,7 @@
 				<strong class="fs-4">{{ carpool.driverPseudo }}</strong>
 
 				{# Driver rating #}
-				{% include "carpool/_driverRating.html.twig" %}
+				{% include "_common/driverRating.html.twig" with {'subtitled': 'false'} %}
 
 			</div>
 
