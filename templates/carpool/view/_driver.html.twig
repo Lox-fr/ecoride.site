@@ -13,11 +13,11 @@
 		<small class="fst-italic mb-2">{{ '(' ~ carpool.driverAge ~ " ans)"}}</small>
 
         {# Driver rating #}
-		{% include "_common/driverRating.html.twig" with {'starWidth': '25px', 'subtitled': 'true'} %}
+		{% include "_common/driverRating.html.twig" with {'ratingValue': carpool.driverAverageRating, 'starWidth': '25px', 'subtitled': 'true'} %}
 		<small class="fst-italic mb-3">
 			Note :
 			<span class="fw-bold">{{ carpool.driverAverageRating|round(1) }}</span>
-			/ 5 (basée sur 2 évaluations)
+			/ 5 (basée sur {{ approvedReviewsDriver|length }} évaluations)
 		</small>
 		<button type="button" class="btn btn-sm btn-outline-primary shadow mt-0 mb-4 mx-auto " data-bs-toggle="modal" data-bs-target="#driverReviewsModal">Voir les avis</button>
 	</div>
@@ -33,5 +33,8 @@
 			{% endfor %}
 		</p>
 	</div>
+
+	{# Reviews about driver - modal #}
+	{% include "carpool/view/_driverReviews.html.twig" with {'starWidth': '25px', 'subtitled': 'true'} %}
 
 </div>

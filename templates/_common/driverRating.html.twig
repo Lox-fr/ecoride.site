@@ -1,6 +1,6 @@
-{% if (carpool.driverAverageRating) %}
-	<ul class="d-flex flex-row flex-nowrap justify-content-center {{ subtitled ? 'mb-0' }}" title="{{ carpool.driverAverageRating|number_format(1, '.', '') }} sur 5">
-		{% set roundedRating = (carpool.driverAverageRating * 2)|round(0, 'ceil') / 2 %}
+{% if (ratingValue) %}
+	<ul class="d-flex flex-row flex-nowrap justify-content-center {{ subtitled ? 'mb-0' }}" title="{{ ratingValue|number_format(1, '.', '') }} sur 5">
+		{% set roundedRating = (ratingValue * 2)|round(0, 'ceil') / 2 %}
 		{% set fullStars = roundedRating|round(0, 'floor') %}
 		{% set halfStar = (roundedRating - fullStars) >= 0.5 %}
 		{% set emptyStars = 5 - fullStars - (halfStar ? 1 : 0) %}
