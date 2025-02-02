@@ -17,19 +17,23 @@
 			</h2>
 		</header>
 
-        <div class="px-sm-5">
-            {% include "carpool/view/_ride.html.twig" %}
-            {% include "carpool/view/_driver.html.twig" %}
-            {% include "carpool/view/_car.html.twig" %}
-            {% include "carpool/view/_passengers.html.twig" %}
-        </div>
+		<section class="px-sm-5">
+			{% include "carpool/view/_ride.html.twig" %}
+			{% include "carpool/view/_driver.html.twig" %}
+			{% include "carpool/view/_car.html.twig" %}
+			{% include "carpool/view/_passengers.html.twig" %}
+		</section>
 
 		<footer>
-			<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" onclick="window.location.href='{{ path('app_home') }}'" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
+
+			<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#joinCarpoolValidation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
 				Rejoindre pour
 				<span class="fw-bold text-light">{{ carpool.pricePerPerson }}</span>
 				crédits
 			</button>
+
+			{% include "carpool/view/_joinValidation.html.twig" %}
+
 		</footer>
 
 	</article>
