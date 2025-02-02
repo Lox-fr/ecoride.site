@@ -1,1 +1,19 @@
-Historique des trajets
+<h2 class="fs-3 fw-bold mt-4 mb-3 px-3 pb-2 border-bottom border-primary">
+	Historique
+	<span class="text-nowrap">de vos trajets</span>
+</h2>
+
+{% if upcomingCarpools is not empty %}
+	<h3 class="fs-4 mt-4">Trajets à venir</h3>
+    {% include "profile/_rideHistory/_carpool.html.twig" with {'carpoolList': upcomingCarpools, 'past': false} %}
+{% endif %}
+
+<hr class="mt-5">
+
+{% if pastCarpoolsByYear is not empty %}
+	<h3 class="fs-4">Trajets passés</h3>
+	{% for year, carpoolsInYear in pastCarpoolsByYear %}
+		<h4 class="fs-5 mt-4">{{ year }}</h4>
+        {% include "profile/_rideHistory/_carpool.html.twig" with {'carpoolList': carpoolsInYear, 'past': true} %}
+	{% endfor %}
+{% endif %}

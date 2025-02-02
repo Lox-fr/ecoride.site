@@ -4,30 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller\User;
 
+use App\Document\Carpool;
 use App\Entity\Car;
 use App\Entity\User;
-use App\Document\Carpool;
 use App\Form\CarFormType;
-use App\Service\FileUploader;
-use App\Service\User\CarManager;
-use App\Service\User\RoleManager;
-use App\Repository\UserRepository;
-use App\Service\User\PreferenceManager;
 use App\Form\Carpool\CarpoolAddFormType;
 use App\Form\User\DriverProfileFormType;
-use Symfony\Component\Form\FormInterface;
 use App\Form\User\PassengerProfileFormType;
+use App\Repository\UserRepository;
+use App\Service\Carpool\CarpoolSearchService;
+use App\Service\FileUploader;
+use App\Service\User\CarManager;
+use App\Service\User\PreferenceManager;
+use App\Service\User\RoleManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/profil')]
 class ProfileController extends AbstractController
 {
     public function __construct(
+        private CarpoolSearchService $carpoolSearchService,
         private RoleManager $roleManager,
         private CarManager $carManager,
         private PreferenceManager $preferenceManager,
@@ -54,18 +56,22 @@ class ProfileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser() ?? new User();
 
-        $passengerProfileForm =
-            $this->handlePassengerForm($request, $user, $userRepository);
+        // Passenger form
+        $passengerProfileForm = $this->handlePassengerForm($request, $user, $userRepository);
         if ($passengerProfileForm instanceof RedirectResponse) {
             return $passengerProfileForm;
         }
 
+        // Driver form
         $driverProfileForm = $this->handleDriverForm($request, $user, $userRepository);
         if ($driverProfileForm instanceof RedirectResponse) {
             return $driverProfileForm;
         } elseif ($driverProfileForm->isSubmitted()) {
             $activeTab = 'devenir-chauffeur';
         }
+
+        // User carpool history
+        $userCarpoolsData = $this->getUserCarpools($user);
 
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'UserProfileController',
@@ -76,6 +82,8 @@ class ProfileController extends AbstractController
             'carpoolForm' => $this->createForm(CarpoolAddFormType::class, new Carpool(),
                 ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]),
             'addCarFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
+            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
+            'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
         ]);
     }
 
@@ -178,5 +186,55 @@ class ProfileController extends AbstractController
                 $this->preferenceManager->deletePreferenceById($registeredUserPreferenceId);
             }
         }
+    }
+
+    /**
+     * Returns a user's trips separated into upcoming and past trips, grouped by year.
+     *
+     * @return array<string, array<int, Carpool>>
+     */
+    private function getUserCarpools(User $user): array
+    {
+        $userCarpools = $this->carpoolSearchService->findCarpoolsByUser($user);
+        // Separate past and upcoming carpools
+        $upcomingCarpools = [];
+        $pastCarpools = [];
+        $currentDate = new \DateTimeImmutable();
+        foreach ($userCarpools as $carpool) {
+            if ($carpool->getDepartureTime() >= $currentDate) {
+                $upcomingCarpools[] = $carpool;
+            } else {
+                $pastCarpools[] = $carpool;
+            }
+        }
+        // Sort past and upcoming carpools
+        usort($upcomingCarpools, function ($a, $b) {
+            return $a->getDepartureTime() <=> $b->getDepartureTime();
+        });
+        usort($pastCarpools, function ($a, $b) {
+            return $a->getDepartureTime() <=> $b->getDepartureTime();
+        });
+        // Group by year
+        $pastCarpoolsByYear = [];
+        foreach ($pastCarpools as $carpool) {
+            $year = $carpool->getDepartureTime()->format('Y');
+            if (!isset($pastCarpoolsByYear[$year])) {
+                $pastCarpoolsByYear[$year] = [];
+            }
+            $pastCarpoolsByYear[$year][] = $carpool;
+        }
+        // Sort years in descending order
+        krsort($pastCarpoolsByYear);
+        // Sort carpools in each year in descending order
+        foreach ($pastCarpoolsByYear as $year => &$carpoolsInYear) {
+            usort($carpoolsInYear, function ($a, $b) {
+                return $b->getDepartureTime() <=> $a->getDepartureTime();
+            });
+        }
+
+        return [
+            'upcomingCarpools' => $upcomingCarpools,
+            'pastCarpoolsByYear' => $pastCarpoolsByYear,
+        ];
     }
 }

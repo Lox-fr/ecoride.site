@@ -26,13 +26,20 @@
 
 		<footer>
 
-			<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#joinCarpoolValidation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
-				Rejoindre pour
-				<span class="fw-bold text-light">{{ carpool.pricePerPerson }}</span>
-				crédits
-			</button>
+			{% if carpool.driveruserId is same as app.user.id %}
+				<button type="button" class="btn btn-outline-danger shadow mt-1 mb-5" data-bs-toggle="modal" data-bs-target="#cancelCarpoolValidation" aria-label="Annuler ce covoiturage">
+					Annuler ce covoiturage
+				</button>
+			{% else %}
+				<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#joinCarpoolValidation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
+					Rejoindre pour
+					<span class="fw-bold text-light">{{ carpool.pricePerPerson }}</span>
+					crédits
+				</button>
+			{% endif %}
 
 			{% include "carpool/view/_joinValidation.html.twig" %}
+			{% include "carpool/view/_cancelValidation.html.twig" %}
 
 		</footer>
 
