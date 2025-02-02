@@ -16,7 +16,7 @@
 	{# Estimated ride time #}
 	<div class="mx-5">
 		<h4 class="fs-6 fst-italic text-decoration-underline">Temps estimé</h4>
-		<p class="mb-4">
+		<p class="mb-4 fw-bold">
 			{% set hours = (carpool.estimatedRideTime // 60) %}
 			{% set minutes = (carpool.estimatedRideTime % 60) %}
 			{% if hours > 0 %}

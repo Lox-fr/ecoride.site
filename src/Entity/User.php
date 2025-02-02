@@ -447,13 +447,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->sumOfRatings / $this->numberOfRatings;
     }
 
-    public function setAverageRating(float $averageRating): static
-    {
-        $this->averageRating = $averageRating;
-
-        return $this;
-    }
-
     public function getCredits(): ?int
     {
         return $this->credits;

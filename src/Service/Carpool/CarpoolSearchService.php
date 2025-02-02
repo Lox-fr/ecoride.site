@@ -40,10 +40,8 @@ final class CarpoolSearchService
 
     /**
      * Finds a carpool by its ID.
-     *
-     * @throws \InvalidArgumentException if the carpool is not found.
      */
-    public function findOneById(string $carpoolId): ?Carpool
+    public function findOneCarpoolByItsId(string $carpoolId): ?Carpool
     {
         return $this->carpoolRepository->find($carpoolId);
     }
