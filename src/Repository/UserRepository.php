@@ -253,9 +253,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * It contains limited personal information compared to drivers, focusing on pseudo,
      * email, creation date, and profile photo.
      *
-     * @param User $user The passenger user entity containing the necessary fixture data.
-     *
-     * @throws \Exception If an error occurs during the execution of the SQL statement.
+     * @throws \Exception if an error occurs during the execution of the SQL statement
      */
     public function loadPassengerFixtures(User $passenger): void
     {
@@ -274,16 +272,48 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
+    /**
+     * Updates the driver's rating values in the database.
+     *
+     * This method updates the number of ratings and the sum of ratings for the given driver
+     * in the database, ensuring that their rating statistics remain accurate.
+     *
+     * @param User $driver the driver whose ratings need to be updated
+     *
+     * @throws \Exception if the update operation fails
+     */
     public function updateDriverRatings(User $driver): void
     {
         try {
             $this->sqlHandler->execute('update/numberAndSumOfRatings', 'queries', null, [
                 'number_of_ratings' => $driver->getNumberOfRatings(),
-                'sum_of_ratings'    => $driver->getSumOfRatings(),
-                'user_id'           => $driver->getId(),
+                'sum_of_ratings' => $driver->getSumOfRatings(),
+                'user_id' => $driver->getId(),
             ]);
         } catch (\Exception $e) {
             throw new \Exception(\sprintf('Update of rating values failed for "%s": %s', $driver->getPseudo(), $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Updates the user's credit balance in the database.
+     *
+     * This method updates the credit balance of the given user, ensuring that their
+     * available credits reflect the latest value.
+     *
+     * @param User $user the user whose credits need to be updated
+     *
+     * @throws \Exception if the update operation fails
+     */
+    public function updateCredits(User $user): void
+    {
+        try {
+            $this->sqlHandler->execute('update/creditsByUserId', 'queries', null, [
+                'credits' => $user->getCredits(),
+                'user_id' => $user->getId(),
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Update of credits value failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
 }
