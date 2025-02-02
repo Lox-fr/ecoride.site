@@ -1,0 +1,48 @@
+<div class="modal" tabindex="-1" id="cancelCarpoolValidation">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<h5 class="modal-title">Important</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+
+				<p class="fw-bold">Confirmez-vous vouloir supprimer ce covoiturage ?</p>
+
+				<p>
+					<span class="fwt-italic text-decoration-underline">Départ de</span><br/>
+					{{ carpool.departurePlace|capitalize }}<br/>
+					<span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
+					Le
+					{{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.departureTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
+
+				<p>
+					<span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
+					{{ carpool.arrivalPlace|capitalize }}<br/>
+					<span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
+					Le
+					{{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.arrivalTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
+
+			</div>
+
+			<div class="modal-footer">
+
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+				<a href="{{ path('app_home', {'carpoolId': carpool.id}) }}" role="button" class="btn btn-danger">Supprimer</a>
+
+			</div>
+
+		</div>
+	</div>
+</div>

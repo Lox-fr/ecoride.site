@@ -1,0 +1,59 @@
+<ul class="d-inline-flex flex-wrap justify-content-center align-content-stretch">
+	{% for carpool in carpoolList %}
+		<li class="d-flex flex-column framed rounded bg-light pt-3 pb-2 px-3 m-1 w-100 shadow" style="min-width: 260px; max-width: 290px;">
+
+            <div class="d-flex flex-row flex-nowrap justify-content-between">
+
+                <div class="d-flex flex-column align-items-start">
+
+                    {% set badgeClass = '' %}
+                    {% set statusLabel = '' %}
+
+                    {% if carpool.status == 'done' %}
+                        {% set badgeClass = 'text-bg-primary' %}
+                        {% set statusLabel = 'Terminé' %}
+                    {% elseif carpool.status == 'open' %}
+                        {% if past %}
+                            {% set badgeClass = 'text-bg-danger' %}
+                            {% set statusLabel = 'Non réalisé' %}
+                        {% else %}
+                            {% set badgeClass = 'text-bg-warning' %}
+                            {% set statusLabel = 'À venir' %}
+                        {% endif %}
+                    {% elseif carpool.status == 'canceled' %}
+                        {% set badgeClass = 'text-bg-secondary' %}
+                        {% set statusLabel = 'Annulé' %}
+                    {% else %}
+                        {% set badgeClass = 'text-bg-light' %}
+                        {% set statusLabel = 'Statut indéfini' %}
+                    {% endif %}
+
+                    <span class="badge {{ badgeClass }} mb-1">{{ statusLabel }}</span>
+
+                    <div class="fw-bold text-start">
+                        {{ carpool.departureCity ~ ' ⇢ ' ~ carpool.arrivalCity }}
+                    </div>
+
+                    <div class="fst-italic">
+                        le
+                        {{ carpool.departureTime|format_datetime(pattern='d MMMM', locale='fr') }}
+                    </div>
+
+                </div>
+
+                {% if carpool.carEngineType is same as 'Électrique' %}
+                    <div class="float-end">
+                        <img src="{{ asset('images/favicons/apple-icon-76x76.png') }}" alt="vignette signalant un voyage écologique" class="me-2" style="width: 36px; height: 36px;"/>
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+			<div class="d-flex flex-row justify-content-end mb-2">
+				<a href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}" class="btn btn-sm btn-outline-primary">Voir en détail</a>
+			</div>
+
+		</li>
+	{% endfor %}
+</ul>
