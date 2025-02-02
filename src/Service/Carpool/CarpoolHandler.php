@@ -54,6 +54,29 @@ class CarpoolHandler
         return $carpool;
     }
 
+    /**
+     * Adds a passenger to the carpool.
+     *
+     * This method updates the list of passengers by adding the given user.
+     * It does not persist changes to the database, it only modifies the in-memory object.
+     *
+     * @param Carpool $carpool   the carpool to update
+     * @param User    $passenger the user to add as a passenger
+     *
+     * @return Carpool the updated carpool instance
+     */
+    public function addPassengerToCarpool(Carpool $carpool, User $passenger): Carpool
+    {
+        $passengers = $carpool->getPassengers();
+        $passengers[] = [
+            'passengerId' => $passenger->getId(),
+            'passengerPseudo' => $passenger->getPseudo(),
+            'passengerPhotoFilename' => $passenger->getPhotoFilename(),
+        ];
+
+        return $carpool->setPassengers($passengers);
+    }
+
     private function calculateArrivalTime(Carpool $carpool, FormInterface $carpoolForm): ?\DateTimeImmutable
     {
         $arrivalTime = null;
