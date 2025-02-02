@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Document;
 
+use App\Repository\ReviewRepository;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\ReferenceOne;
 
-#[MongoDB\Document]
+#[MongoDB\Document(repositoryClass: ReviewRepository::class)]
 class Review
 {
     #[MongoDB\Id]

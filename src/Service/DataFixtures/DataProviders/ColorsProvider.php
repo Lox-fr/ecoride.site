@@ -13,18 +13,18 @@ class ColorsProvider
         'Argent',
         'Beige',
         'Bordeaux',
-        'Blanc',
-        'Bleu',
-        'Gris',
+        'Blanche',
+        'Bleue',
+        'Grise',
         'Jaune',
         'Marron',
-        'Noir',
+        'Noire',
         'Orange',
         'Rose',
         'Rouge',
         'Turquoise',
         'Violet',
-        'Vert',
+        'Verte',
     ];
 
     /**

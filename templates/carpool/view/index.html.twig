@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	De {{ carpool.departureCity}}
+	à {{ carpool.arrivalCity }}
+	avec {{ carpool.driverPseudo }}
+	- {{ parent() }}
+{% endblock %}
+
+{% block main %}
+
+	<article class="container framed bg-light rounded-sm-5 shadow mt-5">
+
+		<header>
+			<h2 class="border-bottom border-primary border-1 py-2 mt-3 mb-4 mb-lg-5 mx-sm-5">
+				Détail du covoiturage
+			</h2>
+		</header>
+
+		<section class="px-sm-5">
+			{% include "carpool/view/_ride.html.twig" %}
+			{% include "carpool/view/_driver.html.twig" %}
+			{% include "carpool/view/_car.html.twig" %}
+			{% include "carpool/view/_passengers.html.twig" %}
+		</section>
+
+		<footer>
+
+			<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#joinCarpoolValidation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
+				Rejoindre pour
+				<span class="fw-bold text-light">{{ carpool.pricePerPerson }}</span>
+				crédits
+			</button>
+
+			{% include "carpool/view/_joinValidation.html.twig" %}
+
+		</footer>
+
+	</article>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+<div class="modal" tabindex="-1" id="joinCarpoolValidation">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<h5 class="modal-title">Validation</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+
+				<p>
+					<span class="fw-bold">
+						Confirmez-vous vouloir participer au covoiturage
+						<span class="text-nowrap">
+							organisé par
+							{{ carpool.driverPseudo }}
+							?
+						</span>
+					</span>
+				</p>
+
+                <p>
+                    <span class="fwt-italic text-decoration-underline">Départ de</span><br/>
+                    {{ carpool.departurePlace|capitalize }}<br/>
+                    <span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
+                    le {{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y 'à' HH'h'mm", locale="fr") }}
+                </p>
+
+                <p>
+                    <span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
+                    {{ carpool.arrivalPlace|capitalize }}<br/>
+                    <span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
+                    le {{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y 'à' HH'h'mm", locale="fr") }}
+                </p>
+
+                <p>
+                    <span class="fwt-italic text-decoration-underline">Prix</span><br/>
+                    <span class="fw-bold">{{ carpool.pricePerPerson }} crédits</span>
+                </p>
+
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<a href="{{ path('app_home') }}" role="button" class="btn btn-primary">Confirmer</a>
+			</div>
+
+		</div>
+	</div>
+</div>

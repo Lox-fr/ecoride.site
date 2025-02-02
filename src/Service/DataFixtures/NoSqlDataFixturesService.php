@@ -23,12 +23,14 @@ class NoSqlDataFixturesService
     private const RATING_NEUTRAL = 3;
 
     // 1 out of 20 carpools is cancelled
-    private const CARPOOL_STATUSES = ['done' => 19, 'cancelled' => 1];
+    private const PAST_CARPOOL_STATUSES = ['done' => 19, 'cancelled' => 1];
+    private const FUTURE_CARPOOL_STATUSES = ['open' => 19, 'cancelled' => 1];
     // 1 out of 40 reviews is rejected
     private const REVIEW_STATUSES = ['approved' => 39, 'rejected' => 1];
 
     private \Faker\Generator $faker;
-    private array $carpoolStatusArray;
+    private array $pastCarpoolStatusArray;
+    private array $futureCarpoolStatusArray;
     private array $reviewStatusArray;
 
     public function __construct(
@@ -40,7 +42,8 @@ class NoSqlDataFixturesService
         private RatingManager $ratingManager,
     ) {
         $this->faker = Factory::create('fr_FR');
-        $this->carpoolStatusArray = $this->generateStatusArray(self::CARPOOL_STATUSES);
+        $this->pastCarpoolStatusArray = $this->generateStatusArray(self::PAST_CARPOOL_STATUSES);
+        $this->futureCarpoolStatusArray = $this->generateStatusArray(self::FUTURE_CARPOOL_STATUSES);
         $this->reviewStatusArray = $this->generateStatusArray(self::REVIEW_STATUSES);
     }
 
@@ -163,7 +166,13 @@ class NoSqlDataFixturesService
         $estimatedRideTime = (int) $this->getRandomRideTime($carpoolRide);
         $pricePerPerson = (int) $this->getRandomPrice($carpoolRide);
         $arrivalTime = (clone $departureTime)->modify('+'.$estimatedRideTime.' minutes');
-        $carpoolStatus = $this->faker->randomElement($this->carpoolStatusArray);
+        $creationTime = (clone $departureTime)->modify('-1 week');
+        $carpoolStatus = $this->faker->randomElement($this->pastCarpoolStatusArray);
+
+        $currentDate = new \DateTimeImmutable();
+        $carpoolStatusArray =
+            $departureTime <= $currentDate ? $this->pastCarpoolStatusArray : $this->futureCarpoolStatusArray;
+        $carpoolStatus = $this->faker->randomElement($carpoolStatusArray);
 
         $newCarpool = new Carpool();
         $newCarpool
@@ -178,7 +187,7 @@ class NoSqlDataFixturesService
             ->setTotalNumberOfSeats($car->getNumberOfSeats())
             ->setNumberOfAvailableSeats($car->getNumberOfSeats())
             ->setStatus($carpoolStatus)
-            ->setCreatedAt(new \DateTimeImmutable())
+            ->setCreatedAt(\DateTimeImmutable::createFromMutable($creationTime))
             ->setDriverUserId($driver->getId())
             ->setDriverPseudo($driver->getPseudo())
             ->setDriverPhotoFilename($driver->getPhotoFilename())
@@ -223,7 +232,7 @@ class NoSqlDataFixturesService
      * Handle load of reviews fixtures.
      * 2 out of 3 passengers leave a review, and 1 out of 2 reviews contains a comment.
      */
-    private function handleReviewsFixtures(array $carpoolPassengers, Carpool $ratedCarpool, User $driver
+    private function handleReviewsFixtures(array $carpoolPassengers, Carpool $ratedCarpool, User $driver,
     ): void {
         foreach ($carpoolPassengers as $passenger) {
             // 2 out of 3 passengers leave a review
@@ -256,7 +265,7 @@ class NoSqlDataFixturesService
                 }
 
                 // record the rating in user entity (SQL database) if the review is approved
-                if ($review->getStatus() === 'approved') {
+                if ('approved' === $review->getStatus()) {
                     $this->ratingManager->addARating($driver, $review->getRating());
                 }
 

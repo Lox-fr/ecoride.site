@@ -1,0 +1,53 @@
+<div class="modal fade" id="driverReviewsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable">
+
+		<article class="modal-content">
+
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">
+					<img src="{{ asset('images/users/' ~ carpool.driverPhotoFilename|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ carpool.driverPseudo }}" class="d-none object-fit-cover rounded-pill border border-secondary border-2 shadow-lg mx-auto" style="width: 60px; height: 60px;"/>
+					Les
+					{{ approvedReviewsDriver|filter(review => review.comment is not empty)|length }}
+					avis publiés concernant
+					<span class="text-primary fw-bold">{{ carpool.driverPseudo }}</span><br/>
+				</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<ul class="modal-body">
+				{% for review in approvedReviewsDriver %}
+					{% if review.comment %}
+
+						<li class="framed rounded mx-1 mb-3 p-2">
+
+							<figure class="text-center">
+								<blockquote class="blockquote mb-2">
+									<p>
+										<span class="fw-bold text-primary">"</span>
+										{{ review.comment }}
+										<span class="fw-bold text-primary">"</span>
+									</p>
+								</blockquote>
+								<figcaption class="fst-italic" style="font-size: 0.87 rem; color: #6c757d;">
+									{{ review.createdAt|format_datetime(pattern="EEEE d MMMM y", locale="fr")|capitalize }}<br/>
+									Par
+									<img src="{{ asset('images/users/' ~ review.authorPhotoFilename|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ review.authorPhotoFilename }}" class="object-fit-cover rounded-pill border border-secondary border-2 shadow-lg mx-auto" style="width: 25px; height: 25px;"/>
+									{{ review.authorPseudo }}
+								</figcaption>
+							</figure>
+
+							<hr class="mb-2">
+
+							{% include "_common/driverRating.html.twig" with {
+							'ratingValue': review.rating, 'starWidth': '25px', 'subtitled': 'true'} %}
+
+						</li>
+
+					{% endif %}
+				{% endfor %}
+			</ul>
+
+		</article>
+
+	</div>
+</div>

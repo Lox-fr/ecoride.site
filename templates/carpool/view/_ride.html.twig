@@ -1,0 +1,47 @@
+<h3 class="border-bottom mx-5 mb-4">Le trajet</h3>
+
+<div class="mb-5 d-flex flex-column flex-lg-row justify-content-center align-items-center">
+
+	{# Departure #}
+	<div class="mx-5">
+		<h4 class="fs-6 fst-italic text-decoration-underline">Départ</h4>
+		<p class="mb-4">
+			{{ carpool.departurePlace|capitalize }}<br/>
+			<span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
+			{{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr")|capitalize }}<br/>
+			<span class="fw-bold">{{ carpool.departureTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}</span>
+		</p>
+	</div>
+
+	{# Estimated ride time #}
+	<div class="mx-5">
+		<h4 class="fs-6 fst-italic text-decoration-underline">Temps estimé</h4>
+		<p class="mb-4 fw-bold">
+			{% set hours = (carpool.estimatedRideTime // 60) %}
+			{% set minutes = (carpool.estimatedRideTime % 60) %}
+			{% if hours > 0 %}
+				{{ hours }}
+				heure{{ hours > 1 ? 's' }}
+				{% if minutes > 0 %}
+					{{ minutes }}
+					minute{{ minutes > 1 ? 's' }}
+				{% endif %}
+			{% else %}
+				{{ minutes }}
+				minute{{ minutes > 1 ? 's' }}
+			{% endif %}
+		</p>
+	</div>
+
+	{# Arrival #}
+	<div class="mx-5">
+		<h4 class="fs-6 fst-italic text-decoration-underline">Arrivée</h4>
+		<p class="mb-4">
+			{{ carpool.arrivalPlace|capitalize }}<br/>
+			<span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
+			{{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr")|capitalize }}<br/>
+			<span class="fw-bold">{{ carpool.arrivalTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}</span>
+		</p>
+	</div>
+
+</div>

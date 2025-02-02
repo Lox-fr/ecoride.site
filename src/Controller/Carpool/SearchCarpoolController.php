@@ -155,7 +155,8 @@ class SearchCarpoolController extends AbstractController
                     \sprintf(
                         '<span class="text-nowrap">Aucun covoiturage n\'est disponible</span>
                         <span class="text-nowrap">pour la date exacte du %s,</span><br/>
-                        <span class="text-nowrap">mais il en existe pour des dates ultérieures.</span>',
+                        <span class="text-nowrap">mais il en existe pour</span>
+                        <span class="text-nowrap">des dates ultérieures.</span>',
                         $requestedDate instanceof \DateTimeInterface ? $requestedDate->format('d/m/Y') : 'demandée'
                     )
                 );
