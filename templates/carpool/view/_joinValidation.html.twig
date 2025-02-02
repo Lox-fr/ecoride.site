@@ -1,5 +1,5 @@
 <div class="modal" tabindex="-1" id="joinCarpoolValidation">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
 
 			<div class="modal-header">
@@ -9,41 +9,53 @@
 
 			<div class="modal-body">
 
-				<p>
-					<span class="fw-bold">
-						Confirmez-vous vouloir participer au covoiturage
-						<span class="text-nowrap">
-							organisé par
-							{{ carpool.driverPseudo }}
-							?
-						</span>
+				<p class="fw-bold">
+					Confirmez-vous vouloir participer au covoiturage
+					<span class="text-nowrap">
+						organisé par
+						{{ carpool.driverPseudo }}
+						?
 					</span>
 				</p>
 
-                <p>
-                    <span class="fwt-italic text-decoration-underline">Départ de</span><br/>
-                    {{ carpool.departurePlace|capitalize }}<br/>
-                    <span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
-                    le {{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y 'à' HH'h'mm", locale="fr") }}
-                </p>
+				<p>
+					<span class="fwt-italic text-decoration-underline">Départ de</span><br/>
+					{{ carpool.departurePlace|capitalize }}<br/>
+					<span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
+					Le
+					{{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.departureTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
 
-                <p>
-                    <span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
-                    {{ carpool.arrivalPlace|capitalize }}<br/>
-                    <span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
-                    le {{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y 'à' HH'h'mm", locale="fr") }}
-                </p>
-
-                <p>
-                    <span class="fwt-italic text-decoration-underline">Prix</span><br/>
-                    <span class="fw-bold">{{ carpool.pricePerPerson }} crédits</span>
-                </p>
+				<p>
+					<span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
+					{{ carpool.arrivalPlace|capitalize }}<br/>
+					<span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
+					Le
+					{{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.arrivalTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
 
 			</div>
 
 			<div class="modal-footer">
+
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-				<a href="{{ path('app_home') }}" role="button" class="btn btn-primary">Confirmer</a>
+
+				{% set disabledJoinButton = false %}
+				{% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.credits < carpool.pricePerPerson %}
+					{% set disabledJoinButton = true %}
+				{% endif %}
+				<a href="{{ path('app_carpool_join', {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary {{ disabledJoinButton ? 'disabled' }}" {{ disabledJoinButton ? 'aria-disabled="true"' }}>
+					Payer
+					{{ carpool.pricePerPerson }}
+					crédits
+				</a>
+
 			</div>
 
 		</div>
