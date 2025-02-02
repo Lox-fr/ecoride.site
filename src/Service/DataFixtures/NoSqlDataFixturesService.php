@@ -23,8 +23,8 @@ class NoSqlDataFixturesService
     private const RATING_NEUTRAL = 3;
 
     // 1 out of 20 carpools is cancelled
-    private const PAST_CARPOOL_STATUSES = ['done' => 19, 'cancelled' => 1];
-    private const FUTURE_CARPOOL_STATUSES = ['open' => 19, 'cancelled' => 1];
+    private const PAST_CARPOOL_STATUSES = ['done' => 19, 'canceled' => 1];
+    private const FUTURE_CARPOOL_STATUSES = ['open' => 19, 'canceled' => 1];
     // 1 out of 40 reviews is rejected
     private const REVIEW_STATUSES = ['approved' => 39, 'rejected' => 1];
 
