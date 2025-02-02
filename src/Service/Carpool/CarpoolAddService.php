@@ -34,18 +34,4 @@ class CarpoolAddService
     {
         return $departureTime instanceof \DateTimeImmutable && $departureTime > new \DateTimeImmutable('+1 hour');
     }
-
-    // public function executeSearchQueryWithFormData(FormInterface $carpoolSearchForm): array
-    // {
-    //     /** @var CarpoolRepository $carpoolRepository */
-    //     $carpoolRepository = $this->documentManager->getRepository(Carpool::class);
-
-    //     $departureTime = $carpoolSearchForm->get('departureTime')->getData();
-    //     $departureCity = $carpoolSearchForm->get('departureCity')->getData();
-    //     $arrivalCity = $carpoolSearchForm->get('arrivalCity')->getData();
-
-    //     $carpoolSearchResults = $carpoolRepository->searchCarpools($departureCity, $arrivalCity, $departureTime);
-
-    //     return $carpoolSearchResults ?? [];
-    // }
 }
