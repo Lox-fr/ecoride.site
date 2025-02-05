@@ -74,7 +74,7 @@ class CarpoolHandler
             'passengerPhotoFilename' => $passenger->getPhotoFilename(),
         ];
 
-        return $carpool->setPassengers($passengers);
+        return $carpool->setPassengers(array_values($passengers));
     }
 
     private function calculateArrivalTime(Carpool $carpool, FormInterface $carpoolForm): ?\DateTimeImmutable

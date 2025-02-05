@@ -222,7 +222,7 @@ class NoSqlDataFixturesService
                 'passengerPhotoFilename' => $passenger->getPhotoFilename(),
             ];
         }
-        $carpool->setPassengers($carpoolPassengers);
+        $carpool->setPassengers(array_values($carpoolPassengers));
         $carpool->setNumberOfAvailableSeats($car->getNumberOfSeats() - $numberOfPassengers);
 
         return $carpoolPassengers;
