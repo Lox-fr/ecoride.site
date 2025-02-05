@@ -91,6 +91,41 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Fetches the user's pseudo and email based on the provided user ID using a SQL query stored in a local file.
+     *
+     * This method queries the database for a user with the given user ID
+     * and retrieves the corresponding pseudo and email
+     * using a prepared SQL query. If no user is found with the provided ID, the method returns null.
+     *
+     * @param int $userId The ID of the user whose pseudo and email are to be retrieved
+     *
+     * @throws \Exception If there is an error executing the SQL query or during the database interaction
+     *
+     * @return User|null The User object containing the pseudo and email if found, or null if no user exists with the provided user ID
+     */
+    public function findUserPseudoAndEmailByUserId(int $userId): ?User
+    {
+        try {
+            $result = $this->sqlHandler->execute('read/userPseudoAndEmailByUserId', 'queries',
+                SqlHandler::FETCH_ASSOCIATIVE, [
+                    'user_id' => $userId,
+                ]);
+
+            if ($result) {
+                $user = new User();
+                $user->setPseudo($result['pseudo']);
+                $user->setEmail($result['email']);
+
+                return $user;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Error fetching pseudo and email for user id "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
      * Updates the passenger profile in the database using a SQL file.
      *
      * This method executes an SQL update query to synchronize the passenger's profile information.
