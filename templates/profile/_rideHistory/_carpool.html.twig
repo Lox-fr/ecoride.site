@@ -50,7 +50,8 @@
             </div>
 
 
-			<div class="d-flex flex-row justify-content-end mb-2">
+			<div class="d-flex flex-row justify-content-between mb-2 align-items-center">
+                <p class="text-danger fst-italic text-decoration-underline" style="font-size: 13px;">{{ carpool.driverUserId == app.user.id ? 'Conducteur' : 'passager' }}</p>
 				<a href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}" class="btn btn-sm btn-outline-primary">Voir en détail</a>
 			</div>
 
