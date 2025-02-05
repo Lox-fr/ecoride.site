@@ -6,7 +6,6 @@ namespace App\Controller\Carpool;
 
 use App\Service\Carpool\CarpoolJoinService;
 use App\Service\Carpool\CarpoolSearchService;
-use App\Service\Review\ReviewSearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,10 +18,8 @@ final class JoinCarpoolController extends AbstractController
         string $carpoolId,
         CarpoolSearchService $carpoolSearchService,
         CarpoolJoinService $carpoolJoinService,
-        ReviewSearchService $reviewSearchService,
     ): Response|RedirectResponse {
         $carpool = $carpoolSearchService->findOneCarpoolByItsId($carpoolId);
-        $approvedReviewsDriver = $reviewSearchService->findApprovedReviewsDriver($carpool);
 
         // Check existence of carpool
         if (!$carpool) {
