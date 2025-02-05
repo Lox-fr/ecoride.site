@@ -351,4 +351,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             throw new \Exception(\sprintf('Update of credits value failed for "%s": %s', $user->getPseudo(), $e->getMessage()), 0, $e);
         }
     }
+
+    /**
+     * Retrieves the credit balance for a given user ID.
+     *
+     * This method fetches the current credit balance of the specified user
+     * from the database.
+     *
+     * @param int $userId the ID of the user whose credit balance is being retrieved
+     *
+     * @throws \Exception if the retrieval operation fails
+     */
+    public function findCreditsByUserId(int $userId): ?int
+    {
+        try {
+            $result =
+                $this->sqlHandler->execute('read/creditsByUserId', 'queries', SqlHandler::FETCH_ONE, [
+                    'user_id' => $userId,
+                ]);
+
+            return $result ?? null;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Update of credits value failed for "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service\Carpool;
 
-use App\Document\Carpool;
 use App\Entity\User;
+use App\Document\Carpool;
 use App\Repository\UserRepository;
+use App\Service\User\CreditsManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -17,6 +18,7 @@ final class CarpoolCancelService
         private DocumentManager $documentManager,
         private UserRepository $userRepository,
         private MailerInterface $mailer,
+        private CreditsManager $creditsManager,
     ) {
     }
 
@@ -33,6 +35,7 @@ final class CarpoolCancelService
                 $this->notifyPassenger($passenger, $carpool);
             }
         }
+        $this->returnCreditsToPassengers($carpool);
         // Update the carpool status
         $carpool->setStatus('canceled');
 
@@ -59,5 +62,15 @@ final class CarpoolCancelService
             ]);
 
         $this->mailer->send($email);
+    }
+
+    public function returnCreditsToPassengers(Carpool $carpool): void
+    {
+        foreach ($carpool->getPassengers() as $passengerData) {
+            $passenger = new User();
+            $passengerCredits = $this->userRepository->findCreditsByUserId($passengerData['passengerId']);
+            $passenger->setId($passengerData['passengerId'])->setCredits($passengerCredits);
+            $this->creditsManager->updateCredits($passenger, $passengerCredits + $carpool->getPricePerPerson());
+        }
     }
 }
