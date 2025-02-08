@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class CancelCarpoolController extends AbstractController
+final class CarpoolCancelController extends AbstractController
 {
     #[Route('/covoiturage/annuler/{carpoolId}', name: 'app_carpool_cancel')]
     public function cancelCarpool(

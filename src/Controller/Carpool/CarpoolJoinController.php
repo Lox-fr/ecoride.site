@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class JoinCarpoolController extends AbstractController
+final class CarpoolJoinController extends AbstractController
 {
     #[Route('/rejoindre/{carpoolId}', name: 'app_carpool_join')]
     public function index(

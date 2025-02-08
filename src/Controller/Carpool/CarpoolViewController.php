@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class ViewCarpoolController extends AbstractController
+final class CarpoolViewController extends AbstractController
 {
     #[Route('/covoiturage/{carpoolId}', name: 'app_carpool_view')]
     public function index(
@@ -31,7 +31,7 @@ final class ViewCarpoolController extends AbstractController
         return $this->render('carpool/view/index.html.twig', [
             'controller_name' => 'ViewCarpoolController',
             'carpool' => $carpool,
-            'approvedReviewsDriver' => $approvedReviewsDriver
+            'approvedReviewsDriver' => $approvedReviewsDriver,
         ]);
     }
 }
