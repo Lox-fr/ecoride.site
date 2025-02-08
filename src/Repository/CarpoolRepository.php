@@ -45,6 +45,7 @@ class CarpoolRepository extends DocumentRepository
             ->field('arrivalCity')->equals(new Regex('^' . preg_quote($arrivalCity) . '$', 'i'))
             ->field('departureTime')->gte($departureTime)
             ->field('numberOfAvailableSeats')->gt(0)
+            ->field('status')->equals('open')
             ->sort('departureTime', 'asc')
             ->getQuery()
             ->execute()
