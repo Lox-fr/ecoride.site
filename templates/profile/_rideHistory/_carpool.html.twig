@@ -31,7 +31,7 @@
                     <span class="badge {{ badgeClass }} mb-1">{{ statusLabel }}</span>
 
                     <div class="fw-bold text-start">
-                        {{ carpool.departureCity ~ ' ⇢ ' ~ carpool.arrivalCity }}
+                        {{ carpool.departureCity|capitalize ~ ' ⇢ ' ~ carpool.arrivalCity|capitalize }}
                     </div>
 
                     <div class="fst-italic">
