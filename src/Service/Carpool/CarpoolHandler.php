@@ -77,6 +77,19 @@ class CarpoolHandler
         return $carpool->setPassengers(array_values($passengers));
     }
 
+    public function removePassengerFromCarpool(Carpool $carpool, User $passenger): Carpool
+    {
+        $passengers = $carpool->getPassengers();
+        $filteredPassengers = array_filter($passengers, fn ($p) => $p['passengerId'] !== $passenger->getId());
+
+        if (\count($filteredPassengers) !== \count($passengers)) {
+            $carpool->setPassengers(array_values($filteredPassengers));
+            $carpool->setNumberOfAvailableSeats($carpool->getNumberOfAvailableSeats() + 1);
+        }
+
+        return $carpool;
+    }
+
     private function calculateArrivalTime(Carpool $carpool, FormInterface $carpoolForm): ?\DateTimeImmutable
     {
         $arrivalTime = null;

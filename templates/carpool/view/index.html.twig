@@ -48,6 +48,11 @@
 					Annuler ce covoiturage
 				</button>
 
+			{% elseif isPassenger and isFuture and carpool.status != 'canceled' %}
+				<button type="button" class="btn btn-outline-danger shadow mt-1 mb-5" data-bs-toggle="modal" data-bs-target="#cancelCarpoolParticipationValidation" aria-label="Annuler votre participation à ce covoiturage">
+					Annuler votre participation
+				</button>
+
 			{% elseif not isDriver and not isPassenger and isFuture %}
 				<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#joinCarpoolValidation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
 					Rejoindre pour
@@ -57,7 +62,8 @@
 			{% endif %}
 
 			{% include "carpool/view/_joinValidation.html.twig" %}
-			{% include "carpool/view/_cancelValidation.html.twig" %}
+			{% include "carpool/view/_cancelValidation.html.twig" with {'participation': false} %}
+			{% include "carpool/view/_cancelValidation.html.twig" with {'participation': true} %}
 
 		</footer>
 
