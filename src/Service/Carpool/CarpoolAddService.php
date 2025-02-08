@@ -23,6 +23,7 @@ class CarpoolAddService
         // Populate and save the carpool
         $hydratedCarpool = $this->carpoolHandler->populateCarpoolWithDriverAndFormDetails(
             $carpool, $carpoolForm, $driver);
+        $hydratedCarpool->setStatus('open');
         $this->documentManager->persist($hydratedCarpool);
         $this->documentManager->flush();
     }
