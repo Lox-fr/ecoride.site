@@ -9,12 +9,29 @@
 
 {% block main %}
 
+	{% set isFuture = carpool.departureTime > date() %}
+	{% set isDriver = false %}
+	{% set isPassenger = false %}
+	{% if app.user %}
+		{% set isDriver = carpool.driveruserId == app.user.id %}
+		{% for passengerData in carpool.passengers %}
+			{% if passengerData['passengerId'] == app.user.id %}
+				{% set isPassenger = true %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+
 	<article class="container framed bg-light rounded-sm-5 shadow mt-5">
 
 		<header>
-			<h2 class="border-bottom border-primary border-1 py-2 mt-3 mb-4 mb-lg-5 mx-sm-5">
+			<h2 class="border-bottom border-primary border-1 py-2 mt-3 {{ carpool.status != 'canceled' ? 'mb-4 mb-lg-5' : 'mb-3' }} mx-sm-5">
 				Détail du covoiturage
 			</h2>
+			{% if carpool.status == 'canceled' %}
+				<p class="fs-1 bg-danger rounded shadow mb-4 mb-lg-5 mx-2">
+					<strong class="text-light fst-italic">Annulé</strong>
+				</p>
+			{% endif %}
 		</header>
 
 		<section class="px-sm-5">
@@ -26,11 +43,17 @@
 
 		<footer>
 
-			{% if carpool.driveruserId is same as app.user.id %}
+			{% if isDriver and isFuture and carpool.status != 'canceled' %}
 				<button type="button" class="btn btn-outline-danger shadow mt-1 mb-5" data-bs-toggle="modal" data-bs-target="#cancelCarpoolValidation" aria-label="Annuler ce covoiturage">
 					Annuler ce covoiturage
 				</button>
-			{% else %}
+
+			{% elseif isPassenger and isFuture and carpool.status != 'canceled' %}
+				<button type="button" class="btn btn-outline-danger shadow mt-1 mb-5" data-bs-toggle="modal" data-bs-target="#cancelCarpoolParticipationValidation" aria-label="Annuler votre participation à ce covoiturage">
+					Annuler votre participation
+				</button>
+
+			{% elseif not isDriver and not isPassenger and isFuture %}
 				<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#joinCarpoolValidation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
 					Rejoindre pour
 					<span class="fw-bold text-light">{{ carpool.pricePerPerson }}</span>
@@ -39,7 +62,8 @@
 			{% endif %}
 
 			{% include "carpool/view/_joinValidation.html.twig" %}
-			{% include "carpool/view/_cancelValidation.html.twig" %}
+			{% include "carpool/view/_cancelValidation.html.twig" with {'participation': false} %}
+			{% include "carpool/view/_cancelValidation.html.twig" with {'participation': true} %}
 
 		</footer>
 

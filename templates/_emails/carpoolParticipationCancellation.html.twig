@@ -1,0 +1,26 @@
+<main>
+
+	<p>
+		Bonjour
+		{{ driverPseudo }},
+	</p>
+
+	<p>
+		Nous vous informons que
+		<strong>{{ passengerPseudo }}</strong>
+		a annulé sa paticipation au covoiturage que vous avez organisé entre
+		<strong>{{ departureCity }}</strong>
+		et
+		<strong>{{ arrivalCity }}</strong>,
+		prévu le
+		<strong>{{ departureTime|format_datetime(pattern="'le' EEEE d MMMM yyyy 'à' HH'h'mm", locale="fr") }}</strong>.
+	</p>
+
+	<p>
+		Bonne journée,
+		à bientôt sur
+		<strong>EcoRide</strong>
+		!
+	</p>
+
+</main>

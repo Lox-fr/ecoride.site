@@ -63,7 +63,13 @@ class CarpoolJoinService
      */
     public function isUserAlreadyPassengerOfCarpool(User $passenger, Carpool $carpool): bool
     {
-        return !empty(array_filter($carpool->getPassengers(),
-            fn ($p) => $p['passengerId'] === $passenger->getId()));
+        $passengers = $carpool->getPassengers() ?? [];
+        foreach ($passengers as $p) {
+            if (isset($p['passengerId']) && $p['passengerId'] === $passenger->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

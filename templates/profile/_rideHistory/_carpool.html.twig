@@ -31,7 +31,7 @@
                     <span class="badge {{ badgeClass }} mb-1">{{ statusLabel }}</span>
 
                     <div class="fw-bold text-start">
-                        {{ carpool.departureCity ~ ' ⇢ ' ~ carpool.arrivalCity }}
+                        {{ carpool.departureCity|capitalize ~ ' ⇢ ' ~ carpool.arrivalCity|capitalize }}
                     </div>
 
                     <div class="fst-italic">
@@ -50,7 +50,8 @@
             </div>
 
 
-			<div class="d-flex flex-row justify-content-end mb-2">
+			<div class="d-flex flex-row justify-content-between mb-2 align-items-center">
+                <p class="text-danger fst-italic text-decoration-underline" style="font-size: 13px;">{{ carpool.driverUserId == app.user.id ? 'Conducteur' : 'passager' }}</p>
 				<a href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}" class="btn btn-sm btn-outline-primary">Voir en détail</a>
 			</div>
 

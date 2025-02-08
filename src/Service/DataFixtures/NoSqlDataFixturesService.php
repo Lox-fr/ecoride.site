@@ -8,7 +8,6 @@ use App\Document\Carpool;
 use App\Document\Review;
 use App\Entity\Car;
 use App\Entity\User;
-use App\Service\Carpool\CarpoolHandler;
 use App\Service\DataFixtures\DataProviders\CarpoolPlacesProvider;
 use App\Service\DataFixtures\DataProviders\CarpoolReviewMessagesProvider;
 use App\Service\DataFixtures\DataProviders\CarpoolRidesProvider;
@@ -35,7 +34,6 @@ class NoSqlDataFixturesService
 
     public function __construct(
         private DocumentManager $documentManager,
-        private CarpoolHandler $carpoolHandler,
         private CarpoolPlacesProvider $carpoolPlacesProvider,
         private CarpoolRidesProvider $carpoolRidesProvider,
         private CarpoolReviewMessagesProvider $carpoolReviewMessagesProvider,
@@ -222,7 +220,7 @@ class NoSqlDataFixturesService
                 'passengerPhotoFilename' => $passenger->getPhotoFilename(),
             ];
         }
-        $carpool->setPassengers($carpoolPassengers);
+        $carpool->setPassengers(array_values($carpoolPassengers));
         $carpool->setNumberOfAvailableSeats($car->getNumberOfSeats() - $numberOfPassengers);
 
         return $carpoolPassengers;

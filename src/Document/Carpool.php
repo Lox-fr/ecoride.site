@@ -122,8 +122,8 @@ class Carpool
     #[MongoDB\Field(type: 'string')]
     private ?string $carEngineType = null;
 
-    #[MongoDB\Field(type: 'hash')]
-    private ?array $passengers = null;
+    #[MongoDB\Field(type: 'collection')]
+    private ?array $passengers = [];
 
     /**
      * @var Collection<int, Review>
@@ -429,15 +429,15 @@ class Carpool
         return $this;
     }
 
-    public function getPassengers(): ?array
+    public function getPassengers(): array
     {
-        return $this->passengers;
+        return $this->passengers ?? [];
     }
 
     public function setPassengers(?array $passengers): static
     {
-        $this->passengers = $passengers;
-
+        $this->passengers = $passengers ?? [];
+    
         return $this;
     }
 
