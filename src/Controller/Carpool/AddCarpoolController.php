@@ -7,20 +7,21 @@ namespace App\Controller\Carpool;
 use App\Entity\Car;
 use App\Entity\User;
 use App\Form\CarFormType;
-use App\Form\Carpool\CarpoolAddFormType;
-use App\Form\User\DriverProfileFormType;
-use App\Form\User\PassengerProfileFormType;
-use App\Service\Carpool\CarpoolAddService;
-use App\Service\Carpool\CarpoolSessionDataManager;
 use App\Service\User\CarManager;
 use App\Service\User\RoleManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Form\Carpool\CarpoolAddFormType;
+use App\Form\User\DriverProfileFormType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Service\Carpool\CarpoolAddService;
+use App\Form\User\PassengerProfileFormType;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\Carpool\CarpoolSearchService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\Carpool\CarpoolSessionDataManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AddCarpoolController extends AbstractController
 {
@@ -31,6 +32,7 @@ class AddCarpoolController extends AbstractController
         private RoleManager $roleManager,
         private CarManager $carManager,
         private CarpoolAddService $carpoolAddService,
+        private CarpoolSearchService $carpoolSearchService,
         private CarpoolSessionDataManager $carpoolSessionDataManager,
     ) {
     }
@@ -46,16 +48,18 @@ class AddCarpoolController extends AbstractController
             return $this->redirectToRoute('app_login', ['_target_path' => $this->generateUrl('app_carpool_add')]);
         }
 
-        // Handle add car form submission
+        // Handle car add form submission
         $addCarFormInCarpoolForm = $this->handleAddCarFormInAddCarpoolForm($request, $user);
         if ($addCarFormInCarpoolForm instanceof RedirectResponse) {
             return $addCarFormInCarpoolForm;
         }
-        // Handle add carpool form submission
+        // Handle carpool add form submission
         $carpoolForm = $this->handleAddCarpoolForm($request, $user);
         if ($carpoolForm instanceof RedirectResponse) {
             return $carpoolForm;
         }
+        // Retrieve user carpool history
+        $userCarpoolsData = $this->carpoolSearchService->getUserCarpools($user);
 
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'AddCarpoolController',
@@ -65,6 +69,8 @@ class AddCarpoolController extends AbstractController
             'driverProfileForm' => $this->createForm(DriverProfileFormType::class, $user),
             'carpoolForm' => $carpoolForm,
             'addCarFormInCarpoolForm' => $addCarFormInCarpoolForm,
+            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
+            'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
         ]);
     }
 

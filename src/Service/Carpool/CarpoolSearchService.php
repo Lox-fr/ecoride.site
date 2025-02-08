@@ -71,4 +71,54 @@ final class CarpoolSearchService
 
         return $carpools;
     }
+
+    /**
+     * Returns a user's trips separated into upcoming and past trips, grouped by year.
+     *
+     * @return array<string, array<int, Carpool>>
+     */
+    public function getUserCarpools(User $user): array
+    {
+        $userCarpools = $this->findCarpoolsByUser($user);
+        // Separate past and upcoming carpools
+        $upcomingCarpools = [];
+        $pastCarpools = [];
+        $currentDate = new \DateTimeImmutable();
+        foreach ($userCarpools as $carpool) {
+            if ($carpool->getDepartureTime() >= $currentDate) {
+                $upcomingCarpools[] = $carpool;
+            } else {
+                $pastCarpools[] = $carpool;
+            }
+        }
+        // Sort past and upcoming carpools
+        usort($upcomingCarpools, function ($a, $b) {
+            return $a->getDepartureTime() <=> $b->getDepartureTime();
+        });
+        usort($pastCarpools, function ($a, $b) {
+            return $a->getDepartureTime() <=> $b->getDepartureTime();
+        });
+        // Group by year
+        $pastCarpoolsByYear = [];
+        foreach ($pastCarpools as $carpool) {
+            $year = $carpool->getDepartureTime()->format('Y');
+            if (!isset($pastCarpoolsByYear[$year])) {
+                $pastCarpoolsByYear[$year] = [];
+            }
+            $pastCarpoolsByYear[$year][] = $carpool;
+        }
+        // Sort years in descending order
+        krsort($pastCarpoolsByYear);
+        // Sort carpools in each year in descending order
+        foreach ($pastCarpoolsByYear as $year => &$carpoolsInYear) {
+            usort($carpoolsInYear, function ($a, $b) {
+                return $b->getDepartureTime() <=> $a->getDepartureTime();
+            });
+        }
+
+        return [
+            'upcomingCarpools' => $upcomingCarpools,
+            'pastCarpoolsByYear' => $pastCarpoolsByYear,
+        ];
+    }
 }
