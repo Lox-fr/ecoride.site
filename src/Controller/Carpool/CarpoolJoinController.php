@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CarpoolJoinController extends AbstractController
 {
-    #[Route('/rejoindre/{carpoolId}', name: 'app_carpool_join')]
+    #[Route('/covoiturage/rejoindre/{carpoolId}', name: 'app_carpool_join')]
     public function index(
         string $carpoolId,
         CarpoolSearchService $carpoolSearchService,
