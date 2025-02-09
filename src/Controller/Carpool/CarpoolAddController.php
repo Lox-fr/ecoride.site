@@ -69,9 +69,9 @@ final class CarpoolAddController extends AbstractController
             'driverProfileForm' => $this->createForm(DriverProfileFormType::class, $user),
             'carpoolForm' => $carpoolForm,
             'addCarFormInCarpoolForm' => $addCarFormInCarpoolForm,
-            'inProgressCarpools' => $userCarpoolsData['inProgressCarpools'],
-            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
+            'currentCarpools' => $userCarpoolsData['currentCarpools'],
+            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
         ]);
     }
 

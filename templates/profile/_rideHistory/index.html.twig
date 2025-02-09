@@ -3,9 +3,9 @@
 	<span class="text-nowrap">de vos trajets</span>
 </h2>
 
-{% if inProgressCarpools is not empty %}
+{% if currentCarpools is not empty %}
 	<h3 class="fs-4 mt-4">Trajets en cours</h3>
-	{% include "profile/_rideHistory/_carpool.html.twig" with {'carpoolList': inProgressCarpools, 'past': true} %}
+	{% include "profile/_rideHistory/_carpool.html.twig" with {'carpoolList': currentCarpools, 'past': true} %}
 
 	{% if pastCarpoolsByYear is not empty or pastCarpoolsByYear is not empty %}
 		<hr class="mt-5">

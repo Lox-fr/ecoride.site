@@ -74,6 +74,7 @@ final class CarpoolSearchService
 
     /**
      * Returns a user's trips separated into upcoming, in progress and past trips, grouped by year.
+     * "inProgress", "arrived" and "contested" statuses are considered as "inProgress".
      *
      * @return array<string, array<int, Carpool>>
      */
@@ -81,15 +82,16 @@ final class CarpoolSearchService
     {
         $userCarpools = $this->findCarpoolsByUser($user);
         // Separate past, in progress and upcoming carpools
-        $inProgressCarpools = [];
+        $currentCarpools = [];
         $upcomingCarpools = [];
         $pastCarpools = [];
         $currentDate = new \DateTimeImmutable();
         foreach ($userCarpools as $carpool) {
-            if ($carpool->getStatus() === CarpoolStatusManager::STATUS_IN_PROGRESS) {
-                $inProgressCarpools[] = $carpool;
-            }
-            elseif ($carpool->getDepartureTime() >= $currentDate) {
+            if (CarpoolStatusManager::STATUS_IN_PROGRESS === $carpool->getStatus()
+            || CarpoolStatusManager::STATUS_ARRIVED === $carpool->getStatus()
+            || CarpoolStatusManager::STATUS_CONTESTED === $carpool->getStatus()) {
+                $currentCarpools[] = $carpool;
+            } elseif ($carpool->getDepartureTime() >= $currentDate) {
                 $upcomingCarpools[] = $carpool;
             } else {
                 $pastCarpools[] = $carpool;
@@ -121,9 +123,9 @@ final class CarpoolSearchService
         }
 
         return [
-            'upcomingCarpools' => $upcomingCarpools,
-            'inProgressCarpools' => $inProgressCarpools,
             'pastCarpoolsByYear' => $pastCarpoolsByYear,
+            'currentCarpools' => $currentCarpools,
+            'upcomingCarpools' => $upcomingCarpools,
         ];
     }
 }

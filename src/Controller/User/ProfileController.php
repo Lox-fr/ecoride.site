@@ -82,9 +82,9 @@ class ProfileController extends AbstractController
             'carpoolForm' => $this->createForm(CarpoolAddFormType::class, new Carpool(),
                 ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]),
             'addCarFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
-            'inProgressCarpools' => $userCarpoolsData['inProgressCarpools'],
-            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
+            'currentCarpools' => $userCarpoolsData['currentCarpools'],
+            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
         ]);
     }
 
