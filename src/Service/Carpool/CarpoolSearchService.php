@@ -86,7 +86,7 @@ final class CarpoolSearchService
         $pastCarpools = [];
         $currentDate = new \DateTimeImmutable();
         foreach ($userCarpools as $carpool) {
-            if ($carpool->getStatus() === 'in progress') {
+            if ($carpool->getStatus() === CarpoolStatusManager::STATUS_IN_PROGRESS) {
                 $inProgressCarpools[] = $carpool;
             }
             elseif ($carpool->getDepartureTime() >= $currentDate) {

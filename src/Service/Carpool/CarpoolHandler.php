@@ -36,7 +36,7 @@ class CarpoolHandler
             ->setArrivalTime($arrivalTime)
             ->setTotalNumberOfSeats($car->getNumberOfSeats())
             ->setNumberOfAvailableSeats($car->getNumberOfSeats())
-            ->setStatus('Available')
+            ->setStatus(CarpoolStatusManager::STATUS_OPEN)
             ->setDriverUserId($driver->getId())
             ->setDriverPseudo($driver->getPseudo())
             ->setDriverPhotoFilename($driver->getPhotoFilename())
