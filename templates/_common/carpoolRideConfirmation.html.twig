@@ -1,0 +1,104 @@
+{% set modalId = '' %}
+{% if mode == 'start' %}
+	{% set modalId = 'carpoolStartConfirmation' %}
+{% elseif mode == 'finish' %}
+	{% set modalId = 'carpoolFinishConfirmation' %}
+{% elseif mode == 'validate' %}
+	{% set modalId = 'carpoolValidationConfirmation' %}
+{% endif %}
+
+<div class="modal" tabindex="-1" id="{{ modalId ~ loop.index ?? '' }}">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<h5 class="modal-title">Important</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+
+				<p class="fw-bold">
+					{% if mode == 'start' %}
+						Vous prenez la route ?<br/>
+						Confirmez-vous vouloir commencer ce covoiturage ?
+					{% elseif mode == 'finish' or mode == 'validate' %}
+						Vous êtes arrivés à destination ?<br/>
+						Confirmez-vous avoir terminé ce covoiturage ?
+					{% endif %}
+				</p>
+
+				<p> {# Departure #}
+					<span class="fwt-italic text-decoration-underline">Départ de</span><br/>
+					{% if carpool.departurePlace %}
+						{{ carpool.departurePlace|capitalize }}<br/>
+					{% endif %}
+					<span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
+					Le {{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.departureTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
+
+				<p> {# Arrival #}
+					<span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
+					{% if carpool.departurePlace %}
+						{{ carpool.arrivalPlace|capitalize }}<br/>
+					{% endif %}
+					<span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
+					Le {{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.arrivalTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
+
+				{% if carpool.passengers is not empty and not mode == 'validate' %}
+
+					{% if mode == "start" %}
+						<ul> {# Passengers #}
+							<span class="fwt-italic text-decoration-underline">Accompagné(e) par</span>
+							{% for passengerData in carpool.passengers %}
+								<li>
+									{{ passengerData.passengerPseudo }}
+								</li>
+							{% endfor %}
+						</ul>
+
+					{% elseif mode == "finish" %}
+						<small class="fst-italic">
+							Un email de validation sera envoyé aux éventuels passagers.<br>
+							Dès leur confirmation, vous serez crédité du montant convenu.
+						</small>
+					{% endif %}
+
+				{% endif %}
+
+				{% if mode == 'validate' %}
+					<small class="fst-italic">
+						Après cette validation,vous serez ensuite invité(e) à laisser un avis sur votre trajet.
+					</small>
+				{% endif %}
+
+			</div>
+
+			<div class="modal-footer">
+
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+				{% set href = '' %}
+				{% if mode == 'start' %}
+					{% set href = 'app_carpool_start' %}
+				{% elseif mode == 'finish' %}
+					{% set href = 'app_carpool_finish' %}
+				{% elseif mode == 'validate' %}
+					{% set href = 'app_carpool_validate' %}
+				{% endif %}
+				{# Action link #}
+				<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary">
+					Confirmer</a>
+
+			</div>
+
+		</div>
+	</div>
+</div>

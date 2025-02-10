@@ -1,0 +1,53 @@
+{% if loop is defined %}
+	{% set loopIndex = loop.index %}
+{% else %}
+	{% set loopIndex = '' %}
+{% endif %}
+
+{% if isDriver and carpool.status != 'canceled' %}
+	{# Cancel the carpool (driver) #}
+	<button type="button" class="btn btn-outline-danger shadow mt-1 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#carpoolCancelConfirmation" aria-label="Annuler ce covoiturage">
+		Annuler ce covoiturage
+	</button>
+	{% include "_common/carpoolCancelConfirmation.html.twig" %}
+
+{% elseif isPassenger and carpool.status != 'canceled' %}
+	{# Cancel the participation to the carpool (passenger) #}
+	<button type="button" class="btn btn-outline-danger shadow mt-1 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#carpoolParticipationCancelConfirmation" aria-label="Annuler votre participation à ce covoiturage">
+		Annuler votre participation
+	</button>
+	{% include "_common/carpoolCancelConfirmation.html.twig" with {'participation': true} %}
+
+{% endif %}
+
+{% if not isDriver and not isPassenger and isFuture %}
+	{# Join the carpool (public) #}
+	<button type="button" class="btn btn-lg btn-primary shadow mt-1 mb-5 mx-2 scaleOnFocusAndHover {{ not carpool.numberOfAvailableSeats ? 'disabled' }}" data-bs-toggle="modal" data-bs-target="#carpoolJoinConfirmation" aria-label="Rejoindre ce covoiturage pour {{ carpool.pricePerPerson }} crédits">
+		Rejoindre pour
+		<span class="fw-bold text-light">{{ carpool.pricePerPerson }}</span>
+		crédits
+	</button>
+	{% include "carpool/view/_joinConfirmation.html.twig" %}
+
+{% elseif carpool.status == 'open' and isDriver %}
+	{# Start (driver) #}
+	<button type="button" class="btn btn-danger shadow mt-1 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#carpoolStartConfirmation{{ loopIndex }}" aria-label="Commencer ce covoiturage - quand vous prenez la route.">
+		Départ
+	</button>
+	{% include "_common/carpoolRideConfirmation.html.twig" with {mode: 'start'} %}
+
+{% elseif carpool.status == 'inProgress' and isDriver %}
+	{# Finish (driver) #}
+	<button type="button" class="btn btn-danger shadow mt-1 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#carpoolFinishConfirmation{{ loopIndex }}" aria-label="Terminer ce covoiturage - quand vous êtes arrivé(e) à destination.">
+		Arrivée
+	</button>
+	{% include "_common/carpoolRideConfirmation.html.twig" with {mode: 'finish'} %}
+
+{% elseif isPassenger and carpool.status == 'arrived' or isPassenger and not hasAlreadyValidated and carpool.status == 'validated' %}
+	{# Validate (passenger) #}
+	<button type="button" class="btn btn-danger shadow mt-1 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#carpoolValidationConfirmation{{ loopIndex }}" aria-label="Déclarer ce covoiturage terminé - quand vous êtes arrivé(e) à destination.">
+		Arrivée
+	</button>
+	{% include "_common/carpoolRideConfirmation.html.twig" with {mode: 'validate'} %}
+
+{% endif %}

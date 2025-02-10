@@ -1,4 +1,4 @@
-<div class="modal" tabindex="-1" id="joinCarpoolValidation">
+<div class="modal" tabindex="-1" id="carpoolJoinConfirmation">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
 
@@ -11,30 +11,28 @@
 
 				<p class="fw-bold">
 					Confirmez-vous vouloir participer au covoiturage
-					<span class="text-nowrap">
-						organisé par
-						{{ carpool.driverPseudo }}
-						?
-					</span>
+					<span class="text-nowrap">organisé par {{ carpool.driverPseudo }} ?</span>
 				</p>
 
-				<p>
+				<p> {# Departure #}
 					<span class="fwt-italic text-decoration-underline">Départ de</span><br/>
-					{{ carpool.departurePlace|capitalize }}<br/>
+					{% if carpool.departurePlace %}
+						{{ carpool.departurePlace|capitalize }}<br/>
+					{% endif %}
 					<span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
-					Le
-					{{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					Le {{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
 					<span class="text-nowrap">
 						{{ carpool.departureTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
 					</span>
 				</p>
 
-				<p>
+				<p> {# Arrival #}
 					<span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
-					{{ carpool.arrivalPlace|capitalize }}<br/>
+					{% if carpool.arrivalPlace %}
+						{{ carpool.arrivalPlace|capitalize }}<br/>
+					{% endif %}
 					<span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
-					Le
-					{{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					Le {{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
 					<span class="text-nowrap">
 						{{ carpool.arrivalTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
 					</span>
@@ -50,11 +48,9 @@
 				{% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.credits < carpool.pricePerPerson %}
 					{% set disabledJoinButton = true %}
 				{% endif %}
+				{# Action link #}
 				<a href="{{ path('app_carpool_join', {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary {{ disabledJoinButton ? 'disabled' }}" {{ disabledJoinButton ? 'aria-disabled="true"' }}>
-					Payer
-					{{ carpool.pricePerPerson }}
-					crédits
-				</a>
+					Payer {{ carpool.pricePerPerson }} crédits</a>
 
 			</div>
 
