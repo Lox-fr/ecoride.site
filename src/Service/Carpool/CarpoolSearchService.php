@@ -74,7 +74,7 @@ final class CarpoolSearchService
 
     /**
      * Returns a user's trips separated into upcoming, in progress and past trips, grouped by year.
-     * "inProgress", "arrived" and "contested" statuses are considered as "inProgress".
+     * "inProgress", "arrived", "validated" and "contested" statuses are considered as "inProgress".
      *
      * @return array<string, array<int, Carpool>>
      */
@@ -89,6 +89,7 @@ final class CarpoolSearchService
         foreach ($userCarpools as $carpool) {
             if (CarpoolStatusManager::STATUS_IN_PROGRESS === $carpool->getStatus()
             || CarpoolStatusManager::STATUS_ARRIVED === $carpool->getStatus()
+            || CarpoolStatusManager::STATUS_VALIDATED === $carpool->getStatus()
             || CarpoolStatusManager::STATUS_CONTESTED === $carpool->getStatus()) {
                 $currentCarpools[] = $carpool;
             } elseif ($carpool->getDepartureTime() >= $currentDate) {

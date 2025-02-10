@@ -14,42 +14,59 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CarpoolRunController extends AbstractController
 {
+    // Start a ride
     #[Route('/covoiturage/commencer/{carpoolId}', name: 'app_carpool_start')]
     public function start(
-        string $carpoolId,
-        CarpoolSearchService $carpoolSearchService,
-        CarpoolStatusManager $carpoolStatusManager,
+        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolEndService $carpoolEndService,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "open" status, if authenticated user is driver
-        $carpool = $this->validateCarpool($carpoolId, $carpoolSearchService, 'start');
+        $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'start');
         if ($carpool instanceof RedirectResponse) {
             return $carpool;
         }
 
-        // Change carpool status to "inProgress"
-        $carpoolStatusManager->startCarpool($carpool);
+        // Change carpool status to "inProgress" if nacessary
+        $carpoolEndService->driverStartsCarpool($carpool);
 
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
     }
 
+    // End a ride
     #[Route('/covoiturage/terminer/{carpoolId}', name: 'app_carpool_finish')]
     public function finish(
-        string $carpoolId,
-        CarpoolSearchService $carpoolSearchService,
-        CarpoolStatusManager $carpoolStatusManager,
-        CarpoolEndService $carpoolEndService,
+        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolEndService $carpoolEndService,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "in progress" status, if authenticated user is driver
-        $carpool = $this->validateCarpool($carpoolId, $carpoolSearchService, 'finish');
+        $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'finish');
         if ($carpool instanceof RedirectResponse) {
             return $carpool;
         }
 
-        // Change carpool status to "arrived"
-        $carpoolStatusManager->finishCarpool($carpool);
+        if (!empty($carpool->getPassengers())) {
+            // Change carpool status to "arrived" if necessary and if there was at least one passenger
+            // And send email to passengers to ask them to validate their participation
+            $carpoolEndService->driverFinishesCarpool($carpool);
+        } else {
+            // Change carpool status to "done" if there was no passenger
+            $carpoolEndService->passengerValidatesCarpool($carpool);
+        }
 
-        // Send email to passengers to ask them to validate their participation
-        $carpoolEndService->notifyPassengers($carpool);
+        return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
+    }
+
+    // Validate a ride
+    #[Route('/covoiturage/valider/{carpoolId}', name: 'app_carpool_validate')]
+    public function validate(
+        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolEndService $carpoolEndService,
+    ): RedirectResponse {
+        // Carpool validation : if exist, if has "arrived" status, if authenticated user is passenger
+        $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'validate');
+        if ($carpool instanceof RedirectResponse) {
+            return $carpool;
+        }
+
+        // Change carpool status to "done" if nacessary and give the credits to driver
+        $carpoolEndService->passengerValidatesCarpool($carpool, true);
 
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
     }
@@ -61,24 +78,23 @@ final class CarpoolRunController extends AbstractController
      *
      * @param string               $carpoolId            the ID of the carpool to be validated
      * @param CarpoolSearchService $carpoolSearchService the service used to search for the carpool by its ID
-     * @param string               $mode                 the mode of the action ('start' or 'finish')
+     * @param string               $mode                 the mode of the action ('start', 'finish', or 'validate')
      *
      * @return Carpool|RedirectResponse the validated carpool object or a RedirectResponse in case of an error
      */
-    private function validateCarpool(
-        string $carpoolId,
-        CarpoolSearchService $carpoolSearchService,
-        string $mode,
+    private function validateCarpoolForUserAction(
+        string $carpoolId, CarpoolSearchService $carpoolSearchService, string $mode,
     ): Carpool|RedirectResponse {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
         // Define message depending on the mode
         $actionLabels = [
             'start' => 'démarrer',
             'finish' => 'arrêter',
+            'validate' => 'valider',
         ];
         $label = $actionLabels[$mode] ?? 'modifier';
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
 
         // Check if user is authenticated
         if (!$user) {
@@ -86,6 +102,7 @@ final class CarpoolRunController extends AbstractController
 
             return $this->redirectToRoute('app_login');
         }
+
         // Check if carpool exists
         $carpool = $carpoolSearchService->findOneCarpoolByItsId($carpoolId);
         if (!$carpool) {
@@ -93,25 +110,52 @@ final class CarpoolRunController extends AbstractController
 
             return $this->redirectToRoute('app_home');
         }
-        // Check if it belongs to authenticated user
-        if ($carpool->getDriverUserId() !== $user->getId()) {
-            $this->addFlash(
-                'error', 'Vous ne pouvez '.$label.' que les covoiturages que vous avez vous-même organisés.');
 
-            return $this->redirectToRoute('app_home');
-        }
-        // Check if Carpool has status "open" for become "inProgress" = start mode
-        if ('start' === $mode) {
-            if (CarpoolStatusManager::STATUS_OPEN !== $carpool->getStatus()) {
-                $this->addFlash('error', 'Le covoiturage ne peut pas être '.$label.' car il n\'est pas "ouvert".');
+        if ('start' === $mode || 'finish' === $mode) {
+            // Check if authenticated user is driver
+            if ($carpool->getDriverUserId() !== $user->getId()) {
+                $this->addFlash(
+                    'error', 'Vous ne pouvez '.$label.' que les covoiturages que vous avez vous-même organisés.');
+
+                return $this->redirectToRoute('app_home');
+            }
+        } elseif ('validate' === $mode) {
+            // Check if auhtenticated user is passenger
+            $isPassenger = false;
+            foreach ($carpool->getPassengers() as $carpoolData) {
+                if ($carpoolData['passengerId'] === $user->getId()) {
+                    $isPassenger = true;
+                }
+            }
+            if (!$isPassenger) {
+                $this->addFlash('error', 'Vous n\'étiez pas passager de ce covoiturage.');
 
                 return $this->redirectToRoute('app_home');
             }
         }
-        // Check if Carpool has status "open" for become "inProgress" = finish mode
-        if ('finish' === $mode) {
+
+        // Check if Carpool has status "open" to become "inProgress" = start mode
+        if ('start' === $mode) {
+            if (CarpoolStatusManager::STATUS_OPEN !== $carpool->getStatus()) {
+                $this->addFlash('error', 'Vous ne pouvez pas '.$label.' le covoiturage car il n\'est pas "ouvert".');
+
+                return $this->redirectToRoute('app_home');
+            }
+        }
+        // Check if Carpool has status "inProgress" to become "arrived" = finish mode
+        elseif ('finish' === $mode) {
             if (CarpoolStatusManager::STATUS_IN_PROGRESS !== $carpool->getStatus()) {
-                $this->addFlash('error', 'Le covoiturage ne peut pas être '.$label.' car il n\'est pas "En cours".');
+                $this->addFlash('error', 'Vous ne pouvez pas '.$label.' le covoiturage car il n\'est pas "En cours".');
+
+                return $this->redirectToRoute('app_home');
+            }
+        }
+        // Check if Carpool has status "arrived" to become "validated" = validate mode
+        // It might already have the status "validated" if one passenger has already validated it
+        elseif ('validate' === $mode) {
+            if (CarpoolStatusManager::STATUS_ARRIVED !== $carpool->getStatus()
+            && CarpoolStatusManager::STATUS_VALIDATED !== $carpool->getStatus()) {
+                $this->addFlash('error', 'Vous ne pouvez pas '.$label.' le covoiturage car il n\'est pas "Arrivé".');
 
                 return $this->redirectToRoute('app_home');
             }

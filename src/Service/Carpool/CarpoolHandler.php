@@ -72,6 +72,7 @@ class CarpoolHandler
             'passengerId' => $passenger->getId(),
             'passengerPseudo' => $passenger->getPseudo(),
             'passengerPhotoFilename' => $passenger->getPhotoFilename(),
+            'hasValidatedTheRide' => false,
         ];
 
         return $carpool->setPassengers(array_values($passengers));

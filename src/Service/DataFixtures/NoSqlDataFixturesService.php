@@ -223,6 +223,7 @@ class NoSqlDataFixturesService
                 'passengerId' => $passenger->getId(),
                 'passengerPseudo' => $passenger->getPseudo(),
                 'passengerPhotoFilename' => $passenger->getPhotoFilename(),
+                'hasValidatedTheRide' => boolval(mt_rand(0, 1)),
             ];
         }
         $carpool->setPassengers(array_values($carpoolPassengers));

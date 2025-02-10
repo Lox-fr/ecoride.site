@@ -4,30 +4,63 @@ declare(strict_types=1);
 
 namespace App\Service\Carpool;
 
-use App\Document\Carpool;
 use App\Entity\User;
+use App\Document\Carpool;
 use App\Repository\UserRepository;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use App\Service\User\CreditsManager;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 
 class CarpoolEndService
 {
     public function __construct(
         private Security $security,
-        private DocumentManager $documentManager,
         private UserRepository $userRepository,
         private MailerInterface $mailer,
         private CarpoolStatusManager $carpoolStatusManager,
+        private CreditsManager $creditsManager,
     ) {
+    }
+
+    public function driverStartsCarpool(Carpool $carpool): void
+    {
+        // Change carpool status to "inProgress"
+        if (CarpoolStatusManager::STATUS_IN_PROGRESS !== $carpool->getStatus()) {
+            $this->carpoolStatusManager->saveCarpoolAsInProgress($carpool);
+        }
+    }
+
+    public function driverFinishesCarpool(Carpool $carpool): void
+    {
+        // Change carpool status to "arrived"
+        if (CarpoolStatusManager::STATUS_ARRIVED !== $carpool->getStatus()) {
+            $this->carpoolStatusManager->saveCarpoolAsArrived($carpool);
+            // Send email to passengers to ask them to validate their participation
+            $this->notifyPassengers($carpool);
+        }
+    }
+
+    public function passengerValidatesCarpool(Carpool $carpool, bool $creditDriver = false): void
+    {
+        // Change carpool status to "validated" or "done" if necessary
+        if (CarpoolStatusManager::STATUS_DONE !== $carpool->getStatus()) {
+            $passenger = $this->security->getUser();
+            if ($passenger) {
+                $this->carpoolStatusManager->saveCarpoolAsValidatedOrDone($carpool, $passenger);
+            }
+        }
+        // Credits a ride to the driver
+        if ($creditDriver) {
+            $this->creditsManager->creditARideToTheDriver($carpool);
+        }
     }
 
     /**
      * Sends an email to each passenger of a given carpool
      * to ask them to confirm their participation in the completed carpool.
      */
-    public function notifyPassengers(Carpool $carpool): void
+    private function notifyPassengers(Carpool $carpool): void
     {
         foreach ($carpool->getPassengers() as $passengerData) {
             $passenger = $this->userRepository->findUserPseudoAndEmailByUserId((int) $passengerData['passengerId']);
