@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class JoinCarpoolController extends AbstractController
+final class CarpoolJoinController extends AbstractController
 {
-    #[Route('/rejoindre/{carpoolId}', name: 'app_carpool_join')]
+    #[Route('/covoiturage/rejoindre/{carpoolId}', name: 'app_carpool_join')]
     public function index(
         string $carpoolId,
         CarpoolSearchService $carpoolSearchService,
@@ -46,6 +46,13 @@ final class JoinCarpoolController extends AbstractController
             $this->addFlash('warning', 'Vous devez être connecté(e) pour réserver votre place.');
 
             return $this->redirectToRoute('app_login');
+        }
+
+        // Check if user is not the driver
+        if ($passenger->getId() === $carpool->getDriverUserId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas être à la fois passager et conducteur !');
+
+            return $this->redirectToRoute('app_carpool_view', ['carpoolId' => $carpool->getId()]);
         }
 
         // Check if the user is already present as passenger of this carpool

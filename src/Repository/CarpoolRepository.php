@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use MongoDB\BSON\Regex;
+use App\Service\Carpool\CarpoolStatusManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use MongoDB\BSON\Regex;
 
 /**
  * @extends DocumentRepository<Carpool>
@@ -41,11 +42,11 @@ class CarpoolRepository extends DocumentRepository
                 'carEngineType'
             )
             ->readOnly()
-            ->field('departureCity')->equals(new Regex('^' . preg_quote($departureCity) . '$', 'i'))
-            ->field('arrivalCity')->equals(new Regex('^' . preg_quote($arrivalCity) . '$', 'i'))
+            ->field('departureCity')->equals(new Regex('^'.preg_quote($departureCity).'$', 'i'))
+            ->field('arrivalCity')->equals(new Regex('^'.preg_quote($arrivalCity).'$', 'i'))
             ->field('departureTime')->gte($departureTime)
             ->field('numberOfAvailableSeats')->gt(0)
-            ->field('status')->equals('open')
+            ->field('status')->equals(CarpoolStatusManager::STATUS_OPEN)
             ->sort('departureTime', 'asc')
             ->getQuery()
             ->execute()

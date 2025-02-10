@@ -39,7 +39,7 @@ final class CarpoolCancelService
         }
         // Refund passenger and update the carpool status
         $this->returnCreditsToPassengers($carpool);
-        $carpool->setStatus('canceled');
+        $carpool->setStatus(CarpoolStatusManager::STATUS_CANCELED);
 
         $this->documentManager->persist($carpool);
         $this->documentManager->flush();

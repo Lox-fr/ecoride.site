@@ -71,7 +71,7 @@ class ProfileController extends AbstractController
         }
 
         // User carpool history
-        $userCarpoolsData = $this->getUserCarpools($user);
+        $userCarpoolsData = $this->carpoolSearchService->getUserCarpools($user);
 
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'UserProfileController',
@@ -82,8 +82,9 @@ class ProfileController extends AbstractController
             'carpoolForm' => $this->createForm(CarpoolAddFormType::class, new Carpool(),
                 ['user_cars' => \is_array($user->getCars()) ? $user->getCars() : iterator_to_array($user->getCars())]),
             'addCarFormInCarpoolForm' => $this->createForm(CarFormType::class, new Car()),
-            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
+            'currentCarpools' => $userCarpoolsData['currentCarpools'],
+            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
         ]);
     }
 
@@ -186,55 +187,5 @@ class ProfileController extends AbstractController
                 $this->preferenceManager->deletePreferenceById($registeredUserPreferenceId);
             }
         }
-    }
-
-    /**
-     * Returns a user's trips separated into upcoming and past trips, grouped by year.
-     *
-     * @return array<string, array<int, Carpool>>
-     */
-    private function getUserCarpools(User $user): array
-    {
-        $userCarpools = $this->carpoolSearchService->findCarpoolsByUser($user);
-        // Separate past and upcoming carpools
-        $upcomingCarpools = [];
-        $pastCarpools = [];
-        $currentDate = new \DateTimeImmutable();
-        foreach ($userCarpools as $carpool) {
-            if ($carpool->getDepartureTime() >= $currentDate) {
-                $upcomingCarpools[] = $carpool;
-            } else {
-                $pastCarpools[] = $carpool;
-            }
-        }
-        // Sort past and upcoming carpools
-        usort($upcomingCarpools, function ($a, $b) {
-            return $a->getDepartureTime() <=> $b->getDepartureTime();
-        });
-        usort($pastCarpools, function ($a, $b) {
-            return $a->getDepartureTime() <=> $b->getDepartureTime();
-        });
-        // Group by year
-        $pastCarpoolsByYear = [];
-        foreach ($pastCarpools as $carpool) {
-            $year = $carpool->getDepartureTime()->format('Y');
-            if (!isset($pastCarpoolsByYear[$year])) {
-                $pastCarpoolsByYear[$year] = [];
-            }
-            $pastCarpoolsByYear[$year][] = $carpool;
-        }
-        // Sort years in descending order
-        krsort($pastCarpoolsByYear);
-        // Sort carpools in each year in descending order
-        foreach ($pastCarpoolsByYear as $year => &$carpoolsInYear) {
-            usort($carpoolsInYear, function ($a, $b) {
-                return $b->getDepartureTime() <=> $a->getDepartureTime();
-            });
-        }
-
-        return [
-            'upcomingCarpools' => $upcomingCarpools,
-            'pastCarpoolsByYear' => $pastCarpoolsByYear,
-        ];
     }
 }

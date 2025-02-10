@@ -1,0 +1,32 @@
+<main>
+
+	<p>
+		Bonjour
+		{{ passengerPseudo }},
+	</p>
+
+	<p>
+		Le covoiturage que vous avez effectué avec {{ driverPseudo }}
+        entre <strong>{{ departureCity }}</strong> et <strong>{{ arrivalCity }}</strong>
+		le <strong>{{ departureTime|format_datetime(pattern="EEEE d MMMM yyyy", locale="fr") }}</strong>
+        est maintenant terminé.<br/>
+
+        Veuillez vous rendre dans
+        <a href="{{ path('app_profile') }}">votre espace personnel</a>
+        afin d'y valider votre participation.<br/>
+
+        Vous pourrez également y laisser un commentaire et une note si vous le souhaitez.<br/>
+
+        Cette action est indispensable pour que {{ driverPseudo }} puisse être crédité !<br/> 
+
+		Merci d'avoir fait confiance à notre plateforme pour gérer votre déplacement.
+	</p>
+
+	<p>
+		Bonne journée,
+		et à bientôt sur
+		<strong>EcoRide</strong>
+		!
+	</p>
+
+</main>

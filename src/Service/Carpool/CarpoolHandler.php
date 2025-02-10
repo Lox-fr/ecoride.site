@@ -36,7 +36,7 @@ class CarpoolHandler
             ->setArrivalTime($arrivalTime)
             ->setTotalNumberOfSeats($car->getNumberOfSeats())
             ->setNumberOfAvailableSeats($car->getNumberOfSeats())
-            ->setStatus('Available')
+            ->setStatus(CarpoolStatusManager::STATUS_OPEN)
             ->setDriverUserId($driver->getId())
             ->setDriverPseudo($driver->getPseudo())
             ->setDriverPhotoFilename($driver->getPhotoFilename())
@@ -72,6 +72,7 @@ class CarpoolHandler
             'passengerId' => $passenger->getId(),
             'passengerPseudo' => $passenger->getPseudo(),
             'passengerPhotoFilename' => $passenger->getPhotoFilename(),
+            'hasValidatedTheRide' => false,
         ];
 
         return $carpool->setPassengers(array_values($passengers));

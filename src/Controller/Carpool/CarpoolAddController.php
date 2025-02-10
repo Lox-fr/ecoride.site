@@ -7,23 +7,23 @@ namespace App\Controller\Carpool;
 use App\Entity\Car;
 use App\Entity\User;
 use App\Form\CarFormType;
-use App\Service\User\CarManager;
-use App\Service\User\RoleManager;
 use App\Form\Carpool\CarpoolAddFormType;
 use App\Form\User\DriverProfileFormType;
-use Symfony\Component\Form\FormInterface;
-use App\Service\Carpool\CarpoolAddService;
 use App\Form\User\PassengerProfileFormType;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\Carpool\CarpoolAddService;
 use App\Service\Carpool\CarpoolSearchService;
+use App\Service\Carpool\CarpoolSessionDataManager;
+use App\Service\User\CarManager;
+use App\Service\User\RoleManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Service\Carpool\CarpoolSessionDataManager;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class AddCarpoolController extends AbstractController
+final class CarpoolAddController extends AbstractController
 {
     public const CARPOOL_ADD_FORM_SESSION_KEY = 'formData_carpoolAdd';
 
@@ -69,8 +69,9 @@ class AddCarpoolController extends AbstractController
             'driverProfileForm' => $this->createForm(DriverProfileFormType::class, $user),
             'carpoolForm' => $carpoolForm,
             'addCarFormInCarpoolForm' => $addCarFormInCarpoolForm,
-            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
+            'currentCarpools' => $userCarpoolsData['currentCarpools'],
+            'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
         ]);
     }
 

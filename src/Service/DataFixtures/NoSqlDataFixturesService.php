@@ -8,6 +8,7 @@ use App\Document\Carpool;
 use App\Document\Review;
 use App\Entity\Car;
 use App\Entity\User;
+use App\Service\Carpool\CarpoolStatusManager;
 use App\Service\DataFixtures\DataProviders\CarpoolPlacesProvider;
 use App\Service\DataFixtures\DataProviders\CarpoolReviewMessagesProvider;
 use App\Service\DataFixtures\DataProviders\CarpoolRidesProvider;
@@ -22,8 +23,12 @@ class NoSqlDataFixturesService
     private const RATING_NEUTRAL = 3;
 
     // 1 out of 20 carpools is cancelled
-    private const PAST_CARPOOL_STATUSES = ['done' => 19, 'canceled' => 1];
-    private const FUTURE_CARPOOL_STATUSES = ['open' => 19, 'canceled' => 1];
+    private const PAST_CARPOOL_STATUSES = [
+        CarpoolStatusManager::STATUS_DONE => 19,
+        CarpoolStatusManager::STATUS_CANCELED => 1];
+    private const FUTURE_CARPOOL_STATUSES = [
+        CarpoolStatusManager::STATUS_OPEN => 19,
+        CarpoolStatusManager::STATUS_CANCELED => 1];
     // 1 out of 40 reviews is rejected
     private const REVIEW_STATUSES = ['approved' => 39, 'rejected' => 1];
 
@@ -218,6 +223,7 @@ class NoSqlDataFixturesService
                 'passengerId' => $passenger->getId(),
                 'passengerPseudo' => $passenger->getPseudo(),
                 'passengerPhotoFilename' => $passenger->getPhotoFilename(),
+                'hasValidatedTheRide' => boolval(mt_rand(0, 1)),
             ];
         }
         $carpool->setPassengers(array_values($carpoolPassengers));

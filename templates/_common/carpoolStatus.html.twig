@@ -1,0 +1,79 @@
+{# Used in history tab badges (profile and add carpool pages) and the detailed carpool view page (banner) #}
+
+{% set statusClass = '' %}
+{% set statusLabel = '' %}
+
+{% if not size is defined %}
+	{% set size = 'md' %}
+{% endif %}
+
+{% if isFuture is defined %}
+	{% if isFuture %}
+		{% set past = false %}
+	{% else %}
+		{% set past = true %}
+	{% endif %}
+{% endif %}
+
+{% if isPassenger %} {# has already validate or not ? #}
+	{% set hasAlreadyValidated = false %}
+	{% for passengerData in carpool.passengers %}
+		{% if app.user.id == passengerData['passengerId'] and passengerData['hasValidatedTheRide'] %}
+			{% set hasAlreadyValidated = true %}
+		{% endif %}
+	{% endfor %}
+{% endif %}
+
+{% if carpool.status == 'done' %} {# Status : done #}
+	{% set statusClass = 'text-bg-primary' %}
+	{% set statusLabel = 'Terminé' %}
+{% elseif carpool.status == 'open' %} {# Status : open #}
+	{% if past %}
+		{% set statusClass = 'text-bg-danger' %}
+		{% set statusLabel = 'Non réalisé' %}
+	{% else %}
+		{% set statusClass = 'text-bg-warning' %}
+		{% set statusLabel = 'À venir' %}
+	{% endif %}
+{% elseif carpool.status == 'inProgress' %} {# Status : inProgress #}
+	{% set statusClass = 'text-bg-danger' %}
+	{% set statusLabel = 'En cours' %}
+{% elseif carpool.status == 'arrived' %} {# Status : arrived #}
+	{% if isDriver %}
+		{% set statusClass = 'text-bg-primary' %}
+		{% set statusLabel = 'En cours de validation' %}
+	{% else %}
+		{% set statusClass = 'text-bg-danger' %}
+		{% set statusLabel = 'En attente de validation' %}
+	{% endif %}
+{% elseif carpool.status == 'validated' %} {# Status : validated #}
+	{% if isDriver %}
+		{% set statusClass = 'text-bg-primary' %}
+		{% set statusLabel = 'partiellement validé' %}
+	{% else %}
+		{% if hasAlreadyValidated %}
+			{% set statusClass = 'text-bg-primary' %}
+			{% set statusLabel = 'Terminé' %}
+		{% else %}
+			{% set statusClass = 'text-bg-danger' %}
+			{% set statusLabel = 'En attente de validation' %}
+		{% endif %}
+	{% endif %}
+{% elseif carpool.status == 'contested' %} {# Status : contested #}
+	{% set statusClass = 'text-bg-danger' %}
+	{% set statusLabel = 'Litige' %}
+{% elseif carpool.status == 'canceled' %} {# Status : canceled #}
+	{% set statusClass = 'text-bg-secondary' %}
+	{% set statusLabel = 'Annulé' %}
+{% else %}
+	{% set statusClass = 'text-bg-light' %}
+	{% set statusLabel = 'Statut indéfini' %}
+{% endif %}
+
+{% if size == 'xl' and statusLabel != 'Statut indéfini' %}
+	<p class="d-inline-flex fs-1 {{ statusClass }} rounded shadow mb-4 mb-lg-5 mx-auto px-5">
+		<strong class="text-light fst-italic">{{ statusLabel }}</strong>
+	</p>
+{% else %}
+	<span class="badge {{ statusClass }} mb-2">{{ statusLabel }}</span>
+{% endif %}

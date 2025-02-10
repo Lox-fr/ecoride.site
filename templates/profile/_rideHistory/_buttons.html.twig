@@ -1,0 +1,47 @@
+{% set loopIndex = loop ? loop.index ?? '' %}
+
+{% if not isDriver %} {# is necessarily passenger : has already validate or not ? #}
+	{% set hasAlreadyValidated = false %}
+	{% for passengerData in carpool.passengers %}
+		{% if app.user.id == passengerData['passengerId'] and passengerData['hasValidatedTheRide'] %}
+			{% set hasAlreadyValidated = true %}
+		{% endif %}
+	{% endfor %}
+{% endif %}
+
+<div class="d-flex flex-column">
+
+	{% if carpool.status == 'open' and isDriver %}
+		{# Start #}
+		<button type="button" class="btn btn-sm btn-{{ carpool.status == 'open' and past ? 'danger' : 'primary' }} mb-2" data-bs-toggle="modal" data-bs-target="#carpoolStartConfirmation{{ loopIndex }}" aria-label="Commencer ce covoiturage - quand vous prenez la route.">
+			Départ
+		</button>
+		{% include "_common/carpoolRideConfirmation.html.twig" with {mode: 'start'} %}
+
+	{% elseif carpool.status == 'inProgress' and isDriver %}
+		{# Finish #}
+		<button type="button" class="btn btn-sm btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#carpoolFinishConfirmation{{ loopIndex }}" aria-label="Terminer ce covoiturage - quand vous êtes arrivé(e) à destination.">
+			Arrivée
+		</button>
+		{% include "_common/carpoolRideConfirmation.html.twig" with {mode: 'finish'} %}
+
+	{% elseif not isDriver and carpool.status == 'arrived' or not isDriver and not hasAlreadyValidated and carpool.status == 'validated' %}
+		{# Validate #}
+		<button type="button" class="btn btn-sm btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#carpoolValidationConfirmation{{ loopIndex }}" aria-label="Déclarer ce covoiturage terminé - quand vous êtes arrivé(e) à destination.">
+			Arrivée
+		</button>
+		{% include "_common/carpoolRideConfirmation.html.twig" with {mode: 'validate'} %}
+	{% endif %}
+
+	{# Detail #}
+	<a href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}" class="btn btn-sm btn-outline-primary">Voir en détail</a>
+
+	{% if carpool.status == 'open' and past and isDriver %}
+		{# Cancel #}
+		<button type="button" class="btn btn-sm btn-outline-danger mt-2" data-bs-toggle="modal" data-bs-target="#carpoolCancelConfirmation{{ loopIndex }}" aria-label="Annuler ce covoiturage">
+			Annuler
+		</button>
+		{% include "_common/carpoolCancelConfirmation.html.twig" with {loopIndex: loopIndex} %}
+	{% endif %}
+
+</div>
