@@ -48,6 +48,13 @@ final class CarpoolJoinController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        // Check if user is not the driver
+        if ($passenger->getId() === $carpool->getDriverUserId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas être à la fois passager et conducteur !');
+
+            return $this->redirectToRoute('app_carpool_view', ['carpoolId' => $carpool->getId()]);
+        }
+
         // Check if the user is already present as passenger of this carpool
         if ($carpoolJoinService->isUserAlreadyPassengerOfCarpool($passenger, $carpool)) {
             $this->addFlash('info', 'Vous êtes déjà enregistré(e) comme participant(e) de ce covoiturage.');
