@@ -124,6 +124,15 @@
             "@sqlTablesCreation",
             "@fixturesLoading"
         ],
+        "firstDeploy": [
+            "composer install --no-dev --no-scripts --optimize-autoloader",
+            "php bin/console secrets:decrypt-to-local --force --env=prod",
+            "composer dump-env prod",
+            "rm .env.prod.local",
+            "rm config/secrets/prod/prod.decrypt.private.php",
+            "php bin/console doctrine:database:drop --if-exists -f",
+            "@sqlTablesCreation"
+        ],
         "fixturesLoading" :[
             "php bin/console doctrine:mongodb:schema:create",
             "php bin/console doctrine:mongodb:fixtures:load --no-interaction"
