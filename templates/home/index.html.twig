@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+	<header class="mt-5 pb-3" id="carpoolSearch">
+		{% include "_common/carpoolSearchForm.html.twig" %}
+	</header>
+
+	<section class="container mt-5" id="aboutUs">
+		{% include "home/_aboutUs.html.twig" %}
+	</section>
+
+    <section class="container-fluid framed shadow-lg mt-5 border-start-0 border-end-0" id="whyCarpool">
+		{% include "home/_whyCarpool.html.twig" %}
+    </section>
+
+    <section class="container mt-5 pb-1" id="popularRides">
+		{% include "_common/popularRides.html.twig" %}
+    </section>
+
+	<hr class="container my-0">
+
+    <section class="container pt-5" id="ourTeam">
+		{% include "home/_ourTeam.html.twig" %}
+    </section>
+
+{% endblock %}

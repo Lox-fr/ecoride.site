@@ -1,0 +1,150 @@
+@import "flatpickr/dist/flatpickr.min.css";
+
+$body-bg-first-color: $color-1;
+$body-bg-second-color: $color-2;
+$text-color: $color-3;
+$border-color: $color-3;
+$focus-shadow-color: $color-2;
+$framed-bg-color: $color-7;
+$hoverable-bg-white-color: white;
+$hoverable-bg-light-color: $color-7;
+$userBtn-color: white;
+$userBtn-bg-color: $color-5;
+$highlight-bg-first-color: $color-1;
+$highlight-bg-second-color: $color-7;
+
+$page-min-width: 320px;
+$transition-link-transform-scale: 1.15;
+$transition-link-transform-time: 0.2s;
+
+* {
+    font-family: "Helvetica Neue", "Helvetica", Arial, "Liberation Sans", "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: $text-color;
+    &:focus-visible {
+        outline: 0 !important;
+        box-shadow: 0 0 0 0.25rem $focus-shadow-color !important;
+    }
+}
+
+body {
+    padding-top: 56px;
+    min-width: $page-min-width;
+    min-height: 100vh;
+    background: $body-bg-first-color;
+    background: linear-gradient(
+        135deg,
+        $body-bg-first-color 33%,
+        $body-bg-second-color 66%
+    );
+
+    @media (min-width: map-get($grid-breakpoints, "md")) {
+        padding-top: 62px;
+    }
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Hide arrows on number inputs */
+input[type="number"] {
+    appearance: textfield;
+}
+
+.highlightBg {
+    background: $highlight-bg-first-color;
+    background: linear-gradient(
+        135deg,
+        $highlight-bg-first-color 33%,
+        $highlight-bg-second-color 66%
+    );
+}
+
+.framed {
+    border: 1px solid $border-color;
+    background-color: $framed-bg-color;
+}
+
+.handwriting {
+    font-family: "Segoe Script", "Bradley Hand", "Lucida Handwriting",
+        "Snell Roundhand", cursive;
+}
+
+.scaleOnFocusAndHover {
+    display: inline-block;
+    transition: transform $transition-link-transform-time ease-in-out !important;
+    &:hover,
+    &:focus {
+        transform: scale($transition-link-transform-scale) !important;
+    }
+}
+
+.userBtn[aria-expanded="true"] {
+    background-color: $userBtn-bg-color;
+    color: $userBtn-color;
+}
+
+.collectionItemDeleteLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    min-width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.rounded-sm-5 {
+    border-radius: 0;
+
+    @media (min-width: map-get($grid-breakpoints, "sm")) {
+        border-radius: 12px;
+    }
+}
+
+.rounded-lg-5 {
+    border-radius: 0;
+
+    @media (min-width: map-get($grid-breakpoints, "lg")) {
+        border-radius: 12px;
+    }
+}
+
+.hoverableLinksInListItemContainer {
+    a.whiteHoverBg:hover {
+        background-color: $hoverable-bg-white-color;
+    }
+    a.lightHoverBg:hover {
+        background-color: $hoverable-bg-light-color;
+    }
+}
+
+@media (max-width: map-get($grid-breakpoints, "sm")) {
+    .rounded-xs-start {
+        border-top-left-radius: 0.85rem !important;
+        border-bottom-left-radius: 0.85rem !important;
+    }
+}
+
+#devenirChauffeur {
+    #cars {
+        .collectionItemDeleteLink {
+            margin-bottom: 1.8rem;
+        }
+    }
+
+    #preferences {
+        .collectionItem {
+            display: inline-flex;
+            align-items: center;
+        }
+    }
+}
+
+@import "_navbar.scss";

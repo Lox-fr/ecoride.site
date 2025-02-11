@@ -1,0 +1,39 @@
+$nav-link-color: $color-3;
+$nav-link-hover-focus-color: $color-4;
+$nav-link-active-color: $color-5;
+$nav-link-active-hover-focus-color: $color-6;
+$nav-link-transform-scale: 1.05;
+$nav-link-transition-time: 0.1s;
+
+#mainNavbar {
+    .dropdown-item {
+        background-color: transparent;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .nav-link {
+        color: $nav-link-color;
+        transition: transform $nav-link-transition-time ease,
+            color $nav-link-transition-time ease;
+
+        &:hover,
+        &:focus {
+            color: $nav-link-hover-focus-color;
+            transform: scale($nav-link-transform-scale);
+        }
+
+        &.active {
+            color: $nav-link-active-color;
+            font-weight: bold;
+
+            &:hover,
+            &:focus {
+                color: $nav-link-active-hover-focus-color;
+                transform: scale($nav-link-transform-scale);
+            }
+        }
+    }
+}

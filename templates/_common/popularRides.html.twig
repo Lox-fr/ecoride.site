@@ -1,0 +1,83 @@
+<div class="d-inline-flex align-items-center mb-4">
+	<span class="fs-1 pe-2 pe-sm-5 text-primary" aria-hidden="true">
+		★
+	</span>
+	<h2 class="border-bottom border-2 border-primary pb-1 px-3 px-sm-5">
+		Les destinations
+		<span class="text-nowrap">les plus populaires</span>
+	</h2>
+	<span class="fs-1 ps-2 ps-sm-5 text-primary" aria-hidden="true">
+		★
+	</span>
+</div>
+
+{% set destinations = [
+    {
+        name: 'Paris',
+        departures: [
+            { city: 'Lille', credits: 25, link: '#' },
+            { city: 'Lyon', credits: 48, link: '#' },
+            { city: 'Rennes', credits: 35, link: '#' },
+            { city: 'Rouen', credits: 19, link: '#' }
+        ]
+    },
+    {
+        name: 'Lyon',
+        departures: [
+            { city: 'Paris', credits: 53, link: '#' },
+            { city: 'St-Étienne', credits: 12, link: '#' },
+            { city: 'Grenoble', credits: 21, link: '#' },
+            { city: 'Marseille', credits: 30, link: '#' }
+        ]
+    },
+    {
+        name: 'Rennes',
+        departures: [
+            { city: 'Nantes', credits: 20, link: '#' },
+            { city: 'Caen', credits: 29, link: '#' },
+            { city: 'Paris', credits: 45, link: '#' },
+            { city: 'Bordeaux', credits: 40, link: '#' }
+        ]
+    }
+] %}
+
+<ul class="d-flex flex-column flex-md-row justify-content-center mx-sm-5">
+
+	{% for destination in destinations %}
+		<li class="framed shadow rounded-4 p-2 px-3 mb-3 mx-md-2">
+
+			<h3 class="fs-4 fw-bold border-bottom border-primary mx-5">{{ destination.name }}</h3>
+
+			<ul class="mt-3">
+
+				{% for departure in destination.departures %}
+					<li class="bg-light rounded p-0 mb-2 hoverableLinksInListItemContainer">
+
+						<a href="{{ path('app_carpool_search', { 'departureCity': departure.city, 'arrivalCity': destination.name }) }}" class="d-flex align-items-center justify-content-between text-decoration-none w-100 h-100 p-2 {{ controller_name is same as 'SearchCarpoolController' ? 'whiteHoverBg' : 'lightHoverBg' }}" aria-label="Trajet depuis {{ departure.city }} pour {{ departure.credits }} crédits" title="voir les disponibilités actuelles">
+							<div class="text-start">
+								<span class="visually-hidden">Point de départ :</span>
+								<span class="fw-bold">»</span>
+								depuis
+								<span class="fw-bold">{{ departure.city }}</span>
+								:
+								<span class="text-nowrap fst-italic">dès
+									{{ departure.credits }}
+									crédits
+								</span>
+							</div>
+							<span style="width: 20px; height: 20px;" class="d-flex align-items-center ms-3">
+								{{ ux_icon('simple-line-icons:plus') }}
+							</span>
+						</a>
+
+					</li>
+				{% endfor %}
+
+			</ul>
+
+		</li>
+	{% endfor %}
+
+</ul>
+
+<a href="{{ path('app_carpool_add') }}" class="btn btn-lg btn-primary shadow mt-1 mb-5 scaleOnFocusAndHover" aria-label="Proposer un trajet de covoiturage">Proposer votre trajet</a>

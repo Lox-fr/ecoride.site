@@ -1,0 +1,110 @@
+<div class="d-flex flex-column align-items-center framed shadow rounded-3 pt-2">
+
+	<div
+		class="d-flex flex-column flex-lg-row">
+
+		{# Brand input #}
+		<div class="form-floating mx-2 mb-3">
+			{{ form_widget(car.brand, { 'attr' : {
+                'class' : 'text-start rounded-3 shadow ps-4',
+                'aria-describedby' : car.brand.vars.id ~ '_help',
+                'style' : 'width: 252px;' }}) }}
+			{{ form_label(car.brand) }}
+			<div style="width: 252px;">
+				{{ form_errors(car.brand) }}
+			</div>
+			{{ form_help(car.brand) }}
+		</div>
+
+		{# Model input #}
+		<div class="form-floating mx-2 mb-3">
+			{{ form_widget(car.model, { 'attr' : {
+                'class' : 'text-start rounded-3 shadow ps-4',
+                'aria-describedby' : car.model.vars.id ~ '_help',
+                'style' : 'width: 252px;' }}) }}
+			{{ form_label(car.model) }}
+			<div style="width: 252px;">
+				{{ form_errors(car.model) }}
+			</div>
+			{{ form_help(car.model) }}
+		</div>
+
+	</div>
+
+	<div
+		class="d-flex flex-column flex-lg-row">
+
+		{# EngineType input #}
+		<div class="form-floating mx-2 mb-3">
+			{{ form_widget(car.engineType, { 'attr' : {
+                'class' : 'text-start rounded-3 shadow ps-4',
+                'aria-describedby' : car.engineType.vars.id ~ '_help',
+                'style' : 'width: 252px;' }}) }}
+			{{ form_label(car.engineType) }}
+			<div style="width: 252px;">
+				{{ form_errors(car.engineType) }}
+			</div>
+			{{ form_help(car.engineType) }}
+		</div>
+
+		{# Color input #}
+		<div class="form-floating mx-2 mb-3">
+			{{ form_widget(car.color, { 'attr' : {
+                'class' : 'text-start rounded-3 shadow ps-4',
+                'aria-describedby' : car.color.vars.id ~ '_help',
+                'style' : 'width: 252px;' }}) }}
+			{{ form_label(car.color) }}
+			<div style="width: 252px;">
+				{{ form_errors(car.color) }}
+			</div>
+			{{ form_help(car.color) }}
+		</div>
+
+	</div>
+
+	<div
+		class="d-flex flex-column flex-lg-row">
+
+		{# License plate input #}
+		<div class="form-floating mx-2 mb-3">
+			{{ form_widget(car.licensePlate, { 'attr' : {
+                'class' : 'text-start rounded-3 shadow ps-4',
+                'aria-describedby' : car.licensePlate.vars.id ~ '_help',
+                'style' : 'width: 252px;' }}) }}
+			{{ form_label(car.licensePlate) }}
+			<div style="width: 252px;">
+				{{ form_errors(car.licensePlate) }}
+			</div>
+			{{ form_help(car.licensePlate) }}
+		</div>
+
+		{# Date of first registration input #}
+		<div class="form-floating mx-2 mb-3" data-controller="flatpickr" data-flatpickr-mode="untilToday">
+			{{ form_widget(car.dateOfFirstRegistration, { 'attr' : {
+                'class' : 'text-start rounded-3 shadow ps-4 flatpickr',
+                'aria-describedby' : car.dateOfFirstRegistration.vars.id ~ '_help',
+                'placeholder': "now"|date("Y-m-d"),
+                'style' : 'width: 252px;' }}) }}
+			{{ form_label(car.dateOfFirstRegistration) }}
+			<div style="width: 252px;">
+				{{ form_errors(car.dateOfFirstRegistration) }}
+			</div>
+			{{ form_help(car.dateOfFirstRegistration) }}
+		</div>
+
+	</div>
+
+	{# Number of Seats input #}
+	<div class="form-floating mx-2 mb-3">
+		{{ form_widget(car.numberOfSeats, { 'attr' : {
+			'class' : 'text-start rounded-3 shadow ps-4',
+			'aria-describedby' : car.numberOfSeats.vars.id ~ '_help',
+			'style' : 'width: 252px;' }}) }}
+		{{ form_label(car.numberOfSeats) }}
+		<div style="width: 252px;">
+			{{ form_errors(car.numberOfSeats) }}
+		</div>
+		{{ form_help(car.numberOfSeats) }}
+	</div>
+
+</div>

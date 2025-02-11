@@ -1,0 +1,13 @@
+<h3 class="border-bottom mx-5 mb-4">Voiture</h3>
+
+<p class="d-flex flex-column flex-lg-row justify-content-center align-items-center {{ carpool.carEngineType is not same as 'Électrique' ? 'mb-5' }}">
+	<span class="fw-bold mx-3">{{ carpool.carModel ~ ' - ' ~ carpool.carColor }}</span>
+	<small class="fst-italic mx-3">({{ carpool.carBrand  ~ ' - véhicule ' ~ carpool.carEngineType }})</small>
+</p>
+
+{% if (carpool.carEngineType is same as 'Électrique') %}
+	<div class="d-inline-flex align-items-center justify-content-center mb-5">
+		<img src="{{ asset('images/favicons/apple-icon-76x76.png') }}" alt="vignette signalant un voyage écologique" class="me-2" style="width: 36px; height: 36px;"/>
+		<span class="text-primary fw-bold">Voyage écologique</span>
+	</div>
+{% endif %}

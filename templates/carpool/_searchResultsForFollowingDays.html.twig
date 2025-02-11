@@ -1,0 +1,28 @@
+<h2 class="fw-light">
+	<span class="text-nowrap">
+		Il existe
+		<span class="text-primary">
+			{{ carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') > "now"|date('Y-m-d'))|length }}
+		</span>
+		trajet{{ carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') > "now"|date('Y-m-d'))|length > 1 ? 's' }}
+	</span>
+	<span class="text-nowrap">
+		entre <span class="text-primary">{{ carpoolSearchForm.departureCity.vars.value|capitalize }}</span>
+	</span>
+	<span class="text-nowrap">
+		et <span class="text-primary">{{ carpoolSearchForm.arrivalCity.vars.value|capitalize }}</span>
+	</span>
+	<span class="text-nowrap fst-italic">
+		après le {{ carpoolSearchForm.departureTime.vars.value|format_datetime(pattern='d MMMM', locale='fr') }}
+    </span>
+</h2>
+
+<hr class="text-primary border-2 mb-4">
+
+<ul class="d-flex flex-wrap justify-content-center align-items-stretch mb-5">
+	{% for carpool in carpoolSearchResults %}
+		{% if carpool.departureTime|date('Y-m-d') > "now"|date('Y-m-d') %}
+			{% include "carpool/_searchResultCard.html.twig" with {dateTimeDisplay: 'dateTime'} %}
+		{% endif %}
+	{% endfor %}
+</ul>

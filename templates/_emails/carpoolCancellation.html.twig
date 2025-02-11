@@ -1,0 +1,32 @@
+<main>
+
+	<p>
+		Bonjour
+		{{ passengerPseudo }},
+	</p>
+
+	<p>
+		Nous vous informons que le covoiturage organisé par
+		<strong>{{ driverPseudo }}</strong>
+		au départ de
+		<strong>{{ departurePlace ~ ' à ' ~ departureCity }}</strong>
+		et à destination de
+		<strong>{{ arrivalPlace ~ ' à ' ~ arrivalCity }}</strong>,
+        prévu le
+		<strong>{{ departureTime|format_datetime(pattern="EEEE d MMMM yyyy 'à' HH'h'mm", locale="fr") }}</strong>,
+        a été annulé.
+	</p>
+
+	<p>
+        Les <strong>{{ pricePerPerson }} crédits</strong> vous ont d'ores et déjà été restitués.
+    </p>
+
+    <p>
+        Nous sommes désolés pour ce désagrément. N'hésitez pas à consulter d'autres offres sur notre plateforme.
+    </p>
+
+    <p>
+        À bientôt sur <strong>EcoRide</strong> !
+    </p>
+
+</main>

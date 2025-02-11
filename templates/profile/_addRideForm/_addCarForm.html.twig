@@ -1,0 +1,43 @@
+<div class="modal fade" id="addCarForCarpool" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addCarForCarpoolLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="addCarForCarpoolLabel">Ajouter un véhicule à votre compte</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Annuler"></button>
+			</div>
+			{{ form_start(addCarFormInCarpoolForm, { 'action': path('app_carpool_add') }) }}
+			<div class="modal-body">
+
+				{% include 'profile/_addRideForm/_addCarFormField.html.twig'
+					with {'form': addCarFormInCarpoolForm.brand} %}
+				{% include 'profile/_addRideForm/_addCarFormField.html.twig'
+					with {'form': addCarFormInCarpoolForm.model} %}
+				{% include 'profile/_addRideForm/_addCarFormField.html.twig'
+					with {'form': addCarFormInCarpoolForm.color} %}
+				{% include 'profile/_addRideForm/_addCarFormField.html.twig'
+					with {'form': addCarFormInCarpoolForm.engineType} %}
+				{% include 'profile/_addRideForm/_addCarFormField.html.twig'
+					with {'form': addCarFormInCarpoolForm.licensePlate} %}
+
+				<div class="form-floating mx-2 mb-3" data-controller="flatpickr" data-flatpickr-mode="untilToday">
+					{{ form_widget(addCarFormInCarpoolForm.dateOfFirstRegistration, { 'attr' : {
+                        'class' : 'text-start rounded-3 shadow ps-4 flatpickr',
+                        'aria-describedby' : addCarFormInCarpoolForm.dateOfFirstRegistration.vars.id ~ '_help',
+                        'placeholder': "now"|date("Y-m-d") }}) }}
+					{{ form_label(addCarFormInCarpoolForm.dateOfFirstRegistration) }}
+					{{ form_errors(addCarFormInCarpoolForm.dateOfFirstRegistration) }}
+					{{ form_help(addCarFormInCarpoolForm.dateOfFirstRegistration) }}
+				</div>
+
+				{% include 'profile/_addRideForm/_addCarFormField.html.twig'
+					with {'form': addCarFormInCarpoolForm.numberOfSeats} %}
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<button type="submit" class="btn btn-primary">Enregistrer</button>
+			</div>
+			{{ form_end(addCarFormInCarpoolForm) }}
+		</div>
+	</div>
+</div>

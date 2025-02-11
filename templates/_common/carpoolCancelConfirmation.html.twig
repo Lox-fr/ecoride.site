@@ -1,0 +1,64 @@
+{# Used in history tab (profile and add carpool pages) and the detailed carpool view page #}
+
+{% set loopIndex = loopIndex ?? '' %}
+{% set participation = participation ?? false %}
+
+<div class="modal" tabindex="-1" id="{{ participation ? 'carpoolParticipationCancelConfirmation' : 'carpoolCancelConfirmation' ~ loopIndex }}">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<h5 class="modal-title">Important</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+
+				<p class="fw-bold">
+					Confirmez-vous vouloir annuler {{participation ? 'votre participation à ' }}ce covoiturage ?
+				</p>
+
+				<p> {# Departure #}
+					<span class="fwt-italic text-decoration-underline">Départ de</span><br/>
+					{% if carpool.departurePlace %}
+						{{ carpool.departurePlace|capitalize }}<br/>
+					{% endif %}
+					<span class="fw-bold">{{ carpool.departureCity|capitalize }}</span><br/>
+					Le {{ carpool.departureTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.departureTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
+
+				<p> {# Arrival #}
+					<span class="fwt-italic text-decoration-underline">Arrivée à</span><br/>
+					{% if carpool.arrivalPlace %}
+						{{ carpool.arrivalPlace|capitalize }}<br/>
+					{% endif %}
+					<span class="fw-bold">{{ carpool.arrivalCity|capitalize }}</span><br/>
+					Le {{ carpool.arrivalTime|format_datetime(pattern="EEEE d MMMM y", locale="fr") }}
+					<span class="text-nowrap">
+						{{ carpool.arrivalTime|format_datetime(pattern="'à' HH'h'mm", locale="fr") }}
+					</span>
+				</p>
+
+				<small class="fst-italic">
+					Un email de notification sera envoyé
+					{{ participation ? 'au chauffeur' : 'aux éventuels passagers' }}.
+				</small>
+
+			</div>
+
+			<div class="modal-footer">
+
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+				{# Action link #}
+				{% set href = participation ? 'app_carpool_cancel_participation' : 'app_carpool_cancel' %}
+				<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-danger">Confirmer</a>
+
+			</div>
+
+		</div>
+	</div>
+</div>

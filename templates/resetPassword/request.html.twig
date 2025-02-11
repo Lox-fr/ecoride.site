@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block main %}
+
+	<section class="container d-flex flex-row justify-content-center align-items-center flex-fill" id="resetPasswordRequestForm">
+		<div method="post" class="rounded-5 framed shadow-lg p-4 my-5" style="width: 80%; min-width: 300px; max-width: 700px;">
+
+			<h2 class="fs-1 fw-bold mt-3 mb-4">
+				Réinitialisez
+				<span class="text-nowrap">votre mot de passe</span>
+			</h2>
+
+			<p class="px-3">
+				Pour mettre à jour votre mot de passe,
+				vous devez valider la demande via votre adresse email.
+			</p>
+
+			{{ form_start(requestForm) }}
+
+				<div class="input-group mb-4 rounded-4 px-3 mx-auto" style="max-width: 500px;">
+					<span class="d-none d-sm-inline-flex d-lg-none justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 50px;">
+						{{ ux_icon('line-md:email-twotone') }}
+					</span>
+					<span class="d-none d-lg-inline-flex justify-content-center input-group-text rounded-start-4 shadow fs-1" style="width: 60px;">
+						{{ ux_icon('line-md:email-twotone') }}
+					</span>
+					<div class="form-floating">
+						{{ form_widget(requestForm.email, {
+							'attr': {'class': 'rounded-xs-start text-start ps-4 rounded-end-4 shadow', 'aria-required': 'true', 'placeholder': 'exemple@mail.com'}}) }}
+						{{ form_label(requestForm.email) }}
+					</div>
+					{{ form_errors(requestForm.email) }}
+				</div>
+
+				<p>
+					Un lien valable 1 heure vous sera envoyé.
+				</p>
+
+				<button type="submit" class="btn btn-primary shadow mt-3 mb-4 scaleOnFocusAndHover" aria-label="Demander l'envoi d\'un lien de réinitialisation de mot de passe.">
+					Envoyer un email de Réinitialisation
+				</button>
+
+			{{ form_end(requestForm) }}
+
+		</div>
+	</section>
+
+{% endblock %}

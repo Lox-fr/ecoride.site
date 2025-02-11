@@ -1,0 +1,185 @@
+{{ form_start(carpoolForm, { 'action': path('app_carpool_add') } ) }}
+
+<h2 class="fs-3 fw-bold mt-4 px-3 pb-2 mb-0 border-bottom border-primary">
+	Publiez <span class="text-nowrap">un trajet</span></h2>
+<small class="mb-3 fst-italic">
+	<span class="text-danger">*</span> Champs obligatoires</small>
+
+{# Datetime of ride input #}
+<div class="d-inline-flex justify-content-center mx-auto mt-5 mb-4 w-100" data-controller="flatpickr" data-flatpickr-mode="datetimeSinceTodayMaxOneYear">
+	<div class="d-flex flex-column align-items-start">
+		<div class="d-inline-flex">
+			{{ form_label(carpoolForm.departureTime, null, { 'label_attr' : {'class' : 'text-nowrap mb-0' }}) }}
+			<span class="text-danger ms-1">*</span>
+		</div>
+		<div>
+			{{ form_widget(carpoolForm.departureTime, { 'attr' : {
+				'class': 'form-control text-start rounded-3 shadow flatpickr',
+				'placeholder': ("now"|date_modify('+2 hours')).format('d/m/y H:00'),
+				'aria-describedby': carpoolForm.departureTime.vars.id ~ '_help' }}) }}
+			{{ form_errors(carpoolForm.departureTime) }}
+			{{ form_help(carpoolForm.departureTime) }}
+		</div>
+	</div>
+</div>
+
+<div class="d-inline-flex flex-wrap justify-content-center align-items-start mx-auto my-3 w-100">
+
+	<div class="d-flex flex-column align-items-start mx-3 mb-4">
+		{# Departime city input #}
+		<div class="d-inline-flex">
+			{{ form_label(carpoolForm.departureCity, null, { 'label_attr' : {'class' : 'mb-0' }}) }}
+			<span class="text-danger ms-1">*</span>
+		</div>
+		<div class="input-group mb-1">
+			{{ form_widget(carpoolForm.departureCity, { 'attr' : {
+				'aria-describedby': carpoolForm.departureCity.vars.id ~ '_help',
+				'class': 'text-start rounded-start-3 shadow ps-3' }}) }}
+			<button class="btn btn-outline-secondary rounded-end-2 shadow" type="button" data-bs-toggle="collapse" data-bs-target="#departureCityAdress" aria-expanded="false" aria-controls="departureCityAdress" id="addDepartureAddressButton" aria-label="Afficher ou masquer l'adresse de départ">Adresse</button>
+		</div>
+		{{ form_errors(carpoolForm.departureCity) }}
+		{{ form_help(carpoolForm.departureCity) }}
+		{# Departime place input #}
+		<div id="departureCityAdress" class="collapse {{ form_errors(carpoolForm.departurePlace) is not empty or carpoolForm.departurePlace.vars.value ? 'show' : '' }}">
+			<div class="d-none">
+				{{ form_label(carpoolForm.departurePlace) }}
+			</div>
+			{{ form_widget(carpoolForm.departurePlace, { 'attr' : {
+				'aria-describedby': carpoolForm.departurePlace.vars.id ~ '_help',
+				'class': 'text-start rounded-start-3 shadow ps-3' }}) }}
+			{{ form_errors(carpoolForm.departurePlace) }}
+			{{ form_help(carpoolForm.departurePlace) }}
+		</div>
+	</div>
+
+	<div class="d-flex flex-column align-items-start mx-3 mb-3">
+		{# Arrival city input #}
+			<div class="d-inline-flex">
+			{{ form_label(carpoolForm.arrivalCity, null, { 'label_attr' : {'class' : 'mb-0' }}) }}
+			<span class="text-danger ms-1">*</span>
+		</div>
+		<div class="input-group mb-1">
+			{{ form_widget(carpoolForm.arrivalCity, { 'attr' : {
+				'aria-describedby': carpoolForm.arrivalCity.vars.id ~ '_help',
+				'class': 'text-start rounded-start-3 shadow ps-3' }}) }}
+			<button class="btn btn-outline-secondary rounded-end-2 shadow" type="button" data-bs-toggle="collapse" data-bs-target="#arrivalCityAdress" aria-expanded="false" aria-controls="arrivalCityAdress" id="addArrivalAddressButton" aria-label="Afficher ou masquer l'adresse d'arrivée">Adresse</button>
+		</div>
+		{{ form_errors(carpoolForm.arrivalCity) }}
+		{{ form_help(carpoolForm.arrivalCity) }}
+		{# Arrival place input #}
+		<div id="arrivalCityAdress" class="collapse {{ form_errors(carpoolForm.arrivalPlace) is not empty or carpoolForm.arrivalPlace.vars.value ? 'show' : '' }}">
+			<div class="d-none">
+				{{ form_label(carpoolForm.arrivalPlace) }}
+			</div>
+			{{ form_widget(carpoolForm.arrivalPlace, { 'attr' : {
+				'aria-describedby': carpoolForm.arrivalPlace.vars.id ~ '_help',
+				'class': 'text-start rounded-start-3 shadow ps-3' }}) }}
+			{{ form_errors(carpoolForm.arrivalPlace) }}
+			{{ form_help(carpoolForm.arrivalPlace) }}
+		</div>
+	</div>
+
+</div>
+
+{# Estimated ride time input #}
+<div class="d-inline-flex justify-content-center mx-auto mt-3 mb-5 w-100">
+	<div class="d-flex flex-column align-items-start">
+		<div class="d-inline-flex">
+			<label for="{{ carpoolForm.estimatedRideTime.vars.id }}">Durée estimée du trajet</label>
+			<span class="text-danger ms-1">*</span>
+			<small class="fst-italic ms-1">(en minutes)</small>
+		</div>
+		<div class="input-group">
+
+			<button class="btn btn-outline-secondary shadow fw-bold" type="button" onclick="adjustRideTime(-1, '{{ carpoolForm.estimatedRideTime.vars.id }}')" style="width: 40px;">-</button>
+
+			{{ form_widget(carpoolForm.estimatedRideTime, { 'attr': { 'class': 'form-control text-center shadow' } }) }}
+
+			<button class="btn btn-outline-secondary shadow fw-bold" type="button" onclick="adjustRideTime(1, '{{ carpoolForm.estimatedRideTime.vars.id }}')" style="width: 40px;">+</button>
+
+		</div>
+	</div>
+	{{ form_errors(carpoolForm.estimatedRideTime) }}
+	{{ form_help(carpoolForm.estimatedRideTime) }}
+</div>
+{# Handling estimated ride time value with buttons #}
+<script>
+	function adjustRideTime(change, inputId) {
+		const input = document.getElementById(inputId);
+		let value = parseInt(input.value || 0, 10);
+		value += change;
+		value = Math.max(value, parseInt(input.min || 2, 10));
+		input.value = value; }
+</script>
+
+{# Car choice input #}
+<div class="d-inline-flex justify-content-center mx-auto mb-3 w-100">
+	<div class="d-flex flex-column align-items-start" style="min-width: 260px;">
+		<div class="d-inline-flex">
+			{{ form_label(carpoolForm.car, null, { 'label_attr' : {'class' : 'text-nowrap mb-0' }}) }}
+			<span class="text-danger ms-1">*</span>
+		</div>
+		<div class="input-group mb-1" style="max-width: 305px;">
+			{{ form_widget(carpoolForm.car, { 'attr' : {
+				'aria-describedby': carpoolForm.car.vars.id ~ '_help',
+				'class': 'text-start rounded-start-3 shadow ps-3' }}) }}
+			{# New car button #}
+			<button class="btn btn-outline-secondary rounded-end-2 shadow" type="button" data-bs-toggle="modal" data-bs-target="#addCarForCarpool" aria-controls="addCarForCarpool" id="addCarForCarpoolButton" aria-label="Ouvre un popup pour afficher le formulaire permettant l'ajout d'un nouveau véhicule à votre compte." aria-haspopup="true">Ajouter</button>
+		</div>
+	</div>
+	{{ form_errors(carpoolForm.car) }}
+	{{ form_help(carpoolForm.car) }}
+</div>
+
+{# Price per person input #}
+<div class="d-inline-flex justify-content-center mx-auto mt-3 mb-2 w-100">
+	<div class="d-flex flex-column align-items-start">
+		<div class="d-inline-flex">
+			<label for="{{ carpoolForm.pricePerPerson.vars.id }}">Crédits demandés par passager</label>
+			<span class="text-danger ms-1">*</span>
+		</div>
+		<div class="input-group">
+
+			<button class="btn btn-outline-secondary shadow fw-bold" type="button" onclick="adjustPrice(-1, '{{ carpoolForm.pricePerPerson.vars.id }}')" style="width: 40px;">-</button>
+
+			{{ form_widget(carpoolForm.pricePerPerson, { 'attr': { 'class': 'form-control text-center shadow' } }) }}
+
+			<button class="btn btn-outline-secondary shadow fw-bold" type="button" onclick="adjustPrice(1, '{{ carpoolForm.pricePerPerson.vars.id }}')" style="width: 40px;">+</button>
+
+		</div>
+	</div>
+	{{ form_errors(carpoolForm.pricePerPerson) }}
+	{{ form_help(carpoolForm.pricePerPerson) }}
+</div>
+<small class="d-inline-flex flex-wrap justify-content-center mb-4 mx-md-3">
+	<span class="fw-bold me-1">Attention :</span>
+	<span class="text-nowrap me-1">Pour assurer son fonctionnement,</span>
+	<span class="text-nowrap me-1">la plateforme prélèvera 2 crédits</span>
+	<span class="text-nowrap">sur le paiement du premier passager.</span>
+</small>
+{# Handling price per person value with buttons #}
+<script>
+	function adjustPrice(change, inputId) {
+		const input = document.getElementById(inputId);
+		let value = parseInt(input.value || 0, 10);
+		value += change;
+		value = Math.max(value, parseInt(input.min || 3, 10));
+		input.value = value; }
+</script>
+
+<hr>
+
+{# Submit button #}
+<div class="d-inline-flex justify-content-center mb-3">
+	{{ form_row(carpoolForm.submit, { 'attr': {
+		'class': 'btn btn-lg btn-primary shadow mt-1 scaleOnFocusAndHover mt-2 mx-3' }}) }}
+</div>
+
+<div class="d-none">
+	{{ form_rest(carpoolForm) }}
+</div>
+
+{{ form_end(carpoolForm) }}
+
+{# Add car modal #}
+{% include "profile/_addRideForm/_addCarForm.html.twig" %}

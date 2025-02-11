@@ -1,0 +1,68 @@
+<li class="card m-2 pt-2 shadow {{ carpool.carEngineType is same as 'Électrique' ? 'highlightBg' }}" style="min-width: 280px;">
+	<div class="card-body d-flex flex-column">
+
+		{# Departure and arrival times #}
+		<div class="d-inline-flex framed rounded border-primary px-3 py-2 mx-auto mb-4 shadow">
+			<strong class="fs-4">
+				{% if dateTimeDisplay == 'time' %}
+					<span class="text-nowrap">
+						{{ carpool.departureTime|date('H:i') }}
+						⇢
+						{{ carpool.arrivalTime|date('H:i') }}
+					</span>
+				{% elseif dateTimeDisplay == 'dateTime' %}
+					<span class="text-nowrap">
+						{{ carpool.departureTime|format_datetime(pattern='d MMMM', locale='fr') }}
+					</span>
+					<span class="text-nowrap">
+						à
+						{{ carpool.arrivalTime|date('H:i') }}
+					</span>
+				{% endif %}
+			</strong>
+		</div>
+
+		<div class="d-inline-flex align-items-center justify-content-around">
+
+			<div class="d-flex flex-column">
+
+				{# Driver pseudo #}
+				<span class="text-nowrap">Proposé par</span>
+				<strong class="fs-4">{{ carpool.driverPseudo }}</strong>
+
+				{# Driver rating #}
+				{% include "_common/driverRating.html.twig" with {'ratingValue': carpool.driverAverageRating, 'subtitled': 'false'} %}
+
+			</div>
+
+			{# Driver thumbnail #}
+			<img src="{{ asset('images/users/' ~ carpool.driverPhotoFilename|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ carpool.driverPseudo }}" class="float-end object-fit-cover rounded-pill border border-secondary border-2 align-bottom shadow-lg" style="width: 72px; height: 72px;"/>
+
+		</div>
+
+		<hr>
+
+		{# Ecological ride ? #}
+		{% if (carpool.carEngineType is same as 'Électrique') %}
+			<div class="d-inline-flex align-items-center justify-content-center">
+				<img src="{{ asset('images/favicons/apple-icon-76x76.png') }}" alt="vignette signalant un voyage écologique" class="me-2" style="width: 36px; height: 36px;"/>
+				<span class="text-primary fw-bold">Voyage écologique</span>
+			</div>
+			<hr>
+		{% endif %}
+
+		{# Car #}
+		<div>
+			Place{{ carpool.numberOfAvailableSeats > 1 ? 's' }} restante{{ carpool.numberOfAvailableSeats > 1 ? 's' }} :
+			<strong>{{ carpool.numberOfAvailableSeats }} sur {{ carpool.totalNumberOfSeats }}</strong><br/>
+			Prix : <strong>{{ carpool.pricePerPerson }} crédits</strong>
+		</div>
+
+	</div>
+
+	{# Detail button #}
+	<div class="card-footer pt-3 pb-4">
+		<a href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}" class="btn btn-outline-primary shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="">plus de détails</a>
+	</div>
+
+</li>
