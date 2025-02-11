@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Service\Carpool;
 
-use App\Entity\User;
 use App\Document\Carpool;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\User\CreditsManager;
-use App\Service\Carpool\CarpoolHandler;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 
 final class CarpoolCancelService
 {
     public function __construct(
-        private DocumentManager $documentManager,
         private UserRepository $userRepository,
+        private DocumentManager $documentManager,
+        private CarpoolHandler $carpoolHandler,
         private MailerInterface $mailer,
         private CreditsManager $creditsManager,
-        private CarpoolHandler $carpoolHandler,
     ) {
     }
 
@@ -76,7 +76,7 @@ final class CarpoolCancelService
     private function notifyPassenger(User $passenger, Carpool $carpool): void
     {
         $email = (new TemplatedEmail())
-            ->from('ne-pas-repondre@ecoride.com')
+            ->from(new Address('mailer@ecoride.site', 'EcoRide Mail Bot'))
             ->to($passenger->getEmail())
             ->subject('Annulation de covoiturage')
             ->htmlTemplate('_emails/carpoolCancellation.html.twig')
@@ -107,7 +107,7 @@ final class CarpoolCancelService
     private function notifyDriver(User $driver, User $passenger, Carpool $carpool): void
     {
         $email = (new TemplatedEmail())
-            ->from('ne-pas-repondre@ecoride.com')
+            ->from(new Address('mailer@ecoride.site', 'EcoRide Mail Bot'))
             ->to($driver->getEmail())
             ->subject('Annulation de participation à un covoiturage')
             ->htmlTemplate('_emails/carpoolParticipationCancellation.html.twig')
