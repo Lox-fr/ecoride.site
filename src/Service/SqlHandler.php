@@ -27,7 +27,7 @@ class SqlHandler
 
     public function __construct(
         private Connection $connection,
-        private string $sqlBasePath = __DIR__.'/../sql/',
+        private string $sqlBasePath = __DIR__.'/../Sql/',
     ) {
     }
 
