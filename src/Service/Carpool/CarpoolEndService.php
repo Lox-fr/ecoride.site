@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Service\Carpool;
 
-use App\Entity\User;
 use App\Document\Carpool;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\User\CreditsManager;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 
 class CarpoolEndService
 {
     public function __construct(
+        private CarpoolStatusManager $carpoolStatusManager,
         private Security $security,
+        private CreditsManager $creditsManager,
         private UserRepository $userRepository,
         private MailerInterface $mailer,
-        private CarpoolStatusManager $carpoolStatusManager,
-        private CreditsManager $creditsManager,
     ) {
     }
 
@@ -76,7 +77,7 @@ class CarpoolEndService
     private function notifyPassenger(User $passenger, Carpool $carpool): void
     {
         $email = (new TemplatedEmail())
-            ->from('ne-pas-repondre@ecoride.com')
+            ->from(new Address('mailer@ecoride.site', 'EcoRide Mail Bot'))
             ->to($passenger->getEmail())
             ->subject('Validation d\'un covoiturage')
             ->htmlTemplate('_emails/carpoolValidation.html.twig')

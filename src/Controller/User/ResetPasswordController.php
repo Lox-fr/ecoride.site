@@ -23,7 +23,7 @@ use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[Route('/reinitialisation-mot-de-passe')]
-class ResetPasswordController extends AbstractController
+final class ResetPasswordController extends AbstractController
 {
     use ResetPasswordControllerTrait;
 
@@ -77,7 +77,7 @@ class ResetPasswordController extends AbstractController
     /**
      * Validates and process the reset URL that the user clicked in their email.
      */
-    #[Route('/reinitialisation/{token}', name: 'app_reset_password')]
+    #[Route('/validation/{token}', name: 'app_reset_password')]
     public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, ?string $token = null): Response
     {
         if ($token) {
@@ -163,8 +163,8 @@ class ResetPasswordController extends AbstractController
         $email = (new TemplatedEmail())
             ->from(new Address('mailer@ecoride.site', 'EcoRide Mail Bot'))
             ->to((string) $user->getEmail())
-            ->subject('Your password reset request')
-            ->htmlTemplate('resetPassword/email.html.twig')
+            ->subject('Réinitialisation de votre mot de passe')
+            ->htmlTemplate('_emails/resetPasswordValidation.html.twig')
             ->context([
                 'resetToken' => $resetToken,
             ])
