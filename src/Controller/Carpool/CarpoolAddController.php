@@ -40,13 +40,13 @@ final class CarpoolAddController extends AbstractController
     #[Route('/publier-trajet', name: 'app_carpool_add')]
     public function add(Request $request): Response|RedirectResponse
     {
+        // Restrict access to logged in users and display a flash message to others
         /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('info', 'Veuillez vous connecter pour proposer un covoiturage.');
-
-            return $this->redirectToRoute('app_login', ['_target_path' => $this->generateUrl('app_carpool_add')]);
         }
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         // Handle car add form submission
         $addCarFormInCarpoolForm = $this->handleAddCarFormInAddCarpoolForm($request, $user);
