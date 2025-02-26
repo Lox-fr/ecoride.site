@@ -1,8 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Entity\ResetPasswordRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -97,8 +101,39 @@ class ResetPasswordControllerTest extends WebTestCase
 
         self::assertInstanceOf(User::class, $user);
 
-        /** @var UserPasswordHasherInterface $passwordHasher */
+        /* @var UserPasswordHasherInterface $passwordHasher */
         // $passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
         // self::assertTrue($passwordHasher->isPasswordValid($user, 'newStrongPassword@123!'));
+    }
+
+    public function testGetUserMethodFromResetPasswordRequestEntity(): void
+    {
+        // Créer un utilisateur de test
+        $user = (new User())
+            ->setEmail('me@example.com')
+            ->setPassword('a-test-password-that-will-be-changed-later')
+            ->setPseudo('testUser')
+        ;
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        // Créer une demande de réinitialisation de mot de passe
+        $resetPasswordRequest = new ResetPasswordRequest(
+            $user,
+            new \DateTimeImmutable('+1 hour'), // Exemple d'expiration d'1 heure
+            'selector123',
+            'hashedToken123'
+        );
+
+        $this->em->persist($resetPasswordRequest);
+        $this->em->flush();
+
+        // Vérifier que la méthode getUser retourne l'utilisateur correct
+        $retrievedUser = $resetPasswordRequest->getUser();
+
+        self::assertInstanceOf(User::class, $retrievedUser);
+        self::assertSame($user->getEmail(), $retrievedUser->getEmail());
+        self::assertSame($user->getPseudo(), $retrievedUser->getPseudo());
     }
 }
