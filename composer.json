@@ -155,8 +155,7 @@
         "testDbPrepare": [
             "php bin/console app:database:delete --no-interaction --env=test",
             "php bin/console app:database:create --env=test",
-            "@testSqlTablesCreation",
-            "@testFixturesLoading"
+            "@testSqlTablesCreation"
         ],
         "testFixturesLoading" :[
             "php bin/console doctrine:mongodb:schema:create --env=test",

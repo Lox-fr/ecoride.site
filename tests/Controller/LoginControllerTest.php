@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
@@ -33,7 +33,8 @@ class LoginControllerTest extends WebTestCase
         $passwordHasher = $container->get('security.user_password_hasher');
 
         $user = (new User())->setEmail('email@example.com');
-        $user->setPassword($passwordHasher->hashPassword($user, 'password'));
+        $user->setPassword($passwordHasher->hashPassword($user, 'pAssw0rd9@!'));
+        $user->setPseudo('testUser');
 
         $em->persist($user);
         $em->flush();
@@ -42,42 +43,42 @@ class LoginControllerTest extends WebTestCase
     public function testLogin(): void
     {
         // Denied - Can't login with invalid email address.
-        $this->client->request('GET', '/login');
+        $this->client->request('GET', '/connexion');
         self::assertResponseIsSuccessful();
 
-        $this->client->submitForm('Sign in', [
+        $this->client->submitForm('Valider', [
             '_username' => 'doesNotExist@example.com',
             '_password' => 'password',
         ]);
 
-        self::assertResponseRedirects('/login');
+        self::assertResponseRedirects('/connexion');
         $this->client->followRedirect();
 
         // Ensure we do not reveal if the user exists or not.
-        self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
+        self::assertSelectorTextContains('.alert-danger', 'Identifiants invalides.');
 
         // Denied - Can't login with invalid password.
-        $this->client->request('GET', '/login');
+        $this->client->request('GET', '/connexion');
         self::assertResponseIsSuccessful();
 
-        $this->client->submitForm('Sign in', [
+        $this->client->submitForm('Valider', [
             '_username' => 'email@example.com',
             '_password' => 'bad-password',
         ]);
 
-        self::assertResponseRedirects('/login');
+        self::assertResponseRedirects('/connexion');
         $this->client->followRedirect();
 
         // Ensure we do not reveal the user exists but the password is wrong.
-        self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
+        self::assertSelectorTextContains('.alert-danger', 'Identifiants invalides.');
 
         // Success - Login with valid credentials is allowed.
-        $this->client->submitForm('Sign in', [
+        $this->client->submitForm('Valider', [
             '_username' => 'email@example.com',
-            '_password' => 'password',
+            '_password' => 'pAssw0rd9@!',
         ]);
 
-        self::assertResponseRedirects('/');
+        self::assertResponseRedirects('/profil');
         $this->client->followRedirect();
 
         self::assertSelectorNotExists('.alert-danger');

@@ -19,9 +19,19 @@ final class CarpoolJoinController extends AbstractController
         CarpoolSearchService $carpoolSearchService,
         CarpoolJoinService $carpoolJoinService,
     ): Response|RedirectResponse {
-        $carpool = $carpoolSearchService->findOneCarpoolByItsId($carpoolId);
 
+        /** @var \App\Entity\User $passenger */
+        $passenger = $this->getUser();
+
+        // Check if user is authenticated
+        if (!$passenger) {
+            $this->addFlash('warning', 'Vous devez être connecté(e) pour réserver votre place.');
+
+            return $this->redirectToRoute('app_login');
+        }
+        
         // Check existence of carpool
+        $carpool = $carpoolSearchService->findOneCarpoolByItsId($carpoolId);
         if (!$carpool) {
             $this->addFlash('warning', 'Le covoiturage auquel vous souhaitez participer n\'existe pas ou plus.');
 
@@ -35,18 +45,8 @@ final class CarpoolJoinController extends AbstractController
                 entre le moment de votre sélection et celui de votre validation.<br/>
                 Désolé pour le désagrément, veuillez choisir un autre covoiturage');
 
-            $this->redirectToRoute('app_carpool_search');
-        }
-
-        /** @var \App\Entity\User $passenger */
-        $passenger = $this->getUser();
-
-        // Check if user is authenticated
-        if (!$passenger) {
-            $this->addFlash('warning', 'Vous devez être connecté(e) pour réserver votre place.');
-
-            return $this->redirectToRoute('app_login');
-        }
+            $this->redirectToRoute('app_carpool_search');    
+        }    
 
         // Check if user is not the driver
         if ($passenger->getId() === $carpool->getDriverUserId()) {

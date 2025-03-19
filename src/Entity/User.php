@@ -383,13 +383,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $age;
     }
 
-    public function setAge(int $age): static
-    {
-        $this->age = $age;
-
-        return $this;
-    }
-
     public function isPetsAllowed(): ?bool
     {
         return $this->petsAllowed;
