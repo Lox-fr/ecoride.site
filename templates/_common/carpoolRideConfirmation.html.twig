@@ -7,6 +7,8 @@
 	{% set modalId = 'carpoolValidationConfirmation' %}
 {% endif %}
 
+{{ form_start(reviewForm, { 'action': path('app_carpool_validate', {'carpoolId': carpool.id}) }) }}
+
 <div class="modal" tabindex="-1" id="{{ modalId ~ loop.index ?? '' }}">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
@@ -74,9 +76,36 @@
 				{% endif %}
 
 				{% if mode == 'validate' %}
-					<small class="fst-italic">
-						Après cette validation,vous serez ensuite invité(e) à laisser un avis sur votre trajet.
-					</small>
+						<p class="fw-bold mt-5">
+							Quelle note attribuez-vous à ce covoiturage ?
+						</p>
+						<div class="mb-3" data-controller="ratingValue">
+							{{ form_widget(reviewForm.rating, { 'attr' : {
+								'aria-describedby' : reviewForm.rating.vars.id ~ '_help',
+								'class' : 'mx-auto',
+								'style' : 'width: 50%;',
+								'data-ratingValue-target' : 'range',
+								'data-action' : 'input->ratingValue#updateValue'
+							}}) }}
+							{{ form_errors(reviewForm.rating) }}
+							{{ form_help(reviewForm.rating) }}
+							<p>
+								<span data-ratingValue-target="output">5</span>
+								sur 5
+							</p>
+						</div>
+						<p class="fw-bold mt-5">
+							Souhaitez-vous laisser un commentaire ?
+						</p>
+						<div class="form-floating mb-3">
+							{{ form_widget(reviewForm.comment, { 'attr' : {
+								'aria-describedby': reviewForm.comment.vars.id ~ '_help',
+								'class' : 'shadow pt-2',
+								'style' : 'min-height: 80px;'
+							}}) }}
+							{{ form_errors(reviewForm.comment) }}
+							{{ form_help(reviewForm.comment) }}
+						</div>
 				{% endif %}
 
 			</div>
@@ -85,20 +114,29 @@
 
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 
-				{% set href = '' %}
-				{% if mode == 'start' %}
-					{% set href = 'app_carpool_start' %}
-				{% elseif mode == 'finish' %}
-					{% set href = 'app_carpool_finish' %}
+				{% if mode == 'start' or mode == 'finish' %}
+					{% set href = '' %}
+					{% if mode == 'start' %}
+						{% set href = 'app_carpool_start' %}
+					{% elseif mode == 'finish' %}
+						{% set href = 'app_carpool_finish' %}
+					{% endif %}
+					{# Action link #}
+					<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary">
+						Confirmer</a>
 				{% elseif mode == 'validate' %}
-					{% set href = 'app_carpool_validate' %}
+					{{ form_widget(reviewForm.submit, { 'attr' : {
+						'class' : 'btn btn-primary', }}) }}
 				{% endif %}
-				{# Action link #}
-				<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary">
-					Confirmer</a>
 
 			</div>
 
 		</div>
 	</div>
 </div>
+
+<div class="d-none">
+	{{ form_rest(reviewForm) }}
+</div>
+
+{{ form_end(reviewForm) }}

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\User;
 
 use App\Document\Carpool;
+use App\Document\Review;
 use App\Entity\Car;
 use App\Entity\User;
 use App\Form\CarFormType;
 use App\Form\Carpool\CarpoolAddFormType;
+use App\Form\ReviewFormType;
 use App\Form\User\DriverProfileFormType;
 use App\Form\User\PassengerProfileFormType;
 use App\Repository\UserRepository;
@@ -85,6 +87,7 @@ class ProfileController extends AbstractController
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
             'currentCarpools' => $userCarpoolsData['currentCarpools'],
             'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
+            'reviewForm' => $this->createForm(ReviewFormType::class, new Review()),
         ]);
     }
 

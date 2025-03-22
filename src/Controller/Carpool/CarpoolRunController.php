@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Carpool;
 
+use App\Document\Review;
 use App\Document\Carpool;
+use App\Form\ReviewFormType;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Symfony\Component\HttpFoundation\Request;
 use App\Service\Carpool\CarpoolEndService;
 use App\Service\Carpool\CarpoolSearchService;
 use App\Service\Carpool\CarpoolStatusManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Service\Review\ReviewStatusManager;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class CarpoolRunController extends AbstractController
 {
@@ -54,10 +59,15 @@ final class CarpoolRunController extends AbstractController
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
     }
 
-    // Validate a ride
+    // Validate a ride, leave a rating and a comment
     #[Route('/covoiturage/valider/{carpoolId}', name: 'app_carpool_validate')]
     public function validate(
-        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolEndService $carpoolEndService,
+        string $carpoolId,
+        Request $request,
+        CarpoolSearchService $carpoolSearchService,
+        CarpoolEndService $carpoolEndService,
+        DocumentManager $dm,
+        ReviewStatusManager $reviewStatusManager,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "arrived" status, if authenticated user is passenger
         $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'validate');
@@ -67,6 +77,36 @@ final class CarpoolRunController extends AbstractController
 
         // Change carpool status to "done" if nacessary and give the credits to driver
         $carpoolEndService->passengerValidatesCarpool($carpool, true);
+
+        // Handle carpool review leaved by passenger
+        $reviewForm = $this->createForm(ReviewFormType::class);
+        $reviewForm->handleRequest($request);
+        if ($reviewForm->isSubmitted() && $reviewForm->isValid()) {
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+
+            $rating = (int) $reviewForm->get('rating')->getData();
+            $comment = $reviewForm->get('comment')->getData() ?? '';
+
+            $review = new Review();
+            $review->setCreatedAt(new \DateTimeImmutable());
+            $review->setRating($rating);
+            if (trim($comment) !== '') {
+                $review->setComment($comment);
+            }
+            $review->setStatus($reviewStatusManager::STATUS_PENDING);
+            $review->setCarpool($carpool);
+            $review->setDriverUserId($carpool->getDriverUserId());
+            $review->setAuthorUserId($user->getId());
+            $review->setAuthorPseudo($user->getPseudo());
+            $review->setAuthorPhotoFilename($user->getPhotoFilename());
+            // Save in MongoDB
+            $dm->persist($review);
+            $dm->flush();
+
+            $this->addFlash('info', 'Merci pour votre participation !
+                Votre retour a été enregistré et sera validé par nos équipes avant d\'être publié sur le site.');
+        }
 
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
     }

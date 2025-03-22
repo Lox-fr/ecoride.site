@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Carpool;
 
-use App\Service\Carpool\CarpoolSearchService;
+use App\Document\Review;
+use App\Form\ReviewFormType;
 use App\Service\Review\ReviewSearchService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Service\Carpool\CarpoolSearchService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class CarpoolViewController extends AbstractController
 {
@@ -32,6 +34,7 @@ final class CarpoolViewController extends AbstractController
             'controller_name' => 'ViewCarpoolController',
             'carpool' => $carpool,
             'approvedReviewsDriver' => $approvedReviewsDriver,
+            'reviewForm' => $this->createForm(ReviewFormType::class, new Review()),
         ]);
     }
 }
