@@ -7,7 +7,7 @@ namespace App\Repository;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
 /**
- * @extends DocumentRepository<Carpool>
+ * @extends DocumentRepository<Review>
  */
 class ReviewRepository extends DocumentRepository
 {
