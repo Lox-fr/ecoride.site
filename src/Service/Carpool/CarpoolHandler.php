@@ -39,6 +39,8 @@ class CarpoolHandler
             ->setStatus(CarpoolStatusManager::STATUS_OPEN)
             ->setDriverUserId($driver->getId())
             ->setDriverPseudo($driver->getPseudo())
+            ->setDriverEmail($driver->getEmail())
+            ->setDriverPhoneNumber($driver->getPhoneNumber())
             ->setDriverPhotoFilename($driver->getPhotoFilename())
             ->setDriverAge($driver->getAge())
             ->setDriverPetsAllowed($driver->isPetsAllowed())
