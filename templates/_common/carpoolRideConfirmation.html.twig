@@ -7,7 +7,9 @@
 	{% set modalId = 'carpoolValidationConfirmation' %}
 {% endif %}
 
-{{ form_start(reviewForm, { 'action': path('app_carpool_validate', {'carpoolId': carpool.id}) }) }}
+{% if reviewsFormViews[carpool.id] is defined %}
+    {{ form_start(reviewsFormViews[carpool.id], { 'action': path('app_carpool_validate', {'carpoolId': carpool.id}) }) }}
+{% endif %}
 
 <div class="modal" tabindex="-1" id="{{ modalId ~ loop.index ?? '' }}">
 	<div class="modal-dialog modal-dialog-centered">
@@ -75,20 +77,20 @@
 
 				{% endif %}
 
-				{% if mode == 'validate' %}
+				{% if mode == 'validate' and reviewsFormViews[carpool.id] is defined %}
 						<p class="fw-bold mt-5">
 							Quelle note attribuez-vous à ce covoiturage ?
 						</p>
 						<div class="mb-3" data-controller="ratingValue">
-							{{ form_widget(reviewForm.rating, { 'attr' : {
-								'aria-describedby' : reviewForm.rating.vars.id ~ '_help',
+							{{ form_widget(reviewsFormViews[carpool.id].rating, { 'attr' : {
+								'aria-describedby' : reviewsFormViews[carpool.id].rating.vars.id ~ '_help',
 								'class' : 'mx-auto',
 								'style' : 'width: 50%;',
 								'data-ratingValue-target' : 'range',
 								'data-action' : 'input->ratingValue#updateValue'
 							}}) }}
-							{{ form_errors(reviewForm.rating) }}
-							{{ form_help(reviewForm.rating) }}
+							{{ form_errors(reviewsFormViews[carpool.id].rating) }}
+							{{ form_help(reviewsFormViews[carpool.id].rating) }}
 							<p>
 								<span data-ratingValue-target="output">5</span>
 								sur 5
@@ -98,13 +100,13 @@
 							Souhaitez-vous laisser un commentaire ?
 						</p>
 						<div class="form-floating mb-3">
-							{{ form_widget(reviewForm.comment, { 'attr' : {
-								'aria-describedby': reviewForm.comment.vars.id ~ '_help',
+							{{ form_widget(reviewsFormViews[carpool.id].comment, { 'attr' : {
+								'aria-describedby': reviewsFormViews[carpool.id].comment.vars.id ~ '_help',
 								'class' : 'shadow pt-2',
 								'style' : 'min-height: 80px;'
 							}}) }}
-							{{ form_errors(reviewForm.comment) }}
-							{{ form_help(reviewForm.comment) }}
+							{{ form_errors(reviewsFormViews[carpool.id].comment) }}
+							{{ form_help(reviewsFormViews[carpool.id].comment) }}
 						</div>
 				{% endif %}
 
@@ -122,10 +124,10 @@
 						{% set href = 'app_carpool_finish' %}
 					{% endif %}
 					{# Action link #}
-					<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary">
+					<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary" data-turbo="false">
 						Confirmer</a>
 				{% elseif mode == 'validate' %}
-					{{ form_widget(reviewForm.submit, { 'attr' : {
+					{{ form_widget(reviewsFormViews[carpool.id].submit, { 'attr' : {
 						'class' : 'btn btn-primary', }}) }}
 				{% endif %}
 
@@ -135,8 +137,11 @@
 	</div>
 </div>
 
-<div class="d-none">
-	{{ form_rest(reviewForm) }}
-</div>
+{% if reviewsFormViews[carpool.id] is defined %}
+    <div class="d-none">
+        {{ form_rest(reviewsFormViews[carpool.id]) }}
+    </div>
 
-{{ form_end(reviewForm) }}
+    {{ form_end(reviewsFormViews[carpool.id]) }}
+{% endif %}
+

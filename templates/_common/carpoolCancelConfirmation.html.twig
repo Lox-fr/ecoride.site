@@ -55,7 +55,7 @@
 
 				{# Action link #}
 				{% set href = participation ? 'app_carpool_cancel_participation' : 'app_carpool_cancel' %}
-				<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-danger">Confirmer</a>
+				<a href="{{ path(href, {'carpoolId': carpool.id}) }}" role="button" class="btn btn-danger" data-turbo="false">Confirmer</a>
 
 			</div>
 

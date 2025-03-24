@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Carpool;
 
-use App\Document\Review;
 use App\Document\Carpool;
 use App\Form\ReviewFormType;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Symfony\Component\HttpFoundation\Request;
 use App\Service\Carpool\CarpoolEndService;
 use App\Service\Carpool\CarpoolSearchService;
 use App\Service\Carpool\CarpoolStatusManager;
-use App\Service\Review\ReviewStatusManager;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Service\Review\ReviewManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
 
 final class CarpoolRunController extends AbstractController
 {
@@ -66,8 +64,7 @@ final class CarpoolRunController extends AbstractController
         Request $request,
         CarpoolSearchService $carpoolSearchService,
         CarpoolEndService $carpoolEndService,
-        DocumentManager $dm,
-        ReviewStatusManager $reviewStatusManager,
+        ReviewManager $reviewManager,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "arrived" status, if authenticated user is passenger
         $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'validate');
@@ -85,27 +82,18 @@ final class CarpoolRunController extends AbstractController
             /** @var \App\Entity\User $user */
             $user = $this->getUser();
 
+            // Save the review with the correct status
             $rating = (int) $reviewForm->get('rating')->getData();
             $comment = $reviewForm->get('comment')->getData() ?? '';
+            $reviewManager->populateAndSaveReview($rating, $comment, $user, $carpool);
 
-            $review = new Review();
-            $review->setCreatedAt(new \DateTimeImmutable());
-            $review->setRating($rating);
-            if (trim($comment) !== '') {
-                $review->setComment($comment);
+            $flashMessage = 'Merci pour votre participation ! Votre retour a été enregistré';
+            if ($rating < 3 || !empty($comment)) {
+                $this->addFlash('info',
+                    $flashMessage.' et sera validé par nos équipes avant d\'être publié sur le site.');
+            } else {
+                $this->addFlash('info', $flashMessage.'.');
             }
-            $review->setStatus($reviewStatusManager::STATUS_PENDING);
-            $review->setCarpool($carpool);
-            $review->setDriverUserId($carpool->getDriverUserId());
-            $review->setAuthorUserId($user->getId());
-            $review->setAuthorPseudo($user->getPseudo());
-            $review->setAuthorPhotoFilename($user->getPhotoFilename());
-            // Save in MongoDB
-            $dm->persist($review);
-            $dm->flush();
-
-            $this->addFlash('info', 'Merci pour votre participation !
-                Votre retour a été enregistré et sera validé par nos équipes avant d\'être publié sur le site.');
         }
 
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);

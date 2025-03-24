@@ -71,7 +71,7 @@ class Carpool
         value: 3, message: 'Le tarif par personne doit être supérieur ou égal à {{ compared_value }}.')]
     #[Assert\LessThanOrEqual(
         value: 150, message: 'Le tarif par personne ne peut pas dépasser {{ compared_value }}.')]
-    #[MongoDB\Field(type: 'float')]
+    #[MongoDB\Field(type: 'int')]
     private ?int $pricePerPerson = null;
 
     #[MongoDB\Field(type: 'int')]
@@ -91,6 +91,12 @@ class Carpool
 
     #[MongoDB\Field(type: 'string')]
     private ?string $driverPseudo = null;
+
+    #[MongoDB\Field(type: 'string')]
+    private ?string $driverEmail = null;
+
+    #[MongoDB\Field(type: 'string')]
+    private ?string $driverPhoneNumber = null;
 
     #[MongoDB\Field(type: 'string')]
     private ?string $driverPhotoFilename = null;
@@ -194,7 +200,7 @@ class Carpool
         $this->estimatedRideTime = $estimatedRideTime;
 
         return $this;
-    }    
+    }
 
     public function getArrivalTime(): ?\DateTimeImmutable
     {
@@ -312,6 +318,30 @@ class Carpool
     public function setDriverPseudo(?string $driverPseudo): static
     {
         $this->driverPseudo = $driverPseudo;
+
+        return $this;
+    }
+
+    public function getDriverEmail(): ?string
+    {
+        return $this->driverEmail;
+    }
+
+    public function setDriverEmail(string $driverEmail): static
+    {
+        $this->driverEmail = $driverEmail;
+
+        return $this;
+    }
+
+    public function getDriverPhoneNumber(): ?string
+    {
+        return $this->driverPhoneNumber;
+    }
+
+    public function setDriverPhoneNumber(string $driverPhoneNumber): static
+    {
+        $this->driverPhoneNumber = $driverPhoneNumber;
 
         return $this;
     }
@@ -444,7 +474,7 @@ class Carpool
     public function setPassengers(?array $passengers): static
     {
         $this->passengers = $passengers ?? [];
-    
+
         return $this;
     }
 

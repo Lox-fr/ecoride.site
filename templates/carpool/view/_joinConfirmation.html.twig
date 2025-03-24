@@ -42,14 +42,16 @@
 
 			<div class="modal-footer">
 
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-turbo="false">
+					Annuler
+				</button>
 
 				{% set disabledJoinButton = false %}
 				{% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.credits < carpool.pricePerPerson %}
 					{% set disabledJoinButton = true %}
 				{% endif %}
 				{# Action link #}
-				<a href="{{ path('app_carpool_join', {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary {{ disabledJoinButton ? 'disabled' }}" {{ disabledJoinButton ? 'aria-disabled="true"' }}>
+				<a href="{{ path('app_carpool_join', {'carpoolId': carpool.id}) }}" role="button" class="btn btn-primary {{ disabledJoinButton ? 'disabled' }}" {{ disabledJoinButton ? 'aria-disabled="true"' }} data-turbo="false">
 					Payer {{ carpool.pricePerPerson }} crédits</a>
 
 			</div>

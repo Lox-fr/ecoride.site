@@ -188,6 +188,7 @@
             "php vendor/bin/phpunit --testdox --coverage-html tests/CoverageReport"
         ],
         "test": [
+            "composer audit",
             "composer validate --strict",
             "@lint",
             "@phpStan",

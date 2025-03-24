@@ -5,10 +5,12 @@
 
 			<div class="modal-header">
 				<h1 class="modal-title fs-5" id="exampleModalLabel">
-					<img src="{{ asset('images/users/' ~ carpool.driverPhotoFilename|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ carpool.driverPseudo }}" class="d-none object-fit-cover rounded-pill border border-secondary border-2 shadow-lg mx-auto" style="width: 60px; height: 60px;"/>
-					Les
-					{{ approvedReviewsDriver|filter(review => review.comment is not empty)|length }}
-					avis publiés concernant
+					{% if approvedReviewsDriver|filter(review => review.comment is not empty)|length > 0 %}
+						Les {{ approvedReviewsDriver|filter(review => review.comment is not empty)|length }}
+						avis publiés concernant
+					{% else %}
+						Aucun avis publié concernant
+					{% endif %}
 					<span class="text-primary fw-bold">{{ carpool.driverPseudo }}</span><br/>
 				</h1>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

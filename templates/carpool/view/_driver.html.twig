@@ -14,12 +14,14 @@
 
         {# Driver rating #}
 		{% include "_common/driverRating.html.twig" with {'ratingValue': carpool.driverAverageRating, 'starWidth': '25px', 'subtitled': 'true'} %}
-		<small class="fst-italic mb-3">
-			Note :
-			<span class="fw-bold">{{ carpool.driverAverageRating|round(1) }}</span>
-			/ 5 (basée sur {{ approvedReviewsDriver|length }} évaluations)
-		</small>
-		<button type="button" class="btn btn-sm btn-outline-primary shadow mt-0 mb-4 mx-auto " data-bs-toggle="modal" data-bs-target="#driverReviewsModal">Voir les avis</button>
+		{% if carpool.driverAverageRating is not null %}
+			<small class="fst-italic mb-3">
+				Note :
+				<span class="fw-bold">{{ carpool.driverAverageRating|round(1) }}</span>
+				/ 5 (basée sur {{ approvedReviewsDriver|length }} évaluations)
+			</small>
+			<button type="button" class="btn btn-sm btn-outline-primary shadow mt-0 mb-4 mx-auto " data-bs-toggle="modal" data-bs-target="#driverReviewsModal">Voir les avis</button>
+		{% endif %}
 	</div>
 
 	{# Preferences #}

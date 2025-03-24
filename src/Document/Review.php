@@ -39,6 +39,9 @@ class Review
     private ?string $authorPseudo = null;
 
     #[MongoDB\Field(type: 'string')]
+    private ?string $authorEmail = null;
+
+    #[MongoDB\Field(type: 'string')]
     private ?string $authorPhotoFilename = null;
 
     public function getId(): ?string
@@ -138,6 +141,18 @@ class Review
     public function setAuthorPseudo(string $authorPseudo): static
     {
         $this->authorPseudo = $authorPseudo;
+
+        return $this;
+    }
+
+    public function getAuthorEmail(): ?string
+    {
+        return $this->authorEmail;
+    }
+
+    public function setAuthorEmail(string $authorEmail): static
+    {
+        $this->authorEmail = $authorEmail;
 
         return $this;
     }
