@@ -34,4 +34,19 @@ final class ReviewSearchService
             ['createdAt' => 'DESC']
         );
     }
+
+    /**
+     * Retrieves all reviews that need to be moderate.
+     *
+     * @return array<int, Review> List of reviews sorted from oldest to most recent.
+     */
+    public function findReviewsToModerate(): array
+    {
+        return $this->reviewRepository->findBy(
+            [
+                'status' => 'pending',
+            ],
+            ['createdAt' => 'ASC']
+        );
+    }
 }

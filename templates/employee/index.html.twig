@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Employé - Ecoride{% endblock %}
+
+{% block main %}
+
+	<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="carpoolReviewsToValidate">
+
+		<h2 class="fw-light">Bonjour {{ app.user.pseudo }}</h2>
+
+		<hr class="text-primary border-2 mb-4">
+
+		<p class="fs-3">
+			{% if reviewsToModerate|length == 0 %}
+				Il n'y a plus d'avis à modérer
+			{% else %}
+				Il y a actuellement
+				{{ reviewsToModerate|length }}
+				avis à modérer
+			{% endif %}
+		</p>
+
+		<ul class="d-flex flex-wrap justify-content-center align-items-stretch mb-5">
+			{% for review in reviewsToModerate %}
+				<li class="card m-2 pt-2 shadow" style="min-width: 280px; max-width: 450px;">
+
+					<div
+						class="card-body d-flex flex-column">
+
+						{# Ride #}
+						<div class="mb-3">
+							<h3 class="text-start fs-4 border-bottom border-primary">Le trajet</h3>
+							<p>
+								Identifiant :
+								{{ review.carpool.id }}
+								<br/>
+								<span class="text-nowrap">
+									Entre
+									<span class="fw-bold">{{ review.carpool.departureCity|capitalize }}</span>
+									et
+									<span class="fw-bold">{{ review.carpool.arrivalCity|capitalize }}</span>
+								</span>
+								<br/>
+								<span class="text-nowrap">
+									Départ le
+									{{ review.carpool.departureTime|format_datetime(pattern='d MMMM à HH:mm', locale='fr') }}
+								</span>
+								<br/>
+								<span class="text-nowrap">
+									Arrivée prévue le
+									{{ review.carpool.arrivalTime|format_datetime(pattern='d MMMM à HH:mm', locale='fr') }}
+								</span>
+								<br/>
+								<span class="text-nowrap">
+									Proposé par
+									{{ review.carpool.driverPseudo }}
+								</span>
+								<br/>
+								<span class="text-nowrap">
+									Pour
+									{{ review.carpool.pricePerPerson }}
+									crédits par passager
+								</span>
+							</p>
+						</div>
+
+						{# Review #}
+						<div>
+							<h3 class="text-start fs-4 border-bottom border-primary">L'avis</h3>
+							<p>
+								Identifiant :
+								{{ review.id }}
+								<br/>
+								<span class="text-nowrap">
+									Laissé le
+									{{ review.createdAt|format_datetime(pattern='d MMMM à HH:mm', locale='fr') }}
+								</span>
+								<br/>
+								<span class="text-nowrap">
+									Par
+									{{ review.authorPseudo }}
+								</span>
+								<br/>
+								<span class="text-nowrap">
+									Note :
+									<span class="fw-bold">{{ review.rating }}/5</span>
+								</span>
+								<br/>
+								Commentaire :
+								<br/>
+								<span class="d-inline-flex flex-wrap framed rounded-3 p-2 m-2 mb-3">
+									{{ review.comment }}
+								</span>
+							</p>
+						</div>
+
+						{# Contact #}
+						<div>
+							<h3 class="text-start fs-4 border-bottom border-primary">Contacts</h3>
+							<p>
+								<span class="fw-bold">Chauffeur :</span>
+								<br/>
+								<span class="d-flex justify-content-center mb-2">
+									{{ review.carpool.driverPseudo }}
+									<br/>
+									{{ review.carpool.driverEmail }}
+									<br/>
+									{{ review.carpool.driverPhoneNumber }}
+								</span>
+								<span class="fw-bold">Passager :</span>
+								<br/>
+								<span class="">
+									{{ review.authorPseudo }}
+									<br/>
+									{{ review.authorEmail }}
+								</span>
+
+							</p>
+						</div>
+
+					</div>
+
+					<div
+						class="card-footer pt-3 pb-4">
+						{# Butons #}
+						<a href="{{ path('app_employee_reject_review', {'reviewId': review.id}) }}" class="btn btn-outline-danger shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="" data-turbo="false">Refuser</a>
+						<a href="{{ path('app_employee_validate_review', {'reviewId': review.id}) }}" class="btn btn-outline-primary shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="" data-turbo="false">Accepter</a>
+					</div>
+
+				</li>
+			{% endfor %}
+		</ul>
+
+	</section>
+
+{% endblock %}
