@@ -375,4 +375,50 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             throw new \Exception(\sprintf('Update of credits value failed for "%s": %s', $userId, $e->getMessage()), 0, $e);
         }
     }
+
+    /**
+     * Retrieves a user by their ID.
+     *
+     * This method fetches the user data from the database using a raw SQL query.
+     *
+     * @param int $userId the ID of the user to retrieve
+     *
+     * @throws \Exception if the retrieval operation fails
+     */
+    public function findUserById(int $userId): ?User
+    {
+        try {
+            $result = $this->sqlHandler->execute('read/userById', 'queries', SqlHandler::FETCH_ASSOCIATIVE, [
+                'user_id' => $userId,
+            ]);
+
+            if ($result) {
+                $user = new User();
+                $user->setId($userId)
+                    ->setPseudo($result['pseudo'])
+                    ->setEmail($result['email'])
+                    ->setCreatedAt(new \DateTimeImmutable($result['created_at']))
+                    ->setActive((bool) $result['active'])
+                    ->setFirstName($result['first_name'])
+                    ->setLastName($result['last_name'])
+                    ->setAddress($result['address'])
+                    ->setPhoneNumber($result['phone_number'])
+                    ->setPhotoFilename($result['photo_filename'])
+                    ->setDateOfBirth(new \DateTimeImmutable($result['date_of_birth']))
+                    ->setPetsAllowed((bool) $result['pets_allowed'])
+                    ->setDriverRoleChosen((bool) $result['driver_role_chosen'])
+                    ->setSmokersAllowed((bool) $result['smokers_allowed'])
+                    ->setSumOfRatings((int) $result['sum_of_ratings'])
+                    ->setNumberOfRatings((int) $result['number_of_ratings'])
+                    ->setCredits((int) $result['credits'])
+                ;
+
+                return $user;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Retrieving user failed for ID "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
 }
