@@ -55,6 +55,11 @@
 					<li class="nav-item mx-3 d-md-none">
                         <a class="nav-link" href="{{ path('app_profile') }}" aria-label="Naviguez vers la page profil de votre compte pour modifier vos informations, vos préférences, vos véhicules - Consultez votre historique et proposez des trajets" role="button">Profil</a>
                     </li>
+					{% if is_granted('ROLE_EMPLOYEE') %}
+						<li class="nav-item mx-3 d-md-none">
+							<a class="nav-link {{ controller_name == 'EmployeeDashboardController' ? 'active' }}" href="{{ path('app_employee_dashboard') }}" {{ controller_name == 'EmployeeDashboardController' ? 'aria-current="page"' }}>Espace Employé</a>
+						</li>
+					{% endif %}
 					<li class="nav-item mx-3 d-md-none">
                         <a class="nav-link" href="{{ path('app_logout') }}" aria-label="Se déconnecter"  role="button">Se déconnecter</a>
                     </li>
@@ -87,8 +92,14 @@
 					<li>
                         <a class="dropdown-item nav-link py-1 {{ controller_name == 'UserProfileController' ? 'active' }}" href="{{ path('app_profile') }}" {{ controller_name == 'UserProfileController' ? 'aria-current="page"' }} aria-label="Naviguez vers la page profil de votre compte pour modifier vos informations, vos préférences, vos véhicules.">Profil</a>
                     </li>
+					{% if is_granted('ROLE_EMPLOYEE') %}
+						<li>
+							<a class="dropdown-item nav-link py-1 {{ controller_name == 'EmployeeDashboardController' ? 'active' }}" href="{{ path('app_employee_dashboard') }}" {{ controller_name == 'EmployeeDashboardController' ? 'aria-current="page"' }} aria-label="Accédez à votre espace employé afin d'y valider les avis et commentaires laissés par les utilisateurs">Espace Employé</a>
+						</li>
+					{% endif %}
+
 					<li>
-                        <a class="dropdown-item nav-link {{ controller_name == 'CarpoolHistoryController' ? 'active' }}" href="{{ path('app_profile', {'activeTab': 'historique-trajets'}) }}" {{ controller_name == 'CarpoolHistoryController' ? 'aria-current="page"' }} aria-label="Consultez l'historique de vos trajets passés et à venir.">Historique</a>
+                        <a class="dropdown-item nav-link py-1 {{ controller_name == 'CarpoolHistoryController' ? 'active' }}" href="{{ path('app_profile', {'activeTab': 'historique-trajets'}) }}" {{ controller_name == 'CarpoolHistoryController' ? 'aria-current="page"' }} aria-label="Consultez l'historique de vos trajets passés et à venir.">Historique</a>
                     </li>
 					<hr>
 					<li>
