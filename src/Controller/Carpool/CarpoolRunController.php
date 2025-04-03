@@ -6,7 +6,7 @@ namespace App\Controller\Carpool;
 
 use App\Document\Carpool;
 use App\Form\ReviewFormType;
-use App\Service\Carpool\CarpoolEndService;
+use App\Service\Carpool\CarpoolRunService;
 use App\Service\Carpool\CarpoolSearchService;
 use App\Service\Carpool\CarpoolStatusManager;
 use App\Service\Review\ReviewManager;
@@ -20,7 +20,7 @@ final class CarpoolRunController extends AbstractController
     // Start a ride
     #[Route('/covoiturage/commencer/{carpoolId}', name: 'app_carpool_start')]
     public function start(
-        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolEndService $carpoolEndService,
+        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolRunService $carpoolRunService,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "open" status, if authenticated user is driver
         $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'start');
@@ -29,7 +29,7 @@ final class CarpoolRunController extends AbstractController
         }
 
         // Change carpool status to "inProgress" if nacessary
-        $carpoolEndService->driverStartsCarpool($carpool);
+        $carpoolRunService->driverStartsCarpool($carpool);
 
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
     }
@@ -37,7 +37,7 @@ final class CarpoolRunController extends AbstractController
     // End a ride
     #[Route('/covoiturage/terminer/{carpoolId}', name: 'app_carpool_finish')]
     public function finish(
-        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolEndService $carpoolEndService,
+        string $carpoolId, CarpoolSearchService $carpoolSearchService, CarpoolRunService $carpoolRunService,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "in progress" status, if authenticated user is driver
         $carpool = $this->validateCarpoolForUserAction($carpoolId, $carpoolSearchService, 'finish');
@@ -48,10 +48,10 @@ final class CarpoolRunController extends AbstractController
         if (!empty($carpool->getPassengers())) {
             // Change carpool status to "arrived" if necessary and if there was at least one passenger
             // And send email to passengers to ask them to validate their participation
-            $carpoolEndService->driverFinishesCarpool($carpool);
+            $carpoolRunService->driverFinishesCarpool($carpool);
         } else {
             // Change carpool status to "done" if there was no passenger
-            $carpoolEndService->passengerValidatesCarpool($carpool);
+            $carpoolRunService->passengerValidatesCarpool($carpool);
         }
 
         return $this->redirectToRoute('app_profile', ['activeTab' => 'historique-trajets']);
@@ -63,7 +63,7 @@ final class CarpoolRunController extends AbstractController
         string $carpoolId,
         Request $request,
         CarpoolSearchService $carpoolSearchService,
-        CarpoolEndService $carpoolEndService,
+        CarpoolRunService $carpoolRunService,
         ReviewManager $reviewManager,
     ): RedirectResponse {
         // Carpool validation : if exist, if has "arrived" status, if authenticated user is passenger
@@ -73,7 +73,7 @@ final class CarpoolRunController extends AbstractController
         }
 
         // Change carpool status to "done" if nacessary and give the credits to driver
-        $carpoolEndService->passengerValidatesCarpool($carpool, true);
+        $carpoolRunService->passengerValidatesCarpool($carpool, true);
 
         // Handle carpool review leaved by passenger
         $reviewForm = $this->createForm(ReviewFormType::class);
