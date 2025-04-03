@@ -29,6 +29,7 @@ security:
             login_throttling:
                 max_attempts: 5
                 interval: '1 minute'
+            user_checker: App\Security\UserChecker
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Administrateur - Ecoride{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('admin') }}
+    {{ parent() }}
+{% endblock %}
+
+{% block main %}
+	<section class="container-lg framed rounded-lg-5 bg-light shadow my-5 pt-4" id="adminGraph">
+
+		<h2 class="fs-1 fw-bold">Bonjour {{ app.user.pseudo }}</h2>
+
+		<hr class="text-primary border-2 mb-4">
+
+        {# Total gain #}
+		<h3 class="fs-3">Total des gains</h3>
+        <p class="d-inline-flex framed fs-4 text-primary fw-bold mx-auto p-3 rounded-3 shadow">
+            {{ totalCreditsEarned }} crédits
+        </p>
+
+		<hr class="text-primary border-2 mb-4">
+
+        {# Platform activity - chart #}
+		<h3 class="fs-3">Activité de la plateforme</h3>
+        <p class="framed rounded-3 shadow p-2 mb-5 mx-3">
+            {{ render_chart(ActivityChart, {'style': 'min-height: 300px;'}) }}
+        </p>
+
+		<hr class="text-primary border-2 mb-4">
+
+		<h3 class="fs-3">Gestion des utilisateurs</h3>
+
+        {# Add an employee #}
+        <p>
+            <span class="text-nowrap">Vous pouvez créer un compte "employé"</span>
+            <span class="text-nowrap">sur la plateforme en fournissant à minima</span>
+            <span class="text-nowrap"><span class="fw-bold">une adresse email</span>.</span>
+            <br/>
+            <b class="fs-6 fw-light fst-italic">
+                <span class="text-nowrap">Lors de sa première connexion</span>
+                <span class="text-nowrap">votre nouveau/nouvelle collègue devra</span>
+                <span class="text-nowrap">cliquer sur le lien "mot de passe oublié"</span>
+                <span class="text-nowrap">afin de configurer son mot de passe.</span>
+            </b>
+            <form method="post" action="{{ path('admin_create_employee') }}" style="max-width: 400px;" class="mx-auto">
+                <div class="form-floating mb-4">
+                    <input type="email" class="form-control shadow" id="email" name="email" placeholder="name@example.com" required>
+                    <label for="email">Adresse Email <span class="text-danger">*</span></label>
+                </div>
+                <div class="form-floating mb-4">
+                    <input type="text" class="form-control shadow" id="firstName" name="firstName" placeholder="name@example.com" required>
+                    <label for="firstName">Prénom <span class="text-danger">*</span></label>
+                </div>
+                <div class="form-floating mb-4">
+                    <input type="text" class="form-control shadow" id="lestName" name="lestName" placeholder="name@example.com">
+                    <label for="lestName">Nom de famille</label>
+                </div>
+                <button type="submit" class="btn btn-primary shadow mb-3">Ajouter</button>
+            </form>
+        </p>
+
+        {# list of employees #}
+        {% if listOfEmployees is not empty %}
+            <h4 class="fs-5 mb-2">Liste des employés</h4>
+            <div class="table-responsive d-inline-flex mb-3">
+                <table class="table table-bordered border-primary mb-4">
+                    <thead class="table-secondary border-primary">
+                        <tr>
+                            <td class="text-start" scope="col">Pseudo</td>
+                            <td class="text-start" scope="col">Adresse Email</td>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider border-primary">
+                        {% for employee in listOfEmployees %}
+                            <tr>
+                                <td class="text-start">{{ employee.pseudo }}</td>
+                                <td class="text-start">{{ employee.email }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {# Suspend a user #}
+        <p class="">
+            <span class="text-nowrap">Vous pouvez également suspendre</span>
+            <span class="text-nowrap">un utilisateur ou un employé</span>
+            <span class="text-nowrap">en renseignant son adresse email</span>
+            <span class="text-nowrap">dans le champ ci-dessous :</span>
+            <form method="post" action="{{ path('admin_suspend_user') }}" style="max-width: 400px;" class="mx-auto">
+                <div class="form-floating mb-4">
+                    <input type="email" class="form-control shadow" id="email" name="email" placeholder="name@example.com" required>
+                    <label for="email">Email de l'utilisateur <span class="text-danger">*</span></label>
+                </div>
+                <button type="submit" class="btn btn-primary shadow mb-3">Suspendre</button>
+            </form>
+        </p>
+
+        {# Suspended users #}
+        {% if listOfSuspendedUsers is not empty %}
+            <h4 class="fs-5 mb-2">Liste des comptes suspendus</h4>
+            <div class="table-responsive d-inline-flex mb-3">
+                <table class="table table-bordered border-primary mb-4">
+                    <thead class="table-secondary border-primary">
+                        <tr>
+                            <td class="text-start" scope="col">Adresse Email</td>
+                            <td scope="col"></td>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider border-primary">
+                        {% for suspendedUser in listOfSuspendedUsers %}
+                            <tr>
+                                <td class="text-start">{{ suspendedUser.email }}</td>
+                                <td>
+                                    <a href="{{ path('admin_activate_user', {'userId': suspendedUser.id }) }}">
+                                        Réactiver
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+    </section>
+{% endblock %}

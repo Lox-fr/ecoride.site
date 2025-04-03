@@ -36,6 +36,7 @@ class AppFixtures extends Fixture
         }
 
         /* SQL side - using custom SQL queries */
+        $this->sqlDataFixturesService->loadAdminAndEmployees();
         $drivers = $this->sqlDataFixturesService->loadDriversAndReturnCollection();
         $passengers = $this->sqlDataFixturesService->loadPassengersAndReturnCollection();
 

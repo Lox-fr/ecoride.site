@@ -43,13 +43,31 @@ class CreditsManager
         // Retrieve the current driver's credits value, calculate the new value and set it
         $currentDriverCreditsValue = $this->userRepository->findCreditsByUserId((int) $carpool->getDriverUserId());
         if ($currentDriverCreditsValue) {
-            $newDriverCreditsValue = $currentDriverCreditsValue + $carpool->getPricePerPerson();
+            $newDriverCreditsValue = $currentDriverCreditsValue + $carpool->getPricePerPerson() - 2;
         } else {
             $newDriverCreditsValue = $currentDriverCreditsValue;
         }
-        $driver->setCredits((int) $newDriverCreditsValue);
+        $driver->setCredits((int) $newDriverCreditsValue); 
 
         // Update the driver's credits in the database
         $this->userRepository->updateCredits($driver);
+    }
+
+    /**
+     * Credit a ride to the platform.
+     * This method credits the admin account with 2 credits.
+     */
+    public function creditARideToThePlatform(): void
+    {
+        // A user instance hydrated with the driver ID and its credits is required by the user repository method
+        $admin = new User();
+        $admin->setId($this->userRepository->findUserIdByEmail('admin@ecoride.site'));
+
+        // Retrieve the admin's credits value, calculate the new value and set it
+        $currentAdminCreditsValue = $this->userRepository->findCreditsByUserId((int) $admin->getId());
+        $admin->setCredits((int) $currentAdminCreditsValue + 2); 
+
+        // Update the driver's credits in the database
+        $this->userRepository->updateCredits($admin);
     }
 }
