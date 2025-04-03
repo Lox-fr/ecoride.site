@@ -43,6 +43,50 @@ class SqlDataFixturesService
     ) {
     }
 
+    public function loadAdminAndEmployees(): void
+    {
+        $this->loadRoles();
+        $this->loadBrands();
+        $this->loadColors();
+        $this->loadEngineTypes();
+
+        // Admin
+        $admin = $this->userFixturesProvider->getAdmin();
+        $this->userRepository->loadDriverFixtures($admin);
+        $adminId = $this->userRepository->findUserIdByEmail($admin->getEmail());
+        $admin->setId($adminId);
+        $this->userRepository->grantAdminRoleByUserId($adminId);
+        for ($i = 0; $i < 3; ++$i) {
+            $car = $this->loadAndReturnRandomCar($admin);
+            $admin->addCar($car);
+        }
+        $randomPreferences = $this->preferenceFixturesProvider->getCollectionOfConsistentPreferences(mt_rand(0, 3));
+        foreach ($randomPreferences as $preference) {
+            $preference->setUser($admin);
+            $this->preferenceRepository->loadPreferenceFixtures($preference);
+            $admin->addPreference($preference);
+        }
+
+        // Employees
+        $employees = $this->userFixturesProvider->getCollectionOfEmployees();
+        foreach ($employees as $employee) {
+            $this->userRepository->loadDriverFixtures($employee);
+            $employeeId = $this->userRepository->findUserIdByEmail($employee->getEmail());
+            $employee->setId($employeeId);
+            $this->userRepository->grantEmployeeRoleByUserId($employeeId);
+            for ($i = 0; $i < mt_rand(1, 3); ++$i) {
+                $car = $this->loadAndReturnRandomCar($employee);
+                $employee->addCar($car);
+            }
+            $randomPreferences = $this->preferenceFixturesProvider->getCollectionOfConsistentPreferences(mt_rand(0, 3));
+            foreach ($randomPreferences as $preference) {
+                $preference->setUser($employee);
+                $this->preferenceRepository->loadPreferenceFixtures($preference);
+                $employee->addPreference($preference);
+            }
+        }
+    }
+
     /**
      * @return ArrayCollection<User>
      */
@@ -63,11 +107,6 @@ class SqlDataFixturesService
      */
     public function loadDriversAndReturnCollection(): ArrayCollection
     {
-        $this->loadBrands();
-        $this->loadColors();
-        $this->loadEngineTypes();
-        $this->loadRoles();
-
         $drivers = $this->loadAndReturnDrivers();
         foreach ($drivers as $driver) {
             for ($i = 0; $i < mt_rand(1, 3); ++$i) {

@@ -219,6 +219,7 @@ class NoSqlDataFixturesService
     {
         $carpoolPassengers = [];
         $numberOfPassengers = mt_rand(1, $car->getNumberOfSeats());
+        $isFutureCarpool = $carpool->getDepartureTime() > new \DateTimeImmutable();
         for ($i = 0; $i < $numberOfPassengers; ++$i) {
             $passenger = $this->getRandomDriver($passengers);
             $carpoolPassengers[] = [
@@ -226,7 +227,7 @@ class NoSqlDataFixturesService
                 'passengerPseudo' => $passenger->getPseudo(),
                 'passengerEmail' => $passenger->getEmail(),
                 'passengerPhotoFilename' => $passenger->getPhotoFilename(),
-                'hasValidatedTheRide' => boolval(mt_rand(0, 1)),
+                'hasValidatedTheRide' => $isFutureCarpool ? false : boolval(mt_rand(0, 1)),
             ];
         }
         $carpool->setPassengers(array_values($carpoolPassengers));
