@@ -39,6 +39,7 @@ class CarpoolRepository extends DocumentRepository
                 'numberOfAvailableSeats',
                 'totalNumberOfSeats',
                 'pricePerPerson',
+                'estimatedRideTime',
                 'carEngineType'
             )
             ->readOnly()

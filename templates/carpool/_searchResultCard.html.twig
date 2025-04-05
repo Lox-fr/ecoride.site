@@ -1,4 +1,4 @@
-<li class="card m-2 pt-2 shadow {{ carpool.carEngineType is same as 'Électrique' ? 'highlightBg' }}" style="min-width: 280px;">
+<li class="card m-2 pt-2 shadow {{ carpool.carEngineType is same as 'Électrique' ? 'highlightBg' }}" style="min-width: 280px;" data-price="{{ carpool.pricePerPerson }}" data-duration="{{ carpool.estimatedRideTime }}" data-ecological="{{ carpool.carEngineType == 'Électrique' ? 'true' : 'false' }}" data-driver-rating="{{ carpool.driverAverageRating is not empty ? carpool.driverAverageRating + 0.5 : '0' }}">
 	<div class="card-body d-flex flex-column">
 
 		{# Departure and arrival times #}

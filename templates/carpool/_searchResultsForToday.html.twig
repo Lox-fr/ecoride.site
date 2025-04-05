@@ -17,12 +17,22 @@
 	</span>
 </h2>
 
+{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
+	date('Y-m-d') == "now"|date('Y-m-d'))|length > 0 %}
+		{% include "carpool/_filters.html.twig" with {
+			'targetId': 'filterCarpoolSearchResultsForToday',
+			'carpools': carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d')),
+		} %}
+{% endif %}
+
 <hr class="text-primary border-2 mb-4">
 
-<ul class="d-flex flex-wrap justify-content-center align-items-stretch mb-5">
-	{% for carpool in carpoolSearchResults %}
-		{% if carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d') %}
-			{% include "carpool/_searchResultCard.html.twig" with {dateTimeDisplay: 'time'} %}
-		{% endif %}
-	{% endfor %}
-</ul>
+<div class="d-flex justify-content-center">
+	<ul class="d-flex flex-wrap justify-content-center align-items-stretch mb-5 grid today-grid" id="filterCarpoolSearchResultsForTodayGrid">
+		{% for carpool in carpoolSearchResults %}
+			{% if carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d') %}
+				{% include "carpool/_searchResultCard.html.twig" with {dateTimeDisplay: 'time'} %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+</div>

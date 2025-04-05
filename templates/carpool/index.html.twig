@@ -13,7 +13,7 @@
 		{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
 			date('Y-m-d') == "now"|date('Y-m-d'))|length %}
 
-				<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="carpoolSearchResultsForToday">
+				<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="carpoolSearchResultsForToday" data-controller="carpoolFilters">
 					{% include "carpool/_searchResultsForToday.html.twig" %}
 				</section>
 
@@ -21,30 +21,49 @@
 					date('Y-m-d') > "now"|date('Y-m-d'))|length %}
 
 						<div class="mx-3">
-							<button class="d-inline-flex mx-auto btn btn-lg btn-primary shadow mt-5 scaleOnFocusAndHover"type="button" data-bs-toggle="collapse" data-bs-target="#carpoolSearchResultsForFollowingDays" aria-expanded="false" aria-controls="carpoolSearchResultsForFollowingDays">
+							<button class="d-inline-flex mx-auto btn btn-lg btn-primary shadow mt-5 scaleOnFocusAndHover"type="button" data-bs-toggle="collapse" data-bs-target="#carpoolSearchResultsForFollowingDays" aria-expanded="false" aria-controls="carpoolSearchResultsForFollowingDays" id="toggleNextDaysCollapseButton">
 								Voir les jours suivants
 							</button>
 						</div>
-
 				{% endif %}
 
 		{% endif %}
 
 		{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
 			date('Y-m-d') > "now"|date('Y-m-d'))|length %}
-
-				<section class="collapse container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4 {{ not carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d'))|length ? 'show' }}" id="carpoolSearchResultsForFollowingDays">
+				<section class="collapse container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4 {{ not carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d'))|length ? 'show' }}" id="carpoolSearchResultsForFollowingDays" data-controller="carpoolFilters">
 					{% include "carpool/_searchResultsForFollowingDays.html.twig" %}
 				</section>
-
 		{% endif %}
 
 	{% else %}
-
 		<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="popularRides">
 			{% include "_common/popularRides.html.twig" %}
 		</section>
-
 	{% endif %}
 
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		// Handle the label of the collapse button for the "following days" search results
+		document.addEventListener('turbo:load', function () {
+			const collapseElement = document.getElementById('carpoolSearchResultsForFollowingDays');
+			const button = document.getElementById('toggleNextDaysCollapseButton');
+
+			if (collapseElement && button) {
+				collapseElement.addEventListener('shown.bs.collapse', function () {
+					button.textContent = 'Masquer les jours suivants';
+				});
+				collapseElement.addEventListener('hidden.bs.collapse', function () {
+					button.textContent = 'Voir les jours suivants';
+				});
+				// Remove focus after click to avoid staying scaled
+				button.addEventListener('click', () => {
+					button.blur();
+				});
+			}
+		});
+	</script>
 {% endblock %}
