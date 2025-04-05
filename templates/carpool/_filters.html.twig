@@ -1,0 +1,82 @@
+{# min and max price #}
+{% set priceMin = carpoolSearchResults|
+    map(c => c.pricePerPerson)|
+    reduce((carry, price) => price < carry ? price : carry, 9999) %}
+{% set priceMax = carpoolSearchResults|
+    map(c => c.pricePerPerson)|
+    reduce((carry, price) => price > carry ? price : carry, 0) %}
+{# min and max duration #}
+{% set durationMin = carpoolSearchResults|
+    map(c => c.estimatedRideTime)| 
+    reduce((carry, duration) => duration < carry ? duration : carry, 9999) %}
+{% set durationMax = carpoolSearchResults|
+    map(c => c.estimatedRideTime)| 
+    reduce((carry, duration) => duration > carry ? duration : carry, 0) %}
+
+<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#{{ targetId }}" aria-controls="{{ targetId }}" id="{{ targetId }}FilterButton">
+	Filtrer les résultats
+</button>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="{{ targetId }}" aria-labelledby="{{ targetId }}Label">
+
+	<div class="offcanvas-header">
+		<h3 class="offcanvas-title fs-5 fw-bold" id="{{ targetId }}Label">
+            Critères de filtrage :
+        </h3>
+		<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+
+	<div class="offcanvas-body pt-5">
+
+        {# Ecological filter #}
+		<div class="mb-5">
+			<button type="button" class="btn btn-outline-primary shadow" data-carpoolFilters-target="ecoButton" data-action="click->carpoolFilters#toggleEco" data-group-id="{{ targetId }}">
+				<span id="eco-label">Seulement les trajets écologiques</span>
+			</button>
+		</div>
+
+        {# max price #}
+		<div class="mb-5 mx-5">
+			<label for="price-slider" class="form-label">
+                <span class="d-inline-flex flex-wrap text-nowrap">Prix maximum du voyage :</span>
+                <span class="text-nowrap">
+                    <span id="price-value">{{ priceMax }}</span>
+                    crédits
+                </span>
+            </label>
+			<input type="range" id="price-slider" class="form-range" min="{{ priceMin }}" max="{{ priceMax }}" step="1" value="{{ priceMax }}" data-carpoolFilters-target="priceSlider" data-action="input->carpoolFilters#filterByPrice" data-group-id="{{ targetId }}">
+		</div>
+
+        {# max ride time #}
+		<div class="mb-5 mx-5">
+			<label for="duration-slider" class="form-label">
+                <span class="d-inline-flex flex-wrap text-nowrap">Durée maximale du trajet :</span>
+                <span class="text-nowrap">
+                    <span id="duration-value">{{ durationMax }}</span>
+                    minutes
+                </span>
+            </label>
+			<input type="range" id="duration-slider" class="form-range" min="{{ durationMin }}" max="{{ durationMax }}" step="1" value="{{ durationMax }}" data-carpoolFilters-target="durationSlider" data-action="input->carpoolFilters#filterByDuration" data-group-id="{{ targetId }}">
+		</div>
+
+        {# minimal driver rating #}
+		<div class="mb-5 mx-5">
+			<label for="rating-slider" class="form-label">
+                <span class="d-inline-flex flex-wrap text-nowrap">Note minimale</span><span class="text-nowrap"> du conducteur :</span>
+                <span class="text-nowrap">
+                    <span id="rating-value">0</span>
+                    ★
+                </span>
+            </label>
+			<input type="range" id="rating-slider" class="form-range" min="0" max="5" step="0.5" value="0" data-carpoolFilters-target="ratingSlider" data-action="input->carpoolFilters#filterByRating" data-group-id="{{ targetId }}">
+		</div>
+
+        {# Reset filters #}
+		<div class="mb-5">
+			<button type="button" class="btn btn-outline-primary shadow" data-target="carpoolFilters.reset" data-action="click->carpoolFilters#reset" data-group-id="{{ targetId }}" id="reset-filters-button">
+				<span id="reset-filters">Réinitialiser les filtres</span>
+			</button>
+		</div>
+
+	</div>
+</div>
