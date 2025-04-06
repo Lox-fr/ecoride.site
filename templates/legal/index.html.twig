@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales - EcoRide{% endblock %}
+
+{% block main %}
+    <h1 class="pt-5 border-bottom border-primary border-3 pb-3 mx-0 mx-md-5 mb-5 ">Mentions Légales</h1>
+
+    <div class="container d-flex flex-column px-3 px-md-5">
+
+        <section class="mb-5">
+            <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Préambule</h2>
+            <p>
+                <span class="text-nowrap">Ce site internet n'est pas un site officiel</span>
+                <span class="text-nowrap">et n'est pas affilié à</span>
+                <span class="text-nowrap">une entreprise ou organisation réelle.</span><br/>
+                Il a été créé à des fins éducatives et de démonstration, dans le cadre d'un projet de formation et n'est pas destiné à être utilisé à des fins commerciales.
+            </p>
+        </section>
+
+        <section class="d-flex flex-row flex-wrap justify-content-center align-items-start">
+
+            <div class="mx-5 mb-5">
+                <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Éditeur du site</h2>
+                <div>
+                    <p class="mb-2">
+                        Nom de l'entreprise : EcoRide
+                    </p>
+                    <p class="mb-2">
+                        Siège social :
+                        <span class="text-nowrap">1 Avenue de l'Écologie,</span>
+                        <span class="text-nowrap">Paris, France</span><br/>
+                    </p>
+                    <p class="mb-2">
+                        Téléphone :
+                        <span class="text-nowrap">+33 1 00 00 00 00</span>
+                    </p>
+                    <p class="mb-2">
+                        Email : contact@ecoride.com
+                    </p>
+                    <p class="mb-2">
+                        Numéro d'enregistrement :
+                        <span class="text-nowrap">123 456 789</span>
+                    </p>
+                    <p>
+                        Directeur de la publication :
+                        <span class="text-nowrap"> José Studi</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="mx-5 mb-5">
+                <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Hébergeur du site</h2>
+                <div>
+                    <p class="mb-2">
+                        Hébergeur :
+                        <span class="text-nowrap">LWS (Ligne Web Services)</span>
+                    </p>
+                    <p class="mb-2">
+                        Adresse :
+                        <span class="text-nowrap">10, Rue Penthièvre,</span>
+                        <span class="text-nowrap">75008 Paris, France</span>
+                    </p>
+                    <p class="mb-2">
+                        Téléphone :
+                        <span class="text-nowrap">+33 1 77 62 30 03</span>
+                    </p>
+                    <p class="mb-2">
+                        Email : contact@lws.fr
+                    </p>
+                </div>
+            </div>
+            </section>
+
+        <section class="mb-5">
+            <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic" id="cgu">Conditions générales d'utilisation (CGU)</h2>
+            <p>
+                En accédant à ce site, vous acceptez de respecter les présentes conditions d'utilisation.<br/>
+                Tous les contenus présents sur ce site, y compris les textes, images, logos, sont la propriété intellectuelle d'EcoRide <span class="text-nowrap">et sont protégés par le droit d'auteur.</span><br/>
+                EcoRide décline toute responsabilité en cas de dommages résultant de l'utilisation de ce site, y compris les liens vers des sites externes.
+            </p>
+        </section>
+
+        <section class="mb-5">
+            <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Protection des données personnelles</h2>
+            <p>
+                Conformément à la loi Informatique et Libertés du 6 janvier 1978 modifiée et au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité des données vous concernant.<br/>
+                Pour exercer ces droits ou pour toute question sur le traitement de vos données, vous pouvez contacter notre Délégué à la Protection des Données à l'adresse suivante : <a href="mailto:contact@ecoride.site">dpo@ecoride.site</a>.
+            </p>
+        </section>
+
+        <section class="mb-5">
+            <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Cookies</h2>
+            <p>
+                Ce site utilise des cookies pour améliorer votre expérience de navigation.<br/>
+                Un cookie est un petit fichier texte qui est enregistré sur votre appareil lorsque vous visitez notre site.<br/>
+                Vous pouvez choisir de désactiver les cookies dans les paramètres de votre navigateur, mais cela peut affecter votre expérience sur notre site.<br/>
+                Le cookie utilisé sur ce site est le cookie de session, qui expire à la fermeture de votre navigateur.
+            </p>
+        </section>
+
+        <section class="mb-5" id="politique-de-confidentialite">
+            <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Politique de confidentialité</h2>
+            <p>
+                Nous nous engageons à protéger vos données personnelles et à respecter votre vie privée.<br/>
+                Les données que nous collectons sont utilisées uniquement pour le fonctionnement des services proposés.<br/>
+                Nous ne partageons pas vos données avec des tiers, sauf si la loi l'exige.
+            </p>
+        </section>
+
+        <section class="mb-5">
+            <h2 class="border-bottom border-primary mx-0 mx-md-5 fst-italic">Droit applicable</h2>
+            <p>
+                Le présent site est régi par le droit français.<br/>
+                En cas de litige, le tribunal compétent est le Tribunal de Commerce de Paris, France.
+            </p>
+        </section>
+
+    </div>
+
+{% endblock %}
