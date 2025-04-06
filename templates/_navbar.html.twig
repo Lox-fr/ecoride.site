@@ -40,7 +40,7 @@
 					</li>
 				{% endif %}
 				<li class="nav-item mx-3">
-					<a class="nav-link {{ controller_name == 'ContactController' ? 'active' }}" href="#" {{ controller_name == 'ContactController' ? 'aria-current="page"' }}>Contact</a>
+					<a class="nav-link {{ controller_name == 'ContactController' ? 'active' }}" href="{{ path('app_contact') }}" {{ controller_name == 'ContactController' ? 'aria-current="page"' }}>Contact</a>
 				</li>
 				{# user menu, visible only on smaller screens #}
 				<li role="separator"><hr></li>
