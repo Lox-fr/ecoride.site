@@ -47,4 +47,18 @@ final class CarpoolViewController extends AbstractController
             'reviewsFormViews' => $reviewsFormViews,
         ]);
     }
+
+    #[Route('ajax/covoiturage/details/{carpoolId}', name: 'app_carpool_details_partial', methods: ['GET'])]
+    public function partialDetails(CarpoolSearchService $carpoolSearchService, string $carpoolId): Response
+    {
+        $carpool = $carpoolSearchService->findOneCarpoolByItsId($carpoolId);
+    
+        if (!$carpool) {
+            return new Response("Covoiturage introuvable", 404);
+        }
+    
+        return $this->render('carpool/_fetchedDetails.html.twig', [
+            'carpool' => $carpool,
+        ]);
+    }
 }
