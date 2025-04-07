@@ -8,6 +8,8 @@ import TooltipsController from "./controllers/tooltips_controller.ts";
 import CollectionFormController from "./controllers/collectionForm_controller.ts";
 import RatingValueController from "./controllers/ratingValue_controller.ts";
 import CarpoolFiltersController from "./controllers/carpoolFilters_controller.ts";
+import PopoversController from "./controllers/popovers_controller.ts";
+import CarpoolDetailsFetchController from "./controllers/carpoolDetailsFetch_controller.ts";
 
 const app = startStimulusApp();
 
@@ -19,3 +21,5 @@ app.register("tooltips", TooltipsController);
 app.register("collectionForm", CollectionFormController);
 app.register("ratingValue", RatingValueController);
 app.register("carpoolFilters", CarpoolFiltersController);
+app.register("popovers", PopoversController);
+app.register("carpoolDetailsFetch", CarpoolDetailsFetchController);

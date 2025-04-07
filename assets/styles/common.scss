@@ -152,7 +152,7 @@ $breakpoints: (
     617px: 296px,
     913px: 592px,
     1399px: 888px,
-    1400px: 1184px
+    1400px: 1184px,
 );
 .grid {
     width: 100%;
@@ -178,6 +178,7 @@ $breakpoints: (
     }
 }
 
+// Carpool filters buttons
 button[data-carpoolFilters-target="ecoButton"]:hover,
 #reset-filters-button:hover {
     background-color: $hoverable-bg-light-color;
@@ -192,6 +193,19 @@ button[data-carpoolFilters-target="ecoButton"].active {
 }
 button[data-carpoolFilters-target="ecoButton"].active span {
     color: $userBtn-color;
+}
+
+// Carpool details popover
+.carpoolDetailsPopover {
+    --bs-popover-max-width: 600px;
+    --bs-popover-border-color: #437a49;
+    --bs-popover-header-bg: rgba(219, 233, 217, 0.7);
+}
+.passengerThumbnails {
+    width: 90px !important;
+    height: 90px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
 }
 
 @import "_navbar.scss";
