@@ -6,22 +6,25 @@ namespace App\Controller\Carpool;
 
 use App\Entity\Car;
 use App\Entity\User;
+use App\Document\Review;
 use App\Form\CarFormType;
-use App\Form\Carpool\CarpoolAddFormType;
-use App\Form\User\DriverProfileFormType;
-use App\Form\User\PassengerProfileFormType;
-use App\Service\Carpool\CarpoolAddService;
-use App\Service\Carpool\CarpoolSearchService;
-use App\Service\Carpool\CarpoolSessionDataManager;
+use App\Form\ReviewFormType;
 use App\Service\User\CarManager;
 use App\Service\User\RoleManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Form\Carpool\CarpoolAddFormType;
+use App\Form\User\DriverProfileFormType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Service\Carpool\CarpoolAddService;
+use App\Form\User\PassengerProfileFormType;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\Carpool\CarpoolSearchService;
+use App\Service\Carpool\CarpoolStatusManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\Carpool\CarpoolSessionDataManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class CarpoolAddController extends AbstractController
 {
@@ -34,19 +37,20 @@ final class CarpoolAddController extends AbstractController
         private CarpoolAddService $carpoolAddService,
         private CarpoolSearchService $carpoolSearchService,
         private CarpoolSessionDataManager $carpoolSessionDataManager,
+        private CarpoolStatusManager $carpoolStatusManager,
     ) {
     }
 
-    #[Route('/publier-trajet', name: 'app_carpool_add')]
+    #[Route('/publier-trajet', name: 'app_carpool_add')] 
     public function add(Request $request): Response|RedirectResponse
     {
+        // Restrict access to logged in users and display a flash message to others
         /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('info', 'Veuillez vous connecter pour proposer un covoiturage.');
-
-            return $this->redirectToRoute('app_login', ['_target_path' => $this->generateUrl('app_carpool_add')]);
         }
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         // Handle car add form submission
         $addCarFormInCarpoolForm = $this->handleAddCarFormInAddCarpoolForm($request, $user);
@@ -61,6 +65,16 @@ final class CarpoolAddController extends AbstractController
         // Retrieve user carpool history
         $userCarpoolsData = $this->carpoolSearchService->getUserCarpools($user);
 
+        // Create review form for each carpool which is Arrived or Validated
+        $reviewsFormViews = [];
+        foreach ($userCarpoolsData['currentCarpools'] as $carpool) {
+            if ($carpool->getStatus() === $this->carpoolStatusManager::STATUS_ARRIVED
+            || $carpool->getStatus() === $this->carpoolStatusManager::STATUS_VALIDATED) {
+                $reviewsFormViews[$carpool->getId()] =
+                    $this->createForm(ReviewFormType::class, new Review())->createView();
+            }
+        }
+
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'AddCarpoolController',
             'activeTab' => 'publier-trajet',
@@ -72,6 +86,7 @@ final class CarpoolAddController extends AbstractController
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
             'currentCarpools' => $userCarpoolsData['currentCarpools'],
             'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
+            'reviewsFormViews' => $reviewsFormViews,
         ]);
     }
 

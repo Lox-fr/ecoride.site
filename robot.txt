@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /ajax/
+Disallow: /connexion
+Disallow: /contact/envoyer-message
+Disallow: /covoiturage/
+Disallow: /deconnexion
+Disallow: /employe/
+Disallow: /inscription
+Disallow: /logout
+Disallow: /profil/
+Disallow: /publier-trajet
+Disallow: /reinitialisation-mot-de-passe/
+
+Allow: /
+
+Sitemap: https://ecoride.site/sitemap.xml

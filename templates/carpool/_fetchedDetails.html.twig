@@ -1,0 +1,54 @@
+<div class="popover-details">
+
+	<p class="mb-1">
+		<strong>Départ :</strong>
+		{{ carpool.departurePlace ? carpool.departurePlace ~ ', ' : '' }}
+		{{ carpool.departureCity }}
+	</p>
+
+	<p class="mb-1">
+		<strong>Arrivée :</strong>
+		{{ carpool.arrivalPlace ? carpool.arrivalPlace ~ ', ' : '' }}
+		{{ carpool.arrivalCity }}
+	</p>
+
+	<p class="mb-1">
+		<strong>Prévue :</strong>
+		le {{ carpool.arrivalTime|format_datetime(pattern="d MMMM 'à' HH' h 'mm", locale='fr') }}
+	</p>
+
+	<p class="mb-3">
+		<strong>Voiture :</strong>
+		{{ carpool.carBrand ~ ' ' ~ carpool.carModel ~ ' ' ~ carpool.carColor ~ ' - ' ~ carpool.carEngineType }}
+	</p>
+
+	<p class="mb-0">
+		<strong class="pb-0">Informations conducteur :</strong>
+        <ul>
+            {% if carpool.driverPreferences is empty %}
+                <li>Aucune</li>
+            {% else %}
+                {% for preference in carpool.driverPreferences %}
+                    <li>{{ preference }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+	</p>
+
+	<p class="mb-0">
+		<strong>Passagers déjà enregistrés :</strong>
+        <ul class="d-flex flex-wrap justify-content-center mx-3">
+            {% if carpool.passengers is empty %}
+                <li>Aucun</li>
+            {% else %}
+                {% for passenger in carpool.passengers %}
+                    <li class="d-flex flex-column m-2">
+                        <img src="{{ asset('images/users/' ~ passenger['passengerPhotoFilename']|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ passenger['passengerPseudo'] }}" class="object-fit-contain rounded-pill border border-secondary border-2 shadow-lg mx-auto passengerThumbnails" style="width: 90px !important; height: 90px !important;"/>
+                        {{ passenger['passengerPseudo'] }}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+	</p>
+
+</div>

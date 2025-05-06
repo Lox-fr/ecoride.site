@@ -13,7 +13,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
-class CarpoolEndService
+class CarpoolRunService
 {
     public function __construct(
         private CarpoolStatusManager $carpoolStatusManager,
@@ -55,6 +55,8 @@ class CarpoolEndService
         if ($creditDriver) {
             $this->creditsManager->creditARideToTheDriver($carpool);
         }
+        // Add 2 credits to the admin's account
+        $this->creditsManager->creditARideToThePlatform();
     }
 
     /**

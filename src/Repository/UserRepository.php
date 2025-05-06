@@ -244,6 +244,61 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Add the employee role for a specific user (identified by the given user ID) in the database using a SQL file.
+     *
+     * @param int $employeeId The user ID for which the employee role is to be added
+     *
+     * @throws \Exception If the SQL query execution fails, an exception is thrown with details
+     */
+    public function grantEmployeeRoleByUserId(int $employeeId): void
+    {
+        try {
+            $this->sqlHandler->execute(
+                'create/employeeRoleByUserId', 'queries', null, ['user_id' => (int) $employeeId]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Creation of employee role failed for user id "%s": %s', $employeeId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Retrieves all employees from the database using a SQL query stored in a local file.
+     *
+     * This method fetches the IDs and email addresses of all employees
+     * using a SQL query stored in a local file.
+     *
+     * @throws \Exception if the retrieval operation fails
+     *
+     * @return array An array of employees with their IDs and email addresses
+     */
+    public function findAllActiveEmployees(): array
+    {
+        try {
+            $result = $this->sqlHandler->execute(
+                'read/pseudoAndEmailOfActiveEmployees', 'queries', SqlHandler::FETCH_ALL_ASSOCIATIVE, []);
+
+            return $result ?: [];
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Retrieving employees failed: %s', $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Add the admin role for a specific user (identified by the given user ID) in the database using a SQL file.
+     *
+     * @param int $adminId The user ID for which the admin role is to be added
+     *
+     * @throws \Exception If the SQL query execution fails, an exception is thrown with details
+     */
+    public function grantAdminRoleByUserId(int $adminId): void
+    {
+        try {
+            $this->sqlHandler->execute('create/adminRoleByUserId', 'queries', null, ['user_id' => (int) $adminId]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Creation of admin role failed for user id "%s": %s', $adminId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
      * Load a driver fixture into the database.
      *
      * This method inserts driver-related data into the database fixtures table.
@@ -373,6 +428,95 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return $result ?? null;
         } catch (\Exception $e) {
             throw new \Exception(\sprintf('Update of credits value failed for "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Retrieves a user by their ID.
+     *
+     * This method fetches the user data from the database using a raw SQL query.
+     *
+     * @param int $userId the ID of the user to retrieve
+     *
+     * @throws \Exception if the retrieval operation fails
+     */
+    public function findUserById(int $userId): ?User
+    {
+        try {
+            $result = $this->sqlHandler->execute('read/userById', 'queries', SqlHandler::FETCH_ASSOCIATIVE, [
+                'user_id' => $userId,
+            ]);
+
+            if ($result) {
+                $user = new User();
+                $user->setId($userId)
+                    ->setPseudo($result['pseudo'])
+                    ->setEmail($result['email'])
+                    ->setCreatedAt(new \DateTimeImmutable($result['created_at']))
+                    ->setActive((bool) $result['active'])
+                    ->setFirstName($result['first_name'])
+                    ->setLastName($result['last_name'])
+                    ->setAddress($result['address'])
+                    ->setPhoneNumber($result['phone_number'])
+                    ->setPhotoFilename($result['photo_filename'])
+                    ->setDateOfBirth(new \DateTimeImmutable($result['date_of_birth']))
+                    ->setPetsAllowed((bool) $result['pets_allowed'])
+                    ->setDriverRoleChosen((bool) $result['driver_role_chosen'])
+                    ->setSmokersAllowed((bool) $result['smokers_allowed'])
+                    ->setSumOfRatings((int) $result['sum_of_ratings'])
+                    ->setNumberOfRatings((int) $result['number_of_ratings'])
+                    ->setCredits((int) $result['credits'])
+                ;
+
+                return $user;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Retrieving user failed for ID "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Updates the active status of a user by their ID.
+     *
+     * This method updates the user's active status in the database using a SQL query stored in a local file.
+     *
+     * @param int $userId the ID of the user whose active status is to be updated
+     *
+     * @throws \Exception if the update operation fails
+     */
+    public function updateActiveAttributeByUserId(int $userId, int $boolStatus): void
+    {
+        try {
+            $this->sqlHandler->execute('update/activeStatusByUserId', 'queries', null, [
+                'user_id' => $userId,
+                'status' => $boolStatus,
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Suspending user failed for ID "%s": %s', $userId, $e->getMessage()), 0, $e);
+        }
+    }
+
+    /**
+     * Retrieves all suspended users from the database.
+     *
+     * This method fetches the IDs and email addresses of all suspended users
+     * using a SQL query stored in a local file.
+     *
+     * @throws \Exception if the retrieval operation fails
+     *
+     * @return array An array of suspended users with their IDs and email addresses
+     */
+    public function findAllSuspendedUsers(): array
+    {
+        try {
+            $result = $this->sqlHandler->execute(
+                'read/idAndEmailOfsuspendedUsers', 'queries', SqlHandler::FETCH_ALL_ASSOCIATIVE, []);
+
+            return $result ?: [];
+        } catch (\Exception $e) {
+            throw new \Exception(\sprintf('Retrieving suspended users failed: %s', $e->getMessage()), 0, $e);
         }
     }
 }

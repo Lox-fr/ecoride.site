@@ -2,7 +2,7 @@ name: ecoride-stack
 
 services:
     mysql:
-        image: mysql:8.0
+        image: mysql:9.3.0
         container_name: mysql
         restart: always
         environment:
@@ -16,7 +16,7 @@ services:
             - ./src/Sql/.init:/docker-entrypoint-initdb.d
 
     phpmyadmin:
-        image: phpmyadmin/phpmyadmin
+        image: phpmyadmin/phpmyadmin:5.2.2
         container_name: phpmyadmin
         restart: always
         environment:
@@ -29,7 +29,7 @@ services:
             - mysql
 
     mongodb:
-        image: mongo:latest
+        image: mongo:8.0.9
         container_name: mongodb
         restart: always
         environment:
@@ -40,9 +40,10 @@ services:
             - "27017:27017"
         volumes:
             - mongodb_data:/data/db
+            - ./src/Mongo:/docker-entrypoint-initdb.d
 
     mongo-express:
-        image: mongo-express
+        image: mongo-express:1.0.2-20
         container_name: mongodb-express
         restart: always
         environment:

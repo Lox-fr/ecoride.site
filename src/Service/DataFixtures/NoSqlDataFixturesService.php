@@ -193,6 +193,8 @@ class NoSqlDataFixturesService
             ->setCreatedAt(\DateTimeImmutable::createFromMutable($creationTime))
             ->setDriverUserId($driver->getId())
             ->setDriverPseudo($driver->getPseudo())
+            ->setDriverEmail($driver->getEmail())
+            ->setDriverPhoneNumber($driver->getPhoneNumber())
             ->setDriverPhotoFilename($driver->getPhotoFilename())
             ->setDriverAge($driver->getAge())
             ->setDriverPetsAllowed($driver->isPetsAllowed())
@@ -217,13 +219,15 @@ class NoSqlDataFixturesService
     {
         $carpoolPassengers = [];
         $numberOfPassengers = mt_rand(1, $car->getNumberOfSeats());
+        $isFutureCarpool = $carpool->getDepartureTime() > new \DateTimeImmutable();
         for ($i = 0; $i < $numberOfPassengers; ++$i) {
             $passenger = $this->getRandomDriver($passengers);
             $carpoolPassengers[] = [
                 'passengerId' => $passenger->getId(),
                 'passengerPseudo' => $passenger->getPseudo(),
+                'passengerEmail' => $passenger->getEmail(),
                 'passengerPhotoFilename' => $passenger->getPhotoFilename(),
-                'hasValidatedTheRide' => boolval(mt_rand(0, 1)),
+                'hasValidatedTheRide' => $isFutureCarpool ? false : boolval(mt_rand(0, 1)),
             ];
         }
         $carpool->setPassengers(array_values($carpoolPassengers));
@@ -252,6 +256,7 @@ class NoSqlDataFixturesService
                     ->setDriverUserId($ratedCarpool->getDriverUserId())
                     ->setAuthorUserId($passenger['passengerId'])
                     ->setAuthorPseudo($passenger['passengerPseudo'])
+                    ->setAuthorEmail($passenger['passengerEmail'])
                     ->setAuthorPhotoFilename($passenger['passengerPhotoFilename']);
 
                 // 1 out of 2 reviews contains a comment

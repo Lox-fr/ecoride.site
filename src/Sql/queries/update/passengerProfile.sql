@@ -1,7 +1,6 @@
 -- Updates passenger informations in the 'user' table
 UPDATE user
-SET 
-    pseudo = :pseudo,
+SET pseudo = :pseudo,
     photo_filename = :photo_filename,
     first_name = :first_name,
     last_name = :last_name,

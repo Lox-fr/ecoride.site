@@ -1,4 +1,10 @@
-<li class="card m-2 pt-2 shadow {{ carpool.carEngineType is same as 'Électrique' ? 'highlightBg' }}" style="min-width: 280px;">
+<li class="card m-2 pt-2 shadow {{ carpool.carEngineType is same as 'Électrique' ? 'highlightBg' }}"
+	style="min-width: 280px;"
+	data-price="{{ carpool.pricePerPerson }}"
+	data-duration="{{ carpool.estimatedRideTime }}"
+	data-ecological="{{ carpool.carEngineType == 'Électrique' ? 'true' : 'false' }}"
+	data-driver-rating="{{ carpool.driverAverageRating is not empty ? carpool.driverAverageRating + 0.5 : '0' }}">
+
 	<div class="card-body d-flex flex-column">
 
 		{# Departure and arrival times #}
@@ -16,7 +22,7 @@
 					</span>
 					<span class="text-nowrap">
 						à
-						{{ carpool.arrivalTime|date('H:i') }}
+						{{ carpool.departureTime|date('H:i') }}
 					</span>
 				{% endif %}
 			</strong>
@@ -31,12 +37,16 @@
 				<strong class="fs-4">{{ carpool.driverPseudo }}</strong>
 
 				{# Driver rating #}
-				{% include "_common/driverRating.html.twig" with {'ratingValue': carpool.driverAverageRating, 'subtitled': 'false'} %}
+				{% include "_common/driverRating.html.twig"
+					with {'ratingValue': carpool.driverAverageRating, 'subtitled': 'false'} %}
 
 			</div>
 
 			{# Driver thumbnail #}
-			<img src="{{ asset('images/users/' ~ carpool.driverPhotoFilename|default('default.svg')) }}" alt="Photo ou illustration du profil EcoRide de {{ carpool.driverPseudo }}" class="float-end object-fit-cover rounded-pill border border-secondary border-2 align-bottom shadow-lg" style="width: 72px; height: 72px;"/>
+			<img src="{{ asset('images/users/' ~ carpool.driverPhotoFilename|default('default.svg')) }}"
+				alt="Photo ou illustration du profil EcoRide de {{ carpool.driverPseudo }}"
+				class="float-end object-fit-cover rounded-pill border border-secondary border-2 align-bottom shadow-lg"
+				style="width: 72px; height: 72px;"/>
 
 		</div>
 
@@ -45,7 +55,10 @@
 		{# Ecological ride ? #}
 		{% if (carpool.carEngineType is same as 'Électrique') %}
 			<div class="d-inline-flex align-items-center justify-content-center">
-				<img src="{{ asset('images/favicons/apple-icon-76x76.png') }}" alt="vignette signalant un voyage écologique" class="me-2" style="width: 36px; height: 36px;"/>
+				<img src="{{ asset('images/favicons/apple-icon-76x76.png') }}"
+					alt="vignette signalant un voyage écologique"
+					class="me-2"
+					style="width: 36px; height: 36px;"/>
 				<span class="text-primary fw-bold">Voyage écologique</span>
 			</div>
 			<hr>
@@ -60,9 +73,31 @@
 
 	</div>
 
-	{# Detail button #}
-	<div class="card-footer pt-3 pb-4">
-		<a href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}" class="btn btn-outline-primary shadow mt-1 scaleOnFocusAndHover mt-2 mx-3" role="button" aria-controls="">plus de détails</a>
+	<div class="card-footer d-flex justify-content-center align-items-center pt-3 pb-4">
+		{# Consult button - to access the detailed view #}
+		<a  href="{{ path('app_carpool_view', {'carpoolId': carpool.id }) }}"
+			class="btn btn-outline-primary shadow scaleOnFocusAndHover mx-2"
+			role="button"
+			aria-controls="">
+				consulter
+		</a>
+		{# More details button - popover populated by asynchronous requests #}
+		<a  tabindex="0"
+			class="mx-2"
+			role="button"
+			data-controller="carpoolDetailsFetch"
+			data-action="focus->carpoolDetailsFetch#loadDetails"
+			data-carpoolDetailsFetch-url-value="{{ path('app_carpool_details_partial', {carpoolId: carpool.id}) }}"
+			data-bs-toggle="popover"
+			data-bs-custom-class="carpoolDetailsPopover"
+			data-bs-trigger="focus"
+			data-bs-html="true"
+			data-bs-title="<span class='fw-bold'>Plus en détails</span>"
+			data-bs-content="Chargement ..."
+			style="width: 28px; height: 28px;"
+			aria-label="Plus de détails sur ce covoiturage">
+				{{ ux_icon('line-md:question-circle') }}
+		</a>
 	</div>
 
 </li>

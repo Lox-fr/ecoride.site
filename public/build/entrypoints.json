@@ -2,12 +2,22 @@
   "entrypoints": {
     "light": {
       "js": [
-        "/build/runtime.afe9c80d.js",
-        "/build/885.a8546fdf.js",
-        "/build/light.5a6fa01f.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_chart_js_dist_chunks_helpers_segment_js.js",
+        "/build/vendors-node_modules_hotwired_turbo_dist_turbo_es2017-esm_js-node_modules_symfony_stimulus-br-b1de81.js",
+        "/build/light.js"
       ],
       "css": [
-        "/build/light.3bb0e339.css"
+        "/build/vendors-node_modules_hotwired_turbo_dist_turbo_es2017-esm_js-node_modules_symfony_stimulus-br-b1de81.css",
+        "/build/light.css"
+      ]
+    },
+    "admin": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_chart_js_dist_chunks_helpers_segment_js.js",
+        "/build/vendors-node_modules_chartjs-plugin-zoom_dist_chartjs-plugin-zoom_esm_js.js",
+        "/build/admin.js"
       ]
     }
   }

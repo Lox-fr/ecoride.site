@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace App\Controller\User;
 
 use App\Document\Carpool;
+use App\Document\Review;
 use App\Entity\Car;
 use App\Entity\User;
 use App\Form\CarFormType;
 use App\Form\Carpool\CarpoolAddFormType;
+use App\Form\ReviewFormType;
 use App\Form\User\DriverProfileFormType;
 use App\Form\User\PassengerProfileFormType;
 use App\Repository\UserRepository;
 use App\Service\Carpool\CarpoolSearchService;
+use App\Service\Carpool\CarpoolStatusManager;
 use App\Service\FileUploader;
 use App\Service\User\CarManager;
 use App\Service\User\PreferenceManager;
@@ -34,6 +37,7 @@ class ProfileController extends AbstractController
         private CarManager $carManager,
         private PreferenceManager $preferenceManager,
         private FileUploader $fileUploader,
+        private CarpoolStatusManager $carpoolStatusManager,
     ) {
     }
 
@@ -73,6 +77,16 @@ class ProfileController extends AbstractController
         // User carpool history
         $userCarpoolsData = $this->carpoolSearchService->getUserCarpools($user);
 
+        // Create review form for each carpool which is Arrived or Validated
+        $reviewsFormViews = [];
+        foreach ($userCarpoolsData['currentCarpools'] as $carpool) {
+            if ($carpool->getStatus() === $this->carpoolStatusManager::STATUS_ARRIVED
+            || $carpool->getStatus() === $this->carpoolStatusManager::STATUS_VALIDATED) {
+                $reviewsFormViews[$carpool->getId()] =
+                    $this->createForm(ReviewFormType::class, new Review())->createView();
+            }
+        }
+
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'UserProfileController',
             'activeTab' => $activeTab ?? 'informations',
@@ -85,6 +99,7 @@ class ProfileController extends AbstractController
             'pastCarpoolsByYear' => $userCarpoolsData['pastCarpoolsByYear'],
             'currentCarpools' => $userCarpoolsData['currentCarpools'],
             'upcomingCarpools' => $userCarpoolsData['upcomingCarpools'],
+            'reviewsFormViews' => $reviewsFormViews,
         ]);
     }
 

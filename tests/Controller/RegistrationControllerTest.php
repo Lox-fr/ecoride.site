@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
@@ -33,18 +33,27 @@ class RegistrationControllerTest extends WebTestCase
     public function testRegister(): void
     {
         // Register a new user
-        $this->client->request('GET', '/register');
-        self::assertResponseIsSuccessful();
-        self::assertPageTitleContains('Register');
+        $crawler = $this->client->request('GET', '/inscription');
 
-        $this->client->submitForm('Register', [
+        $form = $crawler->selectButton('Valider')->form();
+        $csrfToken = $form->get('registration_form[_token]')->getValue();
+
+
+
+        self::assertResponseIsSuccessful();
+        self::assertPageTitleContains('Inscription');
+
+        $this->client->submitForm('Valider', [
             'registration_form[email]' => 'me@example.com',
-            'registration_form[plainPassword]' => 'password',
+            'registration_form[pseudo]' => 'testUser',
+            'registration_form[plainPassword]' => 'pAssw0rd9@!',
+            'registration_form[confirmPassword]' => 'pAssw0rd9@!',
             'registration_form[agreeTerms]' => true,
+            'registration_form[_token]' => $csrfToken,
         ]);
 
         // Ensure the response redirects after submitting the form, the user exists, and is not verified
-        // self::assertResponseRedirects('/'); @TODO: set the appropriate path that the user is redirected to.
+        self::assertResponseRedirects('/');
         self::assertCount(1, $this->userRepository->findAll());
     }
 }

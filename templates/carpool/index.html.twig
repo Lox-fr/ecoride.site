@@ -8,43 +8,64 @@
 		{% include "_common/carpoolSearchForm.html.twig" %}
 	</header>
 
-	{% if carpoolSearchResults is not empty %}
+	<div data-controller="carpoolFilters popovers">
+		{% if carpoolSearchResults is not empty %}
 
-		{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
-			date('Y-m-d') == "now"|date('Y-m-d'))|length %}
+			{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
+				date('Y-m-d') == "now"|date('Y-m-d'))|length %}
 
-				<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="carpoolSearchResultsForToday">
-					{% include "carpool/_searchResultsForToday.html.twig" %}
-				</section>
+					<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="carpoolSearchResultsForToday">
+						{% include "carpool/_searchResultsForToday.html.twig" %}
+					</section>
 
-				{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
-					date('Y-m-d') > "now"|date('Y-m-d'))|length %}
+					{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
+						date('Y-m-d') > "now"|date('Y-m-d'))|length %}
 
-						<div class="mx-3">
-							<button class="d-inline-flex mx-auto btn btn-lg btn-primary shadow mt-5 scaleOnFocusAndHover"type="button" data-bs-toggle="collapse" data-bs-target="#carpoolSearchResultsForFollowingDays" aria-expanded="false" aria-controls="carpoolSearchResultsForFollowingDays">
-								Voir les jours suivants
-							</button>
-						</div>
+							<div class="mx-3">
+								<button class="d-inline-flex mx-auto btn btn-lg btn-primary shadow mt-5 scaleOnFocusAndHover"type="button" data-bs-toggle="collapse" data-bs-target="#carpoolSearchResultsForFollowingDays" aria-expanded="false" aria-controls="carpoolSearchResultsForFollowingDays" id="toggleNextDaysCollapseButton">
+									Voir les jours suivants
+								</button>
+							</div>
+					{% endif %}
 
-				{% endif %}
+			{% endif %}
 
+			{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
+				date('Y-m-d') > "now"|date('Y-m-d'))|length %}
+					<section class="collapse container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4 {{ not carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d'))|length ? 'show' }}" id="carpoolSearchResultsForFollowingDays">
+						{% include "carpool/_searchResultsForFollowingDays.html.twig" %}
+					</section>
+			{% endif %}
+
+		{% else %}
+			<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="popularRides">
+				{% include "_common/popularRides.html.twig" %}
+			</section>
 		{% endif %}
+	</div>
 
-		{% if carpoolSearchResults|filter(carpool => carpool.departureTime|
-			date('Y-m-d') > "now"|date('Y-m-d'))|length %}
+{% endblock %}
 
-				<section class="collapse container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4 {{ not carpoolSearchResults|filter(carpool => carpool.departureTime|date('Y-m-d') == "now"|date('Y-m-d'))|length ? 'show' }}" id="carpoolSearchResultsForFollowingDays">
-					{% include "carpool/_searchResultsForFollowingDays.html.twig" %}
-				</section>
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		// Handle the label of the collapse button for the "following days" search results
+		document.addEventListener('turbo:load', function () {
+			const collapseElement = document.getElementById('carpoolSearchResultsForFollowingDays');
+			const button = document.getElementById('toggleNextDaysCollapseButton');
 
-		{% endif %}
-
-	{% else %}
-
-		<section class="container-lg framed rounded-lg-5 bg-light shadow mt-5 pt-4" id="popularRides">
-			{% include "_common/popularRides.html.twig" %}
-		</section>
-
-	{% endif %}
-
+			if (collapseElement && button) {
+				collapseElement.addEventListener('shown.bs.collapse', function () {
+					button.textContent = 'Masquer les jours suivants';
+				});
+				collapseElement.addEventListener('hidden.bs.collapse', function () {
+					button.textContent = 'Voir les jours suivants';
+				});
+				// Remove focus after click to avoid staying scaled
+				button.addEventListener('click', () => {
+					button.blur();
+				});
+			}
+		});
+	</script>
 {% endblock %}
